@@ -1,0 +1,62 @@
+.emptyTitle{
+    // margin: 300px 50%;
+    margin-top: 400px;
+    margin-left: 40%;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.mainBox {
+    display: flex;
+
+    .leftMenu {
+        width: 240px;
+        box-shadow: #b9b9b9 2px 2px 2px 2px;
+        border: #000 1px solid;
+        border-radius: 6px;
+        .Title{
+            width: 100%;
+            padding: 16px;
+            background: #000;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            .addIcon{
+                cursor: pointer;
+            }
+        }
+        .liItem{
+            width: 100%;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 400;
+            border-bottom: 1px solid #000;
+            cursor: pointer;
+        }
+        .liItem:hover {
+            color: #1677ff;
+            background: #f3f3f3;
+        }
+        .liItemActive{
+            width: 100%;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 400;
+            border-bottom: 1px solid #000;
+            cursor: pointer;
+            color: #1677ff;
+            background: #f3f3f3;
+        }
+    }
+
+    .contentBox{
+        flex: 1;
+        height: calc(100vh - 92px);
+        margin-left: 32px;
+        border: #000 1px solid;
+        box-shadow: #b9b9b9 2px 2px 2px 2px;
+    }
+}
+

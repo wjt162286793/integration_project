@@ -1,0 +1,620 @@
+/*
+    CSS清除默认样式代码
+*/
+
+html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, textarea, th, td, select {
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100%;
+}
+  /*滚动条宽高 */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* 滚动条上的滚动滑块。样式 */
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #0051ff;
+  }
+
+  /* 鼠标悬停时，设置滑块的背景颜色为深灰色 */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #999999;
+  }
+
+  /* 鼠标按下时，设置滑块的背景颜色为灰色 */
+  ::-webkit-scrollbar-thumb:active {
+    background-color: #666666;
+  }
+
+body {
+    font-family: "Microsoft YaHei";
+    font-size: 14px;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+img {
+    border: none;
+    vertical-align: middle;
+}
+
+a {
+    text-decoration: none;
+    color: #232323;
+}
+
+table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+input, textarea {
+    outline: none;
+    border: none;
+}
+
+textarea {
+    resize: none;
+    overflow: auto;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+.clearfix:after {
+    content: ".";
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: block;
+    clear: both;
+    overflow: hidden;
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+.tl {
+    text-align: left;
+}
+
+.tc {
+    text-align: center
+}
+
+.tr {
+    text-align: right;
+}
+
+.ellipse {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.inline {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+.text-theme {
+    color: #489CFF;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.text-red {
+    color: red;
+}
+
+.text-black {
+    color: #333;
+}
+
+.text-666 {
+    color: #666;
+}
+
+.text-999 {
+    color: #999;
+}
+
+.text-12 {
+    font-size: 12px;
+}
+
+.text-14 {
+    font-size: 14px;
+}
+
+.text-16 {
+    font-size: 16px;
+}
+
+.text-18 {
+    font-size: 18px;
+}
+
+.text-20 {
+    font-size: 20px;
+}
+
+.text-24 {
+    font-size: 24px;
+}
+
+.text-28 {
+    font-size: 28px;
+}
+
+.text-32 {
+    font-size: 32px;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.hover-pointer {
+    cursor: pointer;
+}
+
+.bg-theme {
+    background-color: #489CFF;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+/* flex布局 */
+.flex {
+    display: flex;
+}
+
+.flex-sub {
+    flex: 1;
+}
+
+.flex-twice {
+    flex: 2;
+}
+
+.flex-treble {
+    flex: 3;
+}
+
+.flex-direction {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.align-start {
+    align-items: flex-start;
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+.self-start {
+    align-self: flex-start;
+}
+
+.self-center {
+    align-self: flex-center;
+}
+
+.self-end {
+    align-self: flex-end;
+}
+
+.self-stretch {
+    align-self: stretch;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.margin-0 {
+    margin: 0;
+}
+
+.margin-xs {
+    margin: 10px;
+}
+
+.margin-sm {
+    margin: 20px;
+}
+
+.margin {
+    margin: 30px;
+}
+
+.margin-lg {
+    margin: 40px;
+}
+
+.margin-xl {
+    margin: 50px;
+}
+
+.margin-top-xs {
+    margin-top: 10px;
+}
+
+.margin-top-sm {
+    margin-top: 20px;
+}
+
+.margin-top {
+    margin-top: 30px;
+}
+
+.margin-top-lg {
+    margin-top: 40px;
+}
+
+.margin-top-xl {
+    margin-top: 50px;
+}
+
+.margin-right-xs {
+    margin-right: 10px;
+}
+
+.margin-right-sm {
+    margin-right: 20px;
+}
+
+.margin-right {
+    margin-right: 30px;
+}
+
+.margin-right-lg {
+    margin-right: 40px;
+}
+
+.margin-right-xl {
+    margin-right: 50px;
+}
+
+.margin-bottom-xs {
+    margin-bottom: 10px;
+}
+
+.margin-bottom-sm {
+    margin-bottom: 20px;
+}
+
+.margin-bottom {
+    margin-bottom: 30px;
+}
+
+.margin-bottom-lg {
+    margin-bottom: 40px;
+}
+
+.margin-bottom-xl {
+    margin-bottom: 50px;
+}
+
+.margin-left-xs {
+    margin-left: 10px;
+}
+
+.margin-left-sm {
+    margin-left: 20px;
+}
+
+.margin-left {
+    margin-left: 30px;
+}
+
+.margin-left-lg {
+    margin-left: 40px;
+}
+
+.margin-left-xl {
+    margin-left: 50px;
+}
+
+.margin-lr-xs {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.margin-lr-sm {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.margin-lr {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.margin-lr-lg {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.margin-lr-xl {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.margin-tb-xs {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.margin-tb-sm {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.margin-tb {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.margin-tb-lg {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.margin-tb-xl {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.padding-xs {
+    padding: 10px;
+}
+
+.padding-sm {
+    padding: 20px;
+}
+
+.padding {
+    padding: 30px;
+}
+
+.padding-lg {
+    padding: 40px;
+}
+
+.padding-xl {
+    padding: 50px;
+}
+
+.padding-top-xs {
+    padding-top: 10px;
+}
+
+.padding-top-sm {
+    padding-top: 20px;
+}
+
+.padding-top {
+    padding-top: 30px;
+}
+
+.padding-top-lg {
+    padding-top: 40px;
+}
+
+.padding-top-xl {
+    padding-top: 50px;
+}
+
+.padding-right-xs {
+    padding-right: 10px;
+}
+
+.padding-right-sm {
+    padding-right: 20px;
+}
+
+.padding-right {
+    padding-right: 30px;
+}
+
+.padding-right-lg {
+    padding-right: 40px;
+}
+
+.padding-right-xl {
+    padding-right: 50px;
+}
+
+.padding-bottom-xs {
+    padding-bottom: 10px;
+}
+
+.padding-bottom-sm {
+    padding-bottom: 20px;
+}
+
+.padding-bottom {
+    padding-bottom: 30px;
+}
+
+.padding-bottom-lg {
+    padding-bottom: 40px;
+}
+
+.padding-bottom-xl {
+    padding-bottom: 50px;
+}
+
+.padding-left-xs {
+    padding-left: 10px;
+}
+
+.padding-left-sm {
+    padding-left: 20px;
+}
+
+.padding-left {
+    padding-left: 30px;
+}
+
+.padding-left-lg {
+    padding-left: 40px;
+}
+
+.padding-left-xl {
+    padding-left: 50px;
+}
+
+.padding-lr-xs {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.padding-lr-sm {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.padding-lr {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.padding-lr-lg {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.padding-lr-xl {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.padding-tb-xs {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.padding-tb-sm {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.padding-tb {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.padding-tb-lg {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.padding-tb-xl {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.container {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.icon-skyblue {
+    float: left;
+    width: 10px;
+    height: 30px;
+    background: inherit;
+    background-color: rgba(2, 167, 240, 1);
+}
+
+.solid {
+    border: 1px solid #ddd;
+}
+
+.solid-right {
+    border-right: 1px solid #ddd;
+}
+
+.solid-left {
+    border-left: 1px solid #ddd;
+}
+
+.solid-top {
+    border-top: 1px solid #ddd;
+}
+
+.solid-bottom {
+    border-bottom: 1px solid #ddd;
+}
+
+.p-relative {
+    position: relative;
+}
+
+.p-absolute {
+    position: absolute;
+}

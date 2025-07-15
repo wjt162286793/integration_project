@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT 业务流程模拟</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .nft-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NFT 业务流程模拟</h1>
+        <h2>创建 NFT</h2>
+        <div>
+            <input type="text" id="nftName" placeholder="NFT 名称">
+            <input type="text" id="nftPrice" placeholder="NFT 价格">
+            <button onclick="createNFT()">创建 NFT</button>
+        </div>
+        <h2>市场</h2>
+        <div id="marketplace">
+            <!-- NFTs will be displayed here -->
+        </div>
+        <h2>我的 NFT</h2>
+        <div id="myNFTs">
+            <!-- My NFTs will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        let nfts = [];
+        let myNFTs = [];
+
+        function createNFT() {
+            const name = document.getElementById('nftName').value;
+            const price = document.getElementById('nftPrice').value;
+
+            if (!name || !price) {
+                alert('请输入 NFT 名称和价格');
+                return;
+            }
+
+            const nft = {
+                id: nfts.length + 1,
+                name: name,
+                price: parseFloat(price),
+                owner: '市场'
+            };
+
+            nfts.push(nft);
+            displayNFTs();
+        }
+
+        function displayNFTs() {
+            const marketplace = document.getElementById('marketplace');
+            marketplace.innerHTML = '';
+
+            nfts.forEach(nft => {
+                const nftCard = document.createElement('div');
+                nftCard.className = 'nft-card';
+                nftCard.innerHTML = `
+                    <h3>${nft.name}</h3>
+                    <p>价格: ${nft.price} ETH</p>
+                    <p>所有者: ${nft.owner}</p>
+                    <button onclick="buyNFT(${nft.id})">购买</button>
+                `;
+                marketplace.appendChild(nftCard);
+            });
+        }
+
+        function buyNFT(id) {
+            const nft = nfts.find(n => n.id === id);
+            if (nft && nft.owner === '市场') {
+                nft.owner = '我';
+                myNFTs.push(nft);
+                displayNFTs();
+                displayMyNFTs();
+            }
+        }
+
+        function displayMyNFTs() {
+            const myNFTsDiv = document.getElementById('myNFTs');
+            myNFTsDiv.innerHTML = '';
+
+            myNFTs.forEach(nft => {
+                const nftCard = document.createElement('div');
+                nftCard.className = 'nft-card';
+                nftCard.innerHTML = `
+                    <h3>${nft.name}</h3>
+                    <p>价格: ${nft.price} ETH</p>
+                    <p>所有者: ${nft.owner}</p>
+                `;
+                myNFTsDiv.appendChild(nftCard);
+            });
+        }
+    </script>
+</body>
+</html>
