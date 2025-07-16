@@ -56,7 +56,7 @@ const routeList: RouteConfig[] = [
       {
         name: 'chart',
         path: '/dashBoard/chart',
-        cname: '统计图表',
+        cname: '数据看板',
         element: <Chart />
       },
       {

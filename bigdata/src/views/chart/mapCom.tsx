@@ -1,14 +1,9 @@
-<template>
-  <div class="transportMonitoringMap" ref="echartsRef"></div>
-</template>
+import React, { useEffect } from 'react'
+import * as echarts from 'echarts';
+import {registerMapHandler} from '@/global/china'
+const mapCom:React.FC = ()=> {
 
-<script setup>
-import * as echarts from "echarts";
-import "@/javascript/china.js";
-const echartsRef = ref(null);
-let myChart = null;
-//地图上出发圆点
-var points = [
+    const points = [
   { value: [118.8062, 31.9208], itemStyle: { color: "#4ab2e5" } },
   { value: [127.9688, 45.368], itemStyle: { color: "#4fb6d2" } },
   { value: [110.3467, 41.4899], itemStyle: { color: "#52b9c7" } },
@@ -26,23 +21,16 @@ var points = [
   { value: [108.384366, 30.439702], itemStyle: { color: "#b9be23" } },
   { value: [113.0823, 28.2568], itemStyle: { color: "#a6c62c" } },
   { value: [102.9199, 25.46639], itemStyle: { color: "#96cc34" } },
-  { value: [119.4543, 25.9222]},
+  { value: [122.4648, 31.2891]},
 ];
 
-onMounted(() => {
-  initChart();
-});
-
-//chart里面的map地图配置地址:  https://echarts.apache.org/zh/option.html#geo.map
-//参考博客:   https://blog.csdn.net/sleepwalker_1992/article/details/126959198
-let initChart = () => {
-  if (!myChart) {
-    myChart = echarts.init(echartsRef.value);
-  }
-  myChart.hideLoading();
-  let option = {
+const option = {
     backgroundColor: "#013954", //大背景
-
+        title: {
+            text: '上海数据中心',
+            left: 'center',
+            top: '8px'
+        },
     geo: {
       map: "china",
       aspectScale: 0.75, //长宽比
@@ -208,119 +196,121 @@ let initChart = () => {
           {
             coords: [
               [118.8062, 31.9208],  //起点坐标
-              [119.4543, 25.9222],  //中点坐标
+              [122.4648, 31.2891],  //中点坐标
+
+              
             ],
             lineStyle: { color: "#4ab2e5" },
           },
           {
             coords: [
               [127.9688, 45.368],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#4fb6d2" },
           },
           {
             coords: [
               [110.3467, 41.4899],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#52b9c7" },
           },
           {
             coords: [
               [125.8154, 44.2584],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#5abead" },
           },
           {
             coords: [
               [116.4551, 40.2539],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#f34e2b" },
           },
           {
             coords: [
               [123.1238, 42.1216],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#f56321" },
           },
           {
             coords: [
               [114.4995, 38.1006],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#f56f1c" },
           },
           {
             coords: [
               [117.4219, 39.4189],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#f58414" },
           },
           {
             coords: [
               [112.3352, 37.9413],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#f58f0e" },
           },
           {
             coords: [
               [109.1162, 34.2004],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#f5a305" },
           },
           {
             coords: [
               [103.5901, 36.3043],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],  
             ],
             lineStyle: { color: "#e7ab0b" },
           },
           {
             coords: [
               [106.3586, 38.1775],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#dfae10" },
           },
           {
             coords: [
               [101.4038, 36.8207],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#d5b314" },
           },
           {
             coords: [
               [103.9526, 30.7617],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#c1bb1f" },
           },
           {
             coords: [
               [108.384366, 30.439702],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#b9be23" },
           },
           {
             coords: [
               [113.0823, 28.2568],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#a6c62c" },
           },
           {
             coords: [
               [102.9199, 25.46639],
-              [119.4543, 25.9222],
+              [122.4648, 31.2891],
             ],
             lineStyle: { color: "#96cc34" },
           },
@@ -328,26 +318,24 @@ let initChart = () => {
       },
     ],
   };
-  myChart.setOption(option, true);
-  myChart.resize();
-  // });
-};
-</script>
 
-<style lang="less" scoped>
-.transportMonitoringMap {
-  width: 100%;
-  height: 100%;
-  div{
-     width: 100% !important;
-     height: 100% !important;
-     overflow: auto !important;
-  }
-   canvas{
-   width: 100% !important;
-   height: 100% !important;
-  }
-  // width: 855px;
-  // height: 746px;
+const renderMap = ()=>{
+    registerMapHandler(echarts)
+            const chartDom = document.getElementById('data_map_box');
+        const Chart = echarts.init(chartDom, 'dark');
+    
+        Chart.setOption(option);
 }
-</style>
+useEffect(()=>{
+  renderMap()
+})
+
+    return  (  
+        <div className='data_map_box' id='data_map_box'>
+       
+        </div>
+        )
+    
+}
+
+export default mapCom

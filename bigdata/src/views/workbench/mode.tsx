@@ -48,7 +48,7 @@ const option1 = {
 };
 const option2 = {
     title:{
-        text:'上周统计图表访问量',
+        text:'上周数据看板访问量',
         left:'center'
     },
   tooltip: {
@@ -175,8 +175,8 @@ useEffect(()=>{
       </Col>
       <Col span={8}>
       <div className='colContent'>
-        <h5>统计图表</h5>
-        <p className='desc'>统计图表是通过图形化手段展示数据关系、趋势和模式的工具，旨在降低理解门槛，辅助决策。</p>
+        <h5>数据看板</h5>
+        <p className='desc'>数据看板是通过图形化手段展示数据关系、趋势和模式的工具，旨在降低理解门槛，辅助决策。</p>
         <div id='chartBox_2' className='workbranch_chartBox'></div>
       </div>
       </Col>

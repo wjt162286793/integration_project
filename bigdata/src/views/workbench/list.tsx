@@ -1,10 +1,22 @@
 import React, { useEffect } from 'react'
-import { Col, Row, List, Badge,Tag } from 'antd';
+import { Col, Row, List, Badge,Tag, Button } from 'antd';
 
 
+interface toItem{
+    title:string
+    status:string
+}
+
+interface msgItem{
+    title:string
+    time:string
+    text:string
+    by:string
+    type:string
+}
 const ListCom: React.FC = () => {
 
-    const todoList = [
+    const todoList:toItem[] = [
         {
             title: '构建1个流程图模型',
             status: 'todo'
@@ -32,25 +44,25 @@ const ListCom: React.FC = () => {
 
     ];
 
-    const msgList = [
+    const msgList:msgItem[] = [
         {
             title: '模型已发布',
             time: '2023-12-12',
-            text: '你构建的模型已经发布完成,可以进行查看',
+            text: '你构建的模型已经发布完成,可以进行查看,链接地址为:xxx',
             by: '系统',
             type: 'hasRead'
         },
         {
             title: '数字资产新增',
             time: '2023-12-12',
-            text: '你新增的数字资产已经发布完成,可以进行查看',
+            text: '你新增的数字资产已经发布完成,可以进行查看,链接地址为:xxx',
             by: '系统',
             type: 'noRead'
         },
         {
             title: '图表统计变化',
             time: '2023-12-12',
-            text: '图表统计已经发生变化,可以去图表统计模块进行浏览',
+            text: '图表统计已经发生变化,可以去图表统计模块进行浏览,链接地址为:xxx',
             by: '系统',
             type: 'noRead'
         }
@@ -59,7 +71,7 @@ const ListCom: React.FC = () => {
 
 
     return (
-        <div className='mainBox'>
+        <div className='listBox'>
             <Row>
                 <Col span={12}>
                     <Badge count={todoList.length} offset={[10, 8]}>
@@ -103,7 +115,20 @@ const ListCom: React.FC = () => {
                             dataSource={msgList}
                             renderItem={(item, index) => (
                                 <List.Item>
-                                    <h6>{item.title}</h6>
+                                    <div className='msgItem'>
+                                        <p>{item.title}</p>
+                                        {
+                                            item.type === 'noRead' && <Button type='link'>
+                                            未读
+                                        </Button>
+                                        }
+                                        {
+                                            item.type === 'hasRead' && <Button type='link'>
+                                                <a style={{color:'#97a0a6'}}>已读</a> 
+                                            </Button> 
+                                        }
+                                    </div>
+                                    
                                 </List.Item>
                             )}
                         />

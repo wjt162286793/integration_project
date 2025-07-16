@@ -10,7 +10,7 @@ const list:listItem[] = [
     {
       name: 'chart',
       url: 'http://localhost:9001',
-      cname:'图表系统',
+      cname:'交易所',
       sync: true
     },
     {

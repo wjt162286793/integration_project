@@ -47,7 +47,7 @@ export default function index() {
        <Descriptions items={items} />
        <h2>项目介绍</h2>
        <p>本项目并非应用于任何盈利,仅用于学习。其中的数据全部都为假数据,仅做展示使用。</p>
-       <p>模拟了一些大数据平台和管理系统所需要的业务场景,例如数据展示,统计图表,流程建模等。</p>
+       <p>模拟了一些大数据平台和管理系统所需要的业务场景,例如数据展示,数据看板,流程建模等。</p>
        <h2>技术介绍</h2>
        <p>本项目前端使用vite+react技术栈,后台使用express+mysql技术栈,主要代码为typescript</p>
        <h3>前端层:</h3>
@@ -56,7 +56,7 @@ export default function index() {
       <Col span={3}><span className='label'>统一状态管理:</span>redux</Col>
       <Col span={3}><span className='label'>网络请求工具:</span>axios</Col>
       <Col span={3}><span className='label'>主题ui组件:</span>Ant Design</Col>
-      <Col span={3}><span className='label'>统计图表组件:</span>Echarts & AntV G2</Col>
+      <Col span={3}><span className='label'>数据看板组件:</span>Echarts & AntV G2</Col>
       <Col span={3}><span className='label'>模型构建组件:</span> AntV X6</Col>
       <Col span={3}><span className='label'>常用函数集合:</span> lodash</Col>
       <Col span={3}><span className='label'>3D模型构建:</span> three.js</Col>
@@ -78,7 +78,7 @@ export default function index() {
       <Col span={3}><span className='label'>部署</span>宝塔.腾讯云</Col>
     </Row>
     <h2>模块介绍</h2>
-    项目共有登录模块,工作台模块,数字资产模块,统计图表模块,模型构建模块,大屏预览模块,开发者模块,超级管理员模块
+    项目共有登录模块,工作台模块,数字资产模块,数据看板模块,模型构建模块,大屏预览模块,开发者模块,超级管理员模块
     <h3>登录</h3>
     在项目中,未配置注册功能。登录模块默认配置好三种角色,coder(开发者),admin(超级管理员),user(普通用户)。密码也已经默认配置好,无需用户输入。只有登录才可以使用系统功能。
     <h3>工作台模块</h3>

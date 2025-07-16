@@ -19,16 +19,16 @@ export default function Dashboard() {
     },
     {
       key: 'chart',
-      label: '统计图表',
+      label: '数据看板',
     },
     {
       key: 'modeBuild',
       label: '模型构建',
     },
-    {
-      key: 'readMe',
-      label: '说明文档',
-    },
+    // {
+    //   key: 'readMe',
+    //   label: '说明文档',
+    // },
   ];
 
   const [selectedKeys, changeSelectedKeys] = useState<string[]>(['workbench'])
