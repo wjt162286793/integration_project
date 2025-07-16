@@ -1,42 +1,61 @@
-.modeBox{
-    h4{
+.modeBox {
+    h4 {
         font-size: 20px;
         font-weight: 600;
     }
-    .colContent{
+
+    .colContent {
         height: 500px;
         box-shadow: 4px 1px 4px 5px #eee;
-        margin:18px 36px 18px 0px;
+        margin: 18px 36px 18px 0px;
         cursor: pointer;
         border-radius: 10px;
         padding: 16px;
-        h5{
-        font-size: 16px;
-        font-weight: 500;
-        margin-bottom: 16px;
-        }
-        .desc{
 
+        h5 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
         }
+
+        .desc {}
     }
-    .colContent:hover{
+
+    .colContent:hover {
         background: #f1f1f1;
+    }
+
+    .workbranch_chartBox {
+        margin-top: 16px;
+        height: 360px;
+
     }
 }
 
-.mainBox{
-            h5{
+.mainBox {
+    h5 {
         font-size: 16px;
         font-weight: 600;
         margin-bottom: 16px;
-        }
-    .todoListBox,.msgListBox{
-    margin-right:36px;
-}
-h6{
-    font-size: 14px;
-    font-weight: 500;
-}
+    }
+
+    .todoListBox,
+    .msgListBox {
+        margin-right: 36px;
+        max-height: 240px;
+        overflow: auto;
+    }
+
+    .todoItem {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    h6 {
+        font-size: 14px;
+        font-weight: 500;
+    }
 
 }
-
