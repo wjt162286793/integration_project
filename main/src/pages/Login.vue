@@ -88,9 +88,11 @@ const handleLogin = async () => {
         account:loginForm.username,
         password:loginForm.password
       }).then(res=>{
-        if(res.data.code === 200){
+        console.log(res,'====')
+        if(res.code === 200){
+          console.log(res,'结果')
             // 登录成功，跳转到门户页面
-            router.push('/portal')
+            router.push('/portal') 
         }
         
       })

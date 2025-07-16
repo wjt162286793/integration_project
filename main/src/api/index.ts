@@ -4,14 +4,15 @@ const api_url = '/api'
 
 const api = {
     test:'/',
-    login:'/login',
+    login:'/portal/login',
     getRoutes:'/getRoutes'
 }
 
 
 export const loginApi = (data:any)=>{
-    return request.post({
+    return request({
         url:`${api_url}${api.login}`,
+        method:'POST',
         data
     })
 }

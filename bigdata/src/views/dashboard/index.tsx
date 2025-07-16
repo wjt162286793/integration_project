@@ -42,10 +42,13 @@ export default function Dashboard() {
     console.log(Location, '当前路由信息')
     const pathList = Location.pathname.split('/')
     const routeName: string = pathList[pathList.length - 1]
-
+    
     if (menuList.find(item => item.key === routeName)) {
       console.log('进来了', routeName)
       changeSelectedKeys([routeName])
+    }
+    if(Location.pathname === '/dashboard'){
+      navigate('/dashboard/workbench')
     }
     // const defaultSelectedKeys: string[] = ['workbench'];
   }

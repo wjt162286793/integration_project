@@ -10,7 +10,7 @@ request.interceptors.request.use((config)=>{
 })
 
 request.interceptors.response.use((config)=>{
-    return config
+    return config.data
 })
 
 export default request
