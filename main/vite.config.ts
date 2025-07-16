@@ -10,7 +10,15 @@ export default defineConfig({
     },
   },
   server: {
-    port: 9000
+    port: 9000,
+        proxy:{
+      '/api':{
+        target:'http://localhost:3030/',
+        changeOrigin:true,
+        rewrite:(path)=>path.replace(/^\/api/, '')
+      }
+    }
   },
   plugins: [vue()],
+
 })
