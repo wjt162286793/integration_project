@@ -105,7 +105,7 @@ const ListCom: React.FC = () => {
 
                 </Col>
                 <Col span={12}>
-                    <Badge count={todoList.length} offset={[10, 8]}>
+                    <Badge count={2} offset={[10, 8]}>
                         <h5>系统消息</h5>
                     </Badge>
                     <div className='msgListBox'>

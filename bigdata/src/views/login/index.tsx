@@ -60,7 +60,7 @@ const LoginPage: React.FC = () => {
         <Form
           name="normal_login"
           className=""
-          initialValues={{ remember: true }}
+          initialValues={{ remember: true, username: 'admin', password: 'admin' }}
           onFinish={onFinish}
         >
           <Form.Item

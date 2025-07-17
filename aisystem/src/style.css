@@ -1,79 +1,244 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+html{
+    overflow: hidden;
 }
 
+blockquote,body,button,dd,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,hr,input,legend,li,ol,p,pre,td,textarea,th,ul {
+    margin: 0;
+    padding: 0
+}
+ 
+body,button,input,select,textarea {
+    font: 12px/1.5 tahoma,arial,'Hiragino Sans GB','\5b8b\4f53',sans-serif
+}
+ 
+h1,h2,h3,h4,h5,h6 {
+    font-size: 100%
+}
+ 
+address,cite,dfn,em,var {
+    font-style: normal
+}
+ 
+code,kbd,pre,samp {
+    font-family: courier new,courier,monospace
+}
+ 
+small {
+    font-size: 12px
+}
+ 
+ol,ul {
+    list-style: none
+}
+ 
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+    text-decoration: none
 }
+ 
 a:hover {
-  color: #535bf2;
+    text-decoration: underline
 }
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+ 
+sup {
+    vertical-align: text-top
 }
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+ 
+sub {
+    vertical-align: text-bottom
 }
-
+ 
+legend {
+    color: #000
+}
+ 
+fieldset,img {
+    border: 0
+}
+ 
+button,input,select,textarea {
+    font-size: 100%
+}
+ 
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+ 
+京东的reset
+ 
+* {
+    margin: 0;
+    padding: 0
+}
+ 
+em,i {
+    font-style: normal
+}
+ 
+li {
+    list-style: none
+}
+ 
+img {
+    border: 0;
+    vertical-align: middle
+}
+ 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+    cursor: pointer
 }
-button:hover {
-  border-color: #646cff;
+ 
+a {
+    color: #666;
+    text-decoration: none
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+ 
+a:hover {
+    color: #c81623
 }
-
-.card {
-  padding: 2em;
+ 
+button,input {
+    font-family: Microsoft YaHei,tahoma,arial,Hiragino Sans GB,\\5b8b\4f53,sans-serif
 }
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+ 
+body {
+    -webkit-font-smoothing: antialiased;
+    background-color: #fff;
+    font: 12px/1.5 Microsoft YaHei,tahoma,arial,Hiragino Sans GB,\\5b8b\4f53,sans-serif;
+    color: #666
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+ 
+.hide,.none {
+    display: none
+}
+ 
+.clearfix:after {
+    visibility: hidden;
+    clear: both;
+    display: block;
+    content: ".";
+    height: 0
+}
+ 
+.clearfix {
+    *zoom: 1
+}
+ 
+百度的reset
+ 
+body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,fieldset,legend,button,input,textarea,th,td {
+    margin: 0;
+    padding: 0
+}
+ 
+html {
+    color: #000;
+    overflow-y: scroll;
+    overflow: -moz-scrollbars
+}
+ 
+body,button,input,select,textarea {
+    font: 12px arial
+}
+ 
+h1,h2,h3,h4,h5,h6 {
+    font-size: 100%
+}
+ 
+em {
+    font-style: normal
+}
+ 
+small {
+    font-size: 12px
+}
+ 
+ul,ol {
+    list-style: none
+}
+ 
+a {
+    text-decoration: none
+}
+ 
+a:hover {
+    text-decoration: underline
+}
+ 
+legend {
+    color: #000
+}
+ 
+fieldset,img {
+    border: 0
+}
+ 
+button,input,select,textarea {
+    font-size: 100%
+}
+ 
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+ 
+img {
+    -ms-interpolation-mode: bicubic
+}
+ 
+textarea {
+    resize: vertical
+}
+ 
+.left {
+    float: left
+}
+ 
+.right {
+    float: right
+}
+ 
+.overflow {
+    overflow: hidden
+}
+ 
+.hide {
+    display: none
+}
+ 
+.block {
+    display: block
+}
+ 
+.inline {
+    display: inline
+}
+ 
+.error {
+    color: #F00;
+    font-size: 12px
+}
+ 
+label,button {
+    cursor: pointer
+}
+ 
+.clearfix:after {
+    content: '\20';
+    display: block;
+    height: 0;
+    clear: both
+}
+ 
+.clearfix {
+    zoom: 1
+}
+ 
+.clear {
+    clear: both;
+    height: 0;
+    line-height: 0;
+    font-size: 0;
+    visibility: hidden;
+    overflow: hidden
 }

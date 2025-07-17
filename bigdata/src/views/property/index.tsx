@@ -76,16 +76,16 @@ const Index: React.FC = () => {
       dataIndex: 'update_time',
       key: 'update_time',
     },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a>编辑</a>
-          <a>下架</a>
-        </Space>
-      ),
-    },
+    // {
+    //   title: 'Action',
+    //   key: 'action',
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       <a>编辑</a>
+    //       <a>下架</a>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   const data: DataType[] = [
@@ -166,10 +166,10 @@ const Index: React.FC = () => {
     <div className='searchBox'>
       <span className='searchLabel'>资产名称:</span>
       <Input placeholder="请输入资产名称" value={query.name} className='searchItem' />
-      <span className='searchLabel'>资产等级:</span>
+      {/* <span className='searchLabel'>资产等级:</span>
       <Select value={query.level} options={levelOptions} onChange={changeLevel} className='searchItem' />
       <span className='searchLabel'>资产状态:</span>
-      <Select value={query.status} options={statusOptions} onChange={changeStatus} className='searchItem' />
+      <Select value={query.status} options={statusOptions} onChange={changeStatus} className='searchItem' /> */}
       <Button className='searchBtn' type='primary'>查询</Button>
     </div>
     <div className='tableBox'>

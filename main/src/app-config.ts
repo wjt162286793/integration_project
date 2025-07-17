@@ -21,7 +21,8 @@ const list:listItem[] = [
     },
     {
       name: 'bigdata',
-      url: 'http://localhost:9003',
+      // url: 'http://localhost:9003',
+      url:'http://82.157.193.128:8083',
       cname:'大数据系统',
       sync: true
     },
