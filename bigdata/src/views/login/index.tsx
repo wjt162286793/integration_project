@@ -39,8 +39,12 @@ const LoginPage: React.FC = () => {
 
   useEffect(()=>{
   if(globalText.isSubAppFlag){
-    message.success("微前端模式直接登录！");
-    navigate('/dashboard')
+    // message.success("微前端模式直接登录！");
+    let token = localStorage.getItem('intergration_token')
+    if(token){
+       navigate('/dashboard')
+    }
+    
   }
   },[])
  

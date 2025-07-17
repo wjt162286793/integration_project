@@ -50,6 +50,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
 import {testApi,loginApi} from '@/api'
+import {userStore} from '@/store'
 
 const router = useRouter()
 const loginFormRef = ref<InstanceType<typeof ElForm>>()
@@ -71,7 +72,7 @@ const loginRules = reactive({
   ]
 })
 
-// 登录处理函数
+// 登录函数
 const handleLogin = async () => {
   if (!loginFormRef.value) return
   
@@ -79,34 +80,23 @@ const handleLogin = async () => {
     loading.value = true
     // 表单验证
     await loginFormRef.value.validate()
-    
-    // 验证账号密码（实际项目中应调用后端API）
-    if (loginForm.username === 'admin' && loginForm.password === 'admin') {
-      
-    
+    // 账号密码正确
       loginApi({
         account:loginForm.username,
         password:loginForm.password
       }).then(res=>{
-        console.log(res,'====')
         if(res.code === 200){
-          console.log(res,'结果')
             // 登录成功，跳转到门户页面
+            const user = userStore()
+            user.setUser(res.data)
+            localStorage.setItem('intergration_token',res.data.token)
             router.push('/portal') 
+        }else if (res.code === 7003){
+           ElMessage.error('账号或密码错误')
         }
         
       })
-      
 
-
-      // testApi().then(res=>{
-      //   router.push('/portal')
-      // })
-
-
-    } else {
-      ElMessage.error('账号或密码错误')
-    }
   } catch (error) {
     console.error('登录表单验证失败:', error)
   } finally {

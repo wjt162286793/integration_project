@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DeepSeek WebSocket Client</title>
+</head>
+<body>
+  <input id="input" type="text" placeholder="输入你的问题">
+  <button onclick="sendMessage()">发送</button>
+  <div id="output" style="white-space: pre-wrap;"></div>
+
+  <script>
+    const ws = new WebSocket('ws://localhost:3030');
+    const output = document.getElementById('output');
+    
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'chunk') {
+        output.textContent += data.content;
+      } else if (data.type === 'end') {
+        output.textContent += '\n\n[对话结束]';
+      } else if (data.type === 'error') {
+        output.textContent += '\n\n[错误]: ' + data.content;
+      }
+    };
+
+    function sendMessage() {
+      const input = document.getElementById('input');
+      ws.send(input.value);
+      output.textContent += '\n\n你: ' + input.value + '\nAI: ';
+      input.value = '';
+    }
+  </script>
+</body>
+</html>

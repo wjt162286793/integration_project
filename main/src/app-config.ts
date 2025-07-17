@@ -8,7 +8,7 @@ interface listItem {
 
 const list:listItem[] = [
     {
-      name: 'chart',
+      name: 'exchange',
       url: 'http://localhost:9001',
       cname:'交易所',
       sync: true
@@ -23,6 +23,12 @@ const list:listItem[] = [
       name: 'bigdata',
       url: 'http://localhost:9003',
       cname:'大数据系统',
+      sync: true
+    },
+    {
+      name: 'aisystem',
+      url: 'http://localhost:9004',
+      cname:'ai系统',
       sync: true
     }
 ]

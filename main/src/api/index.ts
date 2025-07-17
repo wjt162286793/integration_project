@@ -5,10 +5,16 @@ const api_url = '/api'
 const api = {
     test:'/',
     login:'/portal/login',
-    getRoutes:'/getRoutes'
+    reqUserInfo:'/portal/userInfo',
 }
 
-
+export const testApi = ()=>{
+    return request({
+        url:'/api/',
+        params:null,
+        method:'GET'
+    })
+}
 export const loginApi = (data:any)=>{
     return request({
         url:`${api_url}${api.login}`,
@@ -16,10 +22,10 @@ export const loginApi = (data:any)=>{
         data
     })
 }
-export const testApi = ()=>{
+
+export const reqUserInfoApi = ()=>{
     return request({
-        url:'/api/',
-        params:null,
+        url:`${api_url}${api.reqUserInfo}`,
         method:'GET'
     })
 }
