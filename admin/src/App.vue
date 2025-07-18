@@ -2,15 +2,17 @@
 
 <template>
   <div>
-     {{useWujieFlag?'vue子应用使用无界':'vue子应用没有使用无界'}}
+    <!-- 路由出口 -->
+    <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
- const useWujieFlag = window?.__POWERED_BY_WUJIE__;
+const useWujieFlag = window?.__POWERED_BY_WUJIE__;
 </script>
 
 <style scoped>
+/* 保留原有的样式 */
 .logo {
   height: 6em;
   padding: 1.5em;

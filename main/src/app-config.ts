@@ -14,7 +14,7 @@ const list:listItem[] = [
       sync: true
     },
     {
-      name: 'admin',
+      name: 'devops',
       url: 'http://localhost:9002',
       cname:'管理系统',
       sync: true
