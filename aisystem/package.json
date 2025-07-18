@@ -9,11 +9,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.10.0",
     "element-plus": "^2.10.4",
     "event-source-polyfill": "^1.0.31",
+    "highlight.js": "^11.11.1",
     "less": "^4.4.0",
     "lodash": "^4.17.21",
+    "markdown-it": "^14.1.0",
+    "markdown-it-abbr": "^2.0.0",
+    "markdown-it-anchor": "^9.2.0",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-highlightjs": "^4.2.0",
+    "markdown-it-sub": "^2.0.0",
+    "markdown-it-sup": "^2.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "markdown-it-toc-done-right": "^4.2.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
