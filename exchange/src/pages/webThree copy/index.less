@@ -1,0 +1,286 @@
+// === 基础样式 ===
+.web3-container {
+  min-height: 100vh;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.web3-header {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.web3-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  flex-grow: 1;
+}
+
+.web3-footer {
+  width: 100%;
+  text-align: center;
+  padding: 1.5rem 0;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 3rem;
+}
+
+.footer-text {
+  color: #666666;
+  font-size: 0.9rem;
+}
+
+// === 未连接状态 ===
+.connection-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  height: 400px;
+}
+
+.wallet-icon {
+  font-size: 4rem;
+  color: #000000;
+  margin-bottom: 1.5rem;
+}
+
+.connection-desc {
+  color: #666666;
+  max-width: 500px;
+  margin: 1rem 0 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.error-message {
+  margin: 1rem 0;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.connect-button {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #333333;
+  }
+}
+
+// === 已连接状态 ===
+.connected-content {
+  width: 100%;
+}
+
+// 钱包信息卡片
+.wallet-info-card {
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.wallet-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.wallet-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-right: 1.5rem;
+  color: #333333;
+}
+
+.wallet-address-info {
+  flex-grow: 1;
+}
+
+.wallet-title {
+  margin-bottom: 0.5rem !important;
+  font-size: 1.2rem;
+  color: #000000;
+}
+
+.full-address {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #666666;
+  word-break: break-all;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+}
+
+.short-address {
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000000;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.disconnect-btn {
+  color: #ff4d4f !important;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.8rem;
+}
+
+// 交易记录卡片
+.transactions-card {
+  margin-top: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.transaction-item {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.transaction-icon {
+  margin-right: 1rem;
+}
+
+.receive-icon,
+.send-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.receive-icon {
+  background-color: #000000;
+}
+
+.send-icon {
+  background-color: #666666;
+}
+
+.transaction-details {
+  flex-grow: 1;
+}
+
+.transaction-hash {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+.transaction-time {
+  font-size: 0.8rem;
+  color: #666666;
+  margin-top: 0.2rem;
+}
+
+.transaction-amount {
+  text-align: right;
+}
+
+.receive-amount {
+  color: #000000;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.send-amount {
+  color: #666666;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.transaction-status {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 0.3rem;
+}
+
+.success {
+  background-color: #f6ffed;
+  color: #000000;
+}
+
+.pending {
+  background-color: #fffbe6;
+  color: #7d724a;
+}
+
+.failed {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+.empty-transactions {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .web3-content {
+    padding: 0 1rem;
+  }
+
+  .wallet-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .wallet-avatar {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .disconnect-btn {
+    margin-top: 1rem;
+  }
+
+  .transaction-details {
+    min-width: 150px;
+  }
+
+  .transaction-hash {
+    font-size: 0.85rem;
+  }
+}

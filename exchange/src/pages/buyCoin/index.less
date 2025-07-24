@@ -1,0 +1,195 @@
+.buyCoinBox {
+    height: calc(100vh - 60px);
+    width: 100vw;
+    display: flex;
+    overflow: auto;
+
+    .banner {
+        width: 1200px;
+        height: 100%;
+        margin: 24px auto;
+
+        .fastDom {
+            display: flex;
+            padding-top: 48px;
+            align-items: center;
+
+            .leftTips {
+                color: #000;
+
+                .bigTips {
+                    font-size: 48px;
+                    font-weight: 700;
+                }
+
+                .smallTips {
+                    font-size: 18px;
+                }
+            }
+
+            .doneDom {
+                flex: 1;
+                // width: 400px;
+                height: 480px;
+
+                .done-dom {
+                    width: 500px;
+                    /* padding: 50px; */
+                    margin-left: 100px;
+                    height: 460px;
+                    box-shadow: 1px 1px 4px 4px #eee;
+                    border-radius: 8px;
+
+                    .radioTitle {
+                        display: flex;
+                        height: 60px;
+                        position: relative;
+                        cursor: pointer;
+                        .triangle-left {
+                            width: 0;
+                            height: 0;
+                            border-top: 60px solid transparent;
+                            border-left: 20px solid #fff;
+                            position: absolute;
+                            left: 50%;
+                            top:0px;
+                        }
+
+                        .triangle-right {
+                            width: 0;
+                            height: 0;
+                            border-top: 60px solid transparent;
+                            border-right: 20px solid #fff;
+                            position: absolute;
+                            left: calc(50% - 20px);
+                            top:0px;
+                        }
+
+                        .buy {
+                            width: 50%;
+                            height: 60px;
+                            text-align: center;
+                            font-size: 24px;
+                            line-height: 60px;
+                            
+                            
+                        }
+
+                        .sell {
+                            width: 50%;
+                            height: 60px;
+                            text-align: center;
+                            font-size: 24px;
+                            line-height: 60px;
+                       
+                        }
+                    }
+
+                    .inputBox {
+                        position: relative;
+                        margin-top: 48px;
+                        margin-bottom: 48px;
+
+                        .inputTitle {
+                            position: absolute;
+                            left: 64px;
+                            top: 8px;
+                            color: #000;
+                            z-index: 1;
+                        }
+
+                        .inputItem {
+                            width: 400px;
+                            margin-left: 48px;
+                        }
+
+                        .selectItem {
+                            position: absolute;
+                            width: 80px;
+                            right: 100px;
+                            top: 12px;
+                            background: #eee;
+                            // height: 48px;
+                        }
+
+                        .ant-input {
+                            padding: 24px 130px 8px 16px;
+                        }
+
+                        .ant-select-selector {
+                            background: #eee;
+                            border: none !important;
+                        }
+
+                        .tipsTitle {
+                            position: absolute;
+                            left: 46px;
+                            bottom: -18px;
+                            color: #8b8b8b;
+                        }
+                    }
+
+                    .priceTips {
+                        margin-left: 48px;
+                    }
+
+                    .coinBtn {
+                        margin-left: 48px;
+                        margin-top: 16px;
+                        height: 48px;
+                        line-height: 48px;
+                        width: 400px;
+                        border-radius: 24px;
+                    }
+
+                }
+
+            }
+        }
+
+        .tipDom {
+            margin-top: 100px;
+            padding: 64px 150px;
+            width: 1200px;
+            height: 500px;
+            box-sizing: border-box;
+            border: 1px solid #eee;
+            border-radius: 16px;
+
+            h4 {
+                font-size: 24px;
+                font-weight: 600;
+                color: #000;
+                text-align: center;
+                margin-bottom: 64px;
+            }
+
+            .tipList {
+                display: flex;
+
+                .tipItem {
+                    width: 300px;
+
+                    h5 {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #000;
+                        margin: 32px 0 16px 0;
+                    }
+                }
+            }
+        }
+        .moreDom{
+            height: 100px;
+        }
+
+
+
+
+
+
+    }
+}
+.ant-tabs-tab-btn{
+    font-size: 18px;
+}
