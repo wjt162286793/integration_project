@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import routeList from './routeList'
-
+import LoadingCom from '@/component/loading'
 // 路由组件（新增，格式与bigdata项目一致）
 const RouterCom: React.FC = () => {
 
@@ -22,7 +22,7 @@ const RouterCom: React.FC = () => {
 
   return (
     <Router>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LoadingCom></LoadingCom>}>
         <Routes>
 
           {/* 使用递归函数替代原来的嵌套map */}
