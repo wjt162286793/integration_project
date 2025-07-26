@@ -14,6 +14,8 @@ import { Decimal } from 'decimal.js';
 import { useNavigate } from 'react-router-dom';
 
 
+
+
 const Index: React.FC = () => {
 
     const navigate = useNavigate()

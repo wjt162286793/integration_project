@@ -14,7 +14,7 @@ export default defineConfig({
     port: 9001,
     proxy:{
       '/exchangeApi':{
-        target:'http://localhost:3000/',
+        target:'http://localhost:3030/',
         changeOrigin:true,
         rewrite:(path)=>path.replace(/^\/exchangeApi/, '')
       }

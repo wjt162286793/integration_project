@@ -9,24 +9,22 @@ import './index.less'
 
 import { useSelector, useDispatch } from 'react-redux';
 
-
-
-
 import GoogleImg from '@/assets/img/google.png' 
 import AppleImg from '@/assets/img/apple.png' 
 import TelegramImg from '@/assets/img/telegram.png' 
 import WalletImg from '@/assets/img/wallet.png' 
 
+import {loginApi,getInfoApi} from '@/api'
 
 type FieldType = {
-    username?: string;
+    account?: string;
     password?: string;
     remember?: string;
 };
 const Index: React.FC = () => {
 
 
-       const reduxData = useSelector(state => state)
+    const reduxData = useSelector(state => state)
     const disPatch = useDispatch()
 
 
@@ -44,6 +42,21 @@ const Index: React.FC = () => {
 
     useEffect(() => {
         setLoadChild(true)
+        console.log(reduxData,'1===')
+
+
+      let token = localStorage.getItem('rx-token')
+      if(token){
+        console.log('登录状态')
+        getInfoApi().then(res=>{
+          disPatch({
+            type: 'setUserInfo',
+            data: res.data
+          })
+        })
+      }else{
+        console.log('未登录状态')
+      }
 
     }, [])
 
@@ -53,29 +66,31 @@ const Index: React.FC = () => {
         }
     }, [loadChild])
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+   
 
     const showModal = () => {
-        setIsModalOpen(true);
+        disPatch({type:'setLoginModalFlag',data:true})
     };
 
     const handleOk = () => {
-        setIsModalOpen(false);
+       disPatch({type:'setLoginModalFlag',data:false})
     };
 
     const handleCancel = () => {
-        setIsModalOpen(false);
+       disPatch({type:'setLoginModalFlag',data:false})
     };
 
 
     const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
         console.log('Success:', values);
-        disPatch({type:'setUserInfo',data:{
-            name:'admin',
-            token:'123456',
-            user_id:'1'
-        }})
+        loginApi({
+            account:values.account,
+            password:values.password
+        }).then(res=>{
+            console.log(res,'res的值====')
+        disPatch({type:'setUserInfo',data:res.data})
         handleCancel()
+        })
     };
 
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
@@ -83,8 +98,11 @@ const Index: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log(reduxData,'全局状态路由')
-        localStorage.setItem('rx-token',reduxData.userInfoHandler.token)
+        // console.log(reduxData,'全局状态路由')
+        // localStorage.setItem('rx-token',reduxData.userInfoHandler.token)
+        if(reduxData?.userInfoHandler.token){
+            localStorage.setItem('rx-token',reduxData?.userInfoHandler.token)
+        }
     }, [reduxData])
 
     return (
@@ -99,7 +117,7 @@ const Index: React.FC = () => {
             <Modal
                 title="登录"
                 closable={{ 'aria-label': 'Custom Close Button' }}
-                open={isModalOpen}
+                open={reduxData.loginModalFlagHandler}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 width='800px'
@@ -111,14 +129,14 @@ const Index: React.FC = () => {
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600,marginTop:'36px' }}
-                    initialValues={{ remember: true, username: 'admin', password: 'admin' }}
+                    initialValues={{ remember: true, account: 'admin', password: 'admin' }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
                     <Form.Item<FieldType>
                         label="账号"
-                        name="username"
+                        name="account"
                         rules={[{ required: true, message: '请输入账号!' }]}
                     >
                         <Input />

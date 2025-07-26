@@ -3,6 +3,7 @@ import './header.less'
 import { Button } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+
 // 修改组件定义，添加props类型
 const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showModal }) => {
 

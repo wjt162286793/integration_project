@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
     "antd": "^5.26.5",
+    "axios": "^1.11.0",
     "decimal.js": "^10.6.0",
     "echarts": "^5.6.0",
     "ethers": "^6.15.0",
