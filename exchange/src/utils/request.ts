@@ -24,19 +24,6 @@ request.interceptors.request.use((config)=>{
 
 request.interceptors.response.use((config)=>{
     return config.data
-//    if(config.data.code === 200){
-//     return config.data
-//    }else if(config.data.code === 7001){
-//     ElMessage.warning('未登录，请先登录');
-//     localStorage.removeItem('intergration_token')
-//     router.push('/login');
-//     return Promise.reject(new Error('未登录'));
-//    }else if(config.data.code === 7002){
-//     ElMessage.warning('token过期');
-//     localStorage.removeItem('intergration_token')
-//     router.push('/login');
-//     return Promise.reject(new Error('未登录'));
-//    }
 })
 
 export default request

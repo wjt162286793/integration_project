@@ -42,7 +42,6 @@ const Index: React.FC = () => {
 
     useEffect(()=>{
         if(loadChild){
-           console.log(location, 'location的值----blockTrade')
         let list = location.pathname.split('/')
         if (location.pathname === '/home/buyCoin/blockTrade') {
             navigate('/home/buyCoin/blockTrade/buyList')
@@ -61,20 +60,6 @@ const Index: React.FC = () => {
 
     },[loadChild])
 
-    //     useEffect(()=>{
-    //     console.log('进入blockTrade组件',location)
-    //     if(location.pathname === '/home/buyCoin/blockTrade'){
-    //         navigate('/home/buyCoin/blockTrade/buyList')
-    //     }
-    //     let list = location.pathname.split('/')
-    //     if(list.includes('buyList')){
-    //         setActiveKey('buyList')
-    //     }else if(list.includes('sellList')){
-    //         setActiveKey('sellList')
-    //     }else if(list.includes('betList')){
-    //         setActiveKey('betList')
-    //     }
-    // },[])
 
     return (
         <div>

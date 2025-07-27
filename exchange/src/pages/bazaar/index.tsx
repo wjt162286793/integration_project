@@ -28,7 +28,6 @@ const Index:React.FC = ()=>{
 
 
     useEffect(()=>{
-      console.log(location,'bazaar离得---')
       let list = location.pathname.split('/')
       if(location.pathname === '/home/bazaar'){
         onChange('currency')

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from '@/component/Header'
-import { Modal, Button, Checkbox, Form, Input } from 'antd'
+import { Modal, Button, Checkbox, Form, Input , message} from 'antd'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'; // ✅ 正确导入
 import { useRouteName } from '@/hooks/useRouteName';
 import type { FormProps } from 'antd';
@@ -8,6 +8,7 @@ import './index.less'
 
 
 import { useSelector, useDispatch } from 'react-redux';
+
 
 import GoogleImg from '@/assets/img/google.png' 
 import AppleImg from '@/assets/img/apple.png' 
@@ -23,6 +24,7 @@ type FieldType = {
 };
 const Index: React.FC = () => {
 
+    const [messageApi, contextHolder] = message.useMessage();
 
     const reduxData = useSelector(state => state)
     const disPatch = useDispatch()
@@ -42,12 +44,10 @@ const Index: React.FC = () => {
 
     useEffect(() => {
         setLoadChild(true)
-        console.log(reduxData,'1===')
 
 
       let token = localStorage.getItem('rx-token')
       if(token){
-        console.log('登录状态')
         getInfoApi().then(res=>{
           disPatch({
             type: 'setUserInfo',
@@ -55,14 +55,12 @@ const Index: React.FC = () => {
           })
         })
       }else{
-        console.log('未登录状态')
       }
 
     }, [])
 
     useEffect(() => {
         if (loadChild) {
-            console.log(location, 'home--loadChild')
         }
     }, [loadChild])
 
@@ -82,24 +80,23 @@ const Index: React.FC = () => {
 
 
     const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-        console.log('Success:', values);
         loginApi({
             account:values.account,
             password:values.password
         }).then(res=>{
-            console.log(res,'res的值====')
+  
+            messageApi.success('登录成功');
+ 
         disPatch({type:'setUserInfo',data:res.data})
+        
         handleCancel()
         })
     };
 
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-        console.log('Failed:', errorInfo);
     };
 
     useEffect(() => {
-        // console.log(reduxData,'全局状态路由')
-        // localStorage.setItem('rx-token',reduxData.userInfoHandler.token)
         if(reduxData?.userInfoHandler.token){
             localStorage.setItem('rx-token',reduxData?.userInfoHandler.token)
         }
@@ -107,6 +104,7 @@ const Index: React.FC = () => {
 
     return (
         <div>
+            {contextHolder}
             <Header jumpRoute={jumpRoute} showModal={showModal}></Header>
             {
                 loadChild && (

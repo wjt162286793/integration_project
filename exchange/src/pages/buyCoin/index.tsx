@@ -17,41 +17,42 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     setLoadChild(true)
-    console.log(location.pathname, 'buyCoin--location.pathname--初始化')
       if (location.pathname === '/home/buyCoin') {
         onChange('fast')
       } else {
         let list = location.pathname.split('/')
+        // 保留当前Query参数
+        const queryParams = location.search;
+        
         if (list.includes('fast')) {
-          // onChange('fast')
-          
           if(list.includes('portal')){
-            navigate(`/home/buyCoin/fast/portal`)
+            navigate(`/home/buyCoin/fast/portal${queryParams}`)
           }else if(list.includes('payMethod')){
-            navigate(`/home/buyCoin/fast/payMethod`)
+            navigate(`/home/buyCoin/fast/payMethod${queryParams}`)
           }else{
-            navigate(`/home/buyCoin/fast`)
+            navigate(`/home/buyCoin/fast${queryParams}`)
           }
           setActiveKey('fast')
         } else if (list.includes('blockTrade')) {
           if(list.includes('buyList')){
-            navigate(`/home/buyCoin/blockTrade/buyList`)
+            navigate(`/home/buyCoin/blockTrade/buyList${queryParams}`)
           }else if(list.includes('sellList')){
-            navigate(`/home/buyCoin/blockTrade/sellList`)
+            navigate(`/home/buyCoin/blockTrade/sellList${queryParams}`)
           }else if(list.includes('betList')){
-            navigate(`/home/buyCoin/blockTrade/betList`)
+            navigate(`/home/buyCoin/blockTrade/betList${queryParams}`)
           }else{
-            navigate(`/home/buyCoin/blockTrade`)
+            navigate(`/home/buyCoin/blockTrade${queryParams}`)
           }
           setActiveKey('blockTrade')
         }
       }
-  }, [])
+  }, [location.search]) // 添加location.search依赖，确保参数变化时重新执行
 
 
   const onChange = (key: string) => {
     setActiveKey(key)
-    navigate(`/home/buyCoin/${key}`)
+    // 保留Query参数
+    navigate(`/home/buyCoin/${key}${location.search}`)
   };
 
 

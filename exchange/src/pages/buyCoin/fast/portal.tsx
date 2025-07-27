@@ -12,13 +12,19 @@ import USDImg from '@/assets/img/USD.png'
 
 import { Decimal } from 'decimal.js';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { createBuyApi } from '@/api'
+import { message } from 'antd'
 
-
-
-
+import HistoryCom from './historyCom'
 const Index: React.FC = () => {
 
     const navigate = useNavigate()
+
+    const reduxData = useSelector(state => state)
+    const disPatch = useDispatch()
+
+    const [messageApi, contextHolder] = message.useMessage();
 
     const num_options = [
         {
@@ -100,13 +106,11 @@ const Index: React.FC = () => {
 
     const [buy_value_1, setBuyValue1] = useState('CNY')
     const handleChange1 = (value: string) => {
-        console.log(buy_value_1,);
         setBuyValue1(value)
 
     };
     const [buy_value_2, setBuyValue2] = useState('BTC')
     const handleChange2 = (value: string) => {
-        console.log(`selected ${value}`);
         setBuyValue2(value)
     };
 
@@ -197,23 +201,22 @@ const Index: React.FC = () => {
         inputChange4('')
     }, [sell_value_1, sell_value_2])
 
-    useEffect(()=>{
-            inputChange1('')
-            inputChange2('')
-            inputChange3('')
-            inputChange4('')
-            setBuyValue1('CNY')
-            setBuyValue2('BTC')
-            setSellValue1('BTC')
-            setSellValue2('CNY')      
-    },[doneType])
+    useEffect(() => {
+        inputChange1('')
+        inputChange2('')
+        inputChange3('')
+        inputChange4('')
+        setBuyValue1('CNY')
+        setBuyValue2('BTC')
+        setSellValue1('BTC')
+        setSellValue2('CNY')
+    }, [doneType])
 
 
 
     const getValueHandler = (value1: string, value2: string) => {
         const result = new Decimal(value1).times(new Decimal(value2));
 
-        console.log(result.toString());
         //这里保留6位小数
         return result.toDecimalPlaces(6).toString()
     }
@@ -221,11 +224,11 @@ const Index: React.FC = () => {
     const estimateHandler = (value: string): boolean => {
         // 检查值是否为空字符串（含仅空格情况）
         if (value.trim() === '') return false;
-        
+
         try {
             // 使用Decimal进行精确数值解析
             const numericValue = new Decimal(value);
-            
+
             // 检查是否为有效数字且严格大于0
             return numericValue.greaterThan(0);
         } catch (e) {
@@ -233,28 +236,62 @@ const Index: React.FC = () => {
             return false;
         }
     }
-    const coinDisabledHandler = ()=>{
-        if(doneType === 'buy'){
-           if(estimateHandler(buy_send) && estimateHandler(buy_get)){
-             return false
-           }else{
-            return true
-           }
-        }else{
-           if(estimateHandler(sell_send) && estimateHandler(sell_get)){
-             return false
-           }else{
-            return true
-           }
+    const coinDisabledHandler = () => {
+        if (doneType === 'buy') {
+            if (estimateHandler(buy_send) && estimateHandler(buy_get)) {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            if (estimateHandler(sell_send) && estimateHandler(sell_get)) {
+                return false
+            } else {
+                return true
+            }
         }
     }
 
-    const toPayHandler = ()=>{
-        navigate('/home/buyCoin/fast/payMethod')
+    const toPayHandler = () => {
+        let postData = null
+        if(doneType === 'buy'){
+             postData = {
+            pay_type: doneType,
+            to_type: buy_value_1,
+            to_value: buy_send,
+            get_type: buy_value_2,
+            get_value: buy_get
+        }
+        }else{
+           postData = {
+            pay_type: doneType,
+            to_type: sell_value_1,
+            to_value: sell_send,
+            get_type: sell_value_2,
+            get_value: sell_get
+        }
+        }
+        createBuyApi(postData).then(res => {
+            if (res.code == 200) {
+                let pay_id = res.id
+                navigate(`/home/buyCoin/fast/payMethod?pay_id=${pay_id}`)
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: '创建失败',
+                });
+            }
+
+        })
+
+    }
+    const toLogin = () => {
+        disPatch({ type: 'setLoginModalFlag', data: true })
     }
 
     return (
         <>
+        {contextHolder}
             <div className='fastDom'>
                 <div className='leftTips'>
                     <p className='bigTips'>C2C快捷交易</p>
@@ -302,7 +339,7 @@ const Index: React.FC = () => {
                                                 )}
                                             />
                                         </div>
-                                        <span className='tipsTitle'>10 - 5000,000 CNY</span>
+                                        <span className='tipsTitle'>10 - 5000,000 {buy_value_1}</span>
                                     </div>
                                     <div className='inputBox'>
                                         <span className='inputTitle'>我将收到</span>
@@ -352,7 +389,7 @@ const Index: React.FC = () => {
                                             )}
                                         />
                                     </div>
-                                    <span className='tipsTitle'>10 - 5000,000 CNY</span>
+                                    <span className='tipsTitle'>10 - 5000,000 {sell_value_1}</span>
                                 </div>
                                 <div className='inputBox'>
                                     <span className='inputTitle'>我将收到</span>
@@ -382,13 +419,31 @@ const Index: React.FC = () => {
                         }
 
                         <p className='priceTips'>
-                            参考价格 1 USDT = 7.13 CNY
+                           {
+                            doneType === 'buy' ? (
+                                <span>
+                                    参考价格 1 USDT = 7.13 CNY
+                                </span>
+                            ) : (
+                                <span>
+                                    参考价格 1 CNY = 0.14 USDT
+                                </span>
+                            )
+                           } 
                         </p>
-                        <Button className='coinBtn' type="primary" disabled={coinDisabledHandler()} onClick={toPayHandler}>选择付款方式</Button>
-                      
+                        {
+                            reduxData.userInfoHandler.token ? (<Button className='coinBtn' type="primary" disabled={coinDisabledHandler()} onClick={toPayHandler}>选择付款方式</Button>) : (<Button className='coinBtn' type='primary' onClick={toLogin}>请先登录</Button>)
+                        }
+
+
+
                     </div>
                 </div>
             </div>
+            {
+               reduxData.userInfoHandler.token  && (<HistoryCom></HistoryCom>)
+            }
+            
             <div className='tipDom'>
                 <h4>如何在快捷交易使用CNY购买USDT</h4>
                 <ul className='tipList'>

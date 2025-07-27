@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './header.less'
-import { Button } from 'antd'
+import { Button,message } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -11,7 +11,9 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
 
     const location = useLocation()
     const navigate = useNavigate()
+    const disPatch = useDispatch()
 
+    const [messageApi, contextHolder] = message.useMessage();
     const menuList = [
         {
             name: '买币',
@@ -41,7 +43,6 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
     const [activeKey, setActiveKey] = useState('')
 
     useEffect(() => {
-        console.log(location, 'header---路由')
         let list = location.pathname.split('/')
         if (list.includes('buyCoin')) {
             setActiveKey('buyCoin')
@@ -49,6 +50,8 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             setActiveKey('bazaar')
         } else if (list.includes('webThree')) {
             setActiveKey('webThree')
+        }else{
+            setActiveKey('buyCoin')
         }
 
     }, [])
@@ -66,7 +69,24 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
         showModal()
     }
 
+    const toOutLogin = () => {
+        
+        disPatch({
+            type: 'setUserInfo', data: {
+                name: '',
+                token: '',
+                user_id: ''
+            }
+        })
+        localStorage.removeItem('rx-token')
+    
+            messageApi.success('退出登录');
+
+    }
+
     return (
+        <>
+                {contextHolder}
         <div className='headerBox'>
             <h1 className='exLogo'>wjt交易所</h1>
             <ul className='menuList'>
@@ -80,12 +100,14 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
 
             </ul>
             {
-               userToken && <Button className='loginBtn' type='primary' onClick={toLogin}>退出</Button>
+                userToken && <Button className='loginBtn' type='primary' onClick={toOutLogin}>退出</Button>
             }
             {
                 !userToken && <Button className='loginBtn' type='primary' onClick={toLogin}>登录</Button>
             }
         </div>
+        </>
+
 
     )
 }

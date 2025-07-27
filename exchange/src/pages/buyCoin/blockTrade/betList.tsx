@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Button } from 'antd'
+import { Row, Col, Button,message } from 'antd'
 
 const butListData = [
     {
@@ -52,8 +52,20 @@ const butListData = [
     },
 ]
 const Index: React.FC = () => {
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const sellHandler = () => {
+        messageApi.info('功能建设中');
+    }
+    const buyHandler = () => {
+        messageApi.info('功能建设中');
+    }
     return (
         <div>
+            {
+                contextHolder
+            }
             <Row className='titleRow'>
                 <Col span={3}>单价</Col>
                 <Col span={3}>剩余数量</Col>
@@ -89,9 +101,9 @@ const Index: React.FC = () => {
                             <Col span={3}>
                             {
                                 Item.doneType === 'buy'?
-                                <Button type="primary" style={{ background: '#ef6f8a' }}>出售</Button>
+                                <Button type="primary" style={{ background: '#ef6f8a' }} onClick={sellHandler}>出售</Button>
                                 :
-                                <Button type="primary" style={{ background: '#31bd65' }}>购买</Button>
+                                <Button type="primary" style={{ background: '#31bd65' }} onClick={buyHandler}>购买</Button>
                             }
                                 
                             </Col>

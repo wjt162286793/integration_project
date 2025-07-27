@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {  BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import routeList from './routeList'
 import LoadingCom from '@/component/loading'
