@@ -13,12 +13,12 @@ const list:listItem[] = [
       cname:'交易所',
       sync: true
     },
-    {
-      name: 'devops',
-      url: 'http://localhost:9002',
-      cname:'管理系统',
-      sync: true
-    },
+    // {
+    //   name: 'devops',
+    //   url: 'http://localhost:9002',
+    //   cname:'管理系统',
+    //   sync: true
+    // },
     {
       name: 'bigdata',
       // url: 'http://localhost:9003',

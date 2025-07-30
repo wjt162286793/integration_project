@@ -240,3 +240,31 @@ label,button {
     visibility: hidden;
     overflow: hidden
 }
+
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+  width: 2px; /* 纵向滚动条宽度 */
+  height: 2px; /* 横向滚动条高度 */
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: transparent; /* 轨道背景透明 */
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: #666; /* 滑块颜色 */
+  border-radius: 1px; /* 滑块圆角 */
+}
+
+/* 滚动条滑块悬停状态 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #444; /* 悬停时颜色加深 */
+}
+
+/* Firefox 滚动条样式 */
+* {
+  scrollbar-width: thin; /* 细滚动条 */
+  scrollbar-color: #666 transparent; /* 滑块颜色和轨道颜色 */
+}

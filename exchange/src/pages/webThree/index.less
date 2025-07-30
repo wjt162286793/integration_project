@@ -1,14 +1,35 @@
-.webThreeDom{
-  width: 100vw;
+.webThreeDom {
+  // width: 100vw;
+  // padding: 0 24px;
   height: calc(100vh - 60px);
-  .notWallet{
+  overflow: auto;
+
+  .notWallet {
     height: 100%;
     width: 100%;
     display: flex;
-    .concentBtn{
+
+    .concentBtn {
       margin: auto;
       width: 200px;
       height: 50px;
+    }
+  }
+
+  .ConnectedDom {
+
+
+    .cardDom {
+      display: flex;
+      justify-content: space-between;
+
+      .label {
+        color: #888;
+      }
+
+      .value {
+        font-weight: 600;
+      }
     }
   }
 }

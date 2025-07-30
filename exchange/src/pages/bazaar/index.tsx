@@ -15,19 +15,30 @@ const items = [
 ];
 const Index:React.FC = ()=>{
 
-
+  
     const location = useLocation()
     const navigate = useNavigate()
     const [loadChild, setLoadChild] = useState(false)
 
     const [activeKey,setActiveKey] = useState('currency')
+
+
+    useEffect(()=>{
+      console.log('监测路由变化',location.search)
+      if(location.search){
+        setShowTabs(false)
+      }else{
+        setShowTabs(true)
+      }
+    },[location.search])
     const onChange = (key:string)=>{
         setActiveKey(key)
         navigate(`/home/bazaar/${key}`)
     }
 
-
+    const [showTabs,setShowTabs] = useState(true)
     useEffect(()=>{
+      const queryParams = location.search;
       let list = location.pathname.split('/')
       if(location.pathname === '/home/bazaar'){
         onChange('currency')
@@ -37,12 +48,21 @@ const Index:React.FC = ()=>{
       }else if(list.includes('tradingData')){
        navigate(`/home/bazaar/tradingData`)
        setActiveKey('tradingData')
+      }else if(list.includes('tradingView')){
+        navigate(`/home/bazaar/tradingView${queryParams}`)
+        setActiveKey('currency')
       }
     },[])
 
+
+
     return (
         <div className='bazaarDom'>
-           <Tabs activeKey={activeKey} items={items} onChange={onChange} />
+          {
+            showTabs && (
+              <Tabs activeKey={activeKey} items={items} onChange={onChange} style={{margin:'24px 350px 0px 350px'}}/>
+            )
+          }
            <Outlet/>
         </div>
     )

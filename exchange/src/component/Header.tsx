@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import './header.less'
-import { Button,message } from 'antd'
+import { Button, message } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 // 修改组件定义，添加props类型
 const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showModal }) => {
+    const isSubAppFlag = window.__POWERED_BY_WUJIE__
 
     const userToken = useSelector(state => state.userInfoHandler.token)
 
@@ -50,7 +51,7 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             setActiveKey('bazaar')
         } else if (list.includes('webThree')) {
             setActiveKey('webThree')
-        }else{
+        } else {
             setActiveKey('buyCoin')
         }
 
@@ -70,7 +71,7 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
     }
 
     const toOutLogin = () => {
-        
+
         disPatch({
             type: 'setUserInfo', data: {
                 name: '',
@@ -79,33 +80,52 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             }
         })
         localStorage.removeItem('rx-token')
-    
-            messageApi.success('退出登录');
+
+        messageApi.success('退出登录');
 
     }
 
     return (
-        <>
-                {contextHolder}
-        <div className='headerBox'>
-            <h1 className='exLogo'>wjt交易所</h1>
-            <ul className='menuList'>
-                {
-                    menuList.map((item, index) => {
-                        return (
-                            <li className={item.key === activeKey ? 'activeMenuItem' : 'menuItem'} key={item.key} onClick={() => jumpItem(item)}>{item.name}</li>
-                        )
-                    })
-                }
 
-            </ul>
+        <>
+            {contextHolder}
             {
-                userToken && <Button className='loginBtn' type='primary' onClick={toOutLogin}>退出</Button>
+                !isSubAppFlag && <div className='headerBox'>
+                    <h1 className='exLogo'>wjt交易所</h1>
+                    <ul className='menuList'>
+                        {
+                            menuList.map((item, index) => {
+                                return (
+                                    <li className={item.key === activeKey ? 'activeMenuItem' : 'menuItem'} key={item.key} onClick={() => jumpItem(item)}>{item.name}</li>
+                                )
+                            })
+                        }
+
+                    </ul>
+                    {
+                        userToken && <Button className='loginBtn' type='primary' onClick={toOutLogin}>退出</Button>
+                    }
+                    {
+                        !userToken && <Button className='loginBtn' type='primary' onClick={toLogin}>登录</Button>
+                    }
+                </div>
             }
             {
-                !userToken && <Button className='loginBtn' type='primary' onClick={toLogin}>登录</Button>
+                isSubAppFlag && <div className='subHeader'>
+                                       <ul className='menuList'>
+                                        <li className='lineLi'></li>
+                        {
+                            menuList.map((item, index) => {
+                                return (
+                                    <li className={item.key === activeKey ? 'activeMenuItem' : 'menuItem'} key={item.key} onClick={() => jumpItem(item)}>{item.name}</li>
+                                )
+                            })
+                        }
+
+                    </ul>
+                </div>
             }
-        </div>
+
         </>
 
 

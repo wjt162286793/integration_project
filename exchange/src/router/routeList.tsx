@@ -13,6 +13,7 @@ const SellList = lazy(() => import('@/pages/buyCoin/blockTrade/sellList.tsx'));
 const BetList = lazy(() => import('@/pages/buyCoin/blockTrade/betList.tsx'));
 const Currency = lazy(() => import('@/pages/bazaar/currency/index.tsx'));
 const TradingData = lazy(() => import('@/pages/bazaar/tradingData/index.tsx'));
+const TradingView = lazy(() => import('@/pages/bazaar/tradingView/index.tsx'));
 
 // 路由配置接口（新增）
 interface RouteConfig {
@@ -49,6 +50,12 @@ const routeList: RouteConfig[] = [
             element:<TradingData/>,
             key:'tradingData',
             name:'tradingData',
+          },
+          {
+            path:'tradingView',
+            element:<TradingView/>,
+            key:'tradingView',
+            name:'tradingView',
           }
         ]
       },

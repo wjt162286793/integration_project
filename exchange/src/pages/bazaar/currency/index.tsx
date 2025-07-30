@@ -1,6 +1,6 @@
 import React from 'react'
 import './index.less'
-import { Row, Col, Button } from 'antd'
+import { Row, Col, Button,message } from 'antd'
 
 import BTCImg from '@/assets/img/BTC.png'
 import ETHImg from '@/assets/img/ETH.png'
@@ -8,6 +8,7 @@ import DOGEImg from '@/assets/img/DOGE.png'
 import USDTImg from '@/assets/img/USDT.png'
 import SOLImg from '@/assets/img/SOL.png'
 
+import {useNavigate} from 'react-router-dom'
 
 const list = [
     {
@@ -64,11 +65,25 @@ const list = [
 const Index: React.FC = () => {
 
 
+    const navigate = useNavigate()
     const startWithFn = (str: string) => {
         return str.startsWith('-')
     }
 
+    const toTradingView = (name:string)=>{
+       navigate(`/home/bazaar/tradingView?type=${name}`)
+    }
+
+    const [messageApi, contextHolder] = message.useMessage();
+    const toDoHandler = ()=>{
+      messageApi.open({
+        type: 'info',
+        content: '闪兑功能暂未开放',
+      });
+    }
+
     return (<div className='currencyDom'>
+        {contextHolder}
         <h5>
             今日行情
         </h5>
@@ -107,8 +122,8 @@ const Index: React.FC = () => {
 
                             </Col>
                             <Col span={3}>
-                                <Button type="text">交易</Button>
-                                <Button type="text">闪兑</Button>
+                                <Button type="text" onClick={()=>toTradingView(Item.name.value)}>交易</Button>
+                                <Button type="text" onClick={toDoHandler}>闪兑</Button>
                             </Col>
                         </Row>
                     )
