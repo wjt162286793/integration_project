@@ -2,7 +2,7 @@
   <div class="portal-container">
    <Header @selectItem="selectItem" :ruleList="ruleList"></Header>
    <div class="subApp-container">
-    <WujieVue v-if="activeApp" :name="activeApp.name" :url="activeApp.url" :sync="activeApp.sync" width="100%" height="100%"></WujieVue>
+    <WujieVue v-show="activeApp" :name="activeApp.name" :url="activeApp.url" :keep-alive="true" :sync="activeApp.sync" width="100%" height="100%"></WujieVue>
    </div>
     
   </div>
@@ -22,7 +22,7 @@ import WujieVue from 'wujie-vue3'
 const router = useRouter()
 const route = useRoute()
 const userInfo = userStore()
-const activeAppName:Ref<string> = ref('chart')
+const activeAppName:Ref<string> = ref('exchange')
 const activeApp:Ref<listItem | null> = ref(null)
 
 const ruleList = ref<listItem[]>([])
@@ -31,6 +31,7 @@ const ruleList = ref<listItem[]>([])
 const getActiveApp = (name:string)=>{
   activeApp.value = list.find(item => item.name === name)
 }
+getActiveApp(activeAppName.value)
 
 const selectItem = (item:listItem)=>{
   activeApp.value = item

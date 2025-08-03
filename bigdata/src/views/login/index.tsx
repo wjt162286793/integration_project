@@ -29,10 +29,11 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     console.log("Received values of form: ", values);
     setTimeout(() => {
+      localStorage.setItem('bigdata_token','123456')
       setLoading(false);
       message.success("登录成功！");
       navigate('/dashboard')
-    }, 1500);
+    });
   };
   const globalText = useContext(GlobalContext)
 
@@ -44,12 +45,21 @@ const LoginPage: React.FC = () => {
     if(token){
        navigate('/dashboard')
     }
-    
+  }else{
+          let token = localStorage.getItem('bigdata_token')
+      if(token){
+        navigate('/dashboard')
+      }
   }
   },[])
- 
+  
+  const isSubAppFlag = globalText.isSubAppFlag
+
   return (
-    <div className="loginPage">
+  <>
+      {
+      !isSubAppFlag && (
+            <div className="loginPage">
       <Card className="mainCard">
         <div className="header">
           <Title level={2} className="title">
@@ -102,6 +112,14 @@ const LoginPage: React.FC = () => {
 
       </Card>
     </div>
+      )
+    }
+    {
+      isSubAppFlag && <></>
+    }
+  </>
+
+
   );
 };
  

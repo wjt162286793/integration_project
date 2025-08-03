@@ -42,11 +42,13 @@ const Index: React.FC = () => {
 
     }
 
+    const isSubAppFlag = window.__POWERED_BY_WUJIE__
+
     useEffect(() => {
         setLoadChild(true)
 
-
-      let token = localStorage.getItem('rx-token')
+      
+      let token = isSubAppFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('rx-token')
       if(token){
         getInfoApi().then(res=>{
           disPatch({
@@ -98,7 +100,11 @@ const Index: React.FC = () => {
 
     useEffect(() => {
         if(reduxData?.userInfoHandler.token){
-            localStorage.setItem('rx-token',reduxData?.userInfoHandler.token)
+            if(isSubAppFlag){
+                localStorage.setItem('intergration_token',reduxData?.userInfoHandler.token)
+            }else{
+                localStorage.setItem('rx-token',reduxData?.userInfoHandler.token)
+            }
         }
     }, [reduxData])
 

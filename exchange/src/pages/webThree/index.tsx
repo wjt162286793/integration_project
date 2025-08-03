@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, message, Table, Card } from 'antd'
-import { ethers } from 'ethers';
+import { ethers} from 'ethers';
 import { addressTokeyList, waterMap } from './data'
 import { CopyOutlined,RedoOutlined } from '@ant-design/icons';
 import './index.less'
@@ -10,6 +10,9 @@ import './index.less'
 
 
 const Index: React.FC = () => {
+  const isSubAppFlag = window.__POWERED_BY_WUJIE__
+  const rawWindow = isSubAppFlag?window.__WUJIE_RAW_WINDOW__:window;
+  console.log(isSubAppFlag,rawWindow,'===---是啥')
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -133,11 +136,11 @@ const Index: React.FC = () => {
   ]
   //检查钱包是否连接
   const checkWalletIsConnected = async () => {
-    if (window.ethereum) {
+    if (rawWindow.ethereum) {
       try {
         console.log(ethers, '====检查')
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const accounts = await provider.listAccounts();
+        const provider = new ethers.BrowserProvider(rawWindow.ethereum);
+        const accounts = await provider.send('eth_accounts', []);
         console.log(accounts, '个人账户')
         if (accounts.length > 0) {
           setIsConnected(true);
@@ -153,12 +156,15 @@ const Index: React.FC = () => {
     }
   };
 
+
   //连接钱包
   const connectWalletHandler = async () => {
-    if (window.ethereum) {
+    if (rawWindow.ethereum || (isSubAppFlag && rawWindow)) {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const accounts = await provider.send("eth_requestAccounts", []);
+        console.log(ethers,'??===ether')
+        const provider = new ethers.BrowserProvider(rawWindow.ethereum);
+        await provider.send('eth_requestAccounts', []);
+        const accounts = await provider.send('eth_accounts', []);
         console.log(accounts, '个人账户')
         setIsConnected(true);
         setAccount(accounts[0]);
@@ -184,10 +190,10 @@ const Index: React.FC = () => {
     // 获取http://127.0.0.1:8545/下所有的账户 (v5语法)
     try {
       // 1. 创建JsonRpcProvider (v5通过providers属性访问)
-      const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545/');
+          const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545/');
 
       // 2. 获取所有账户地址 (v5使用listAccounts方法)
-      const accounts = await provider.listAccounts();
+      const accounts = await provider.send('eth_accounts', []);
 
       // 3. 获取并格式化账户余额 (v5使用ethers.utils.formatEther)
       const accountsWithBalance = await Promise.all(
@@ -195,7 +201,7 @@ const Index: React.FC = () => {
           const balanceWei = await provider.getBalance(address);
           return {
             address,
-            balance: ethers.utils.formatEther(balanceWei), // v5需通过utils访问格式化方法
+            balance: ethers.formatEther(balanceWei), // v5需通过utils访问格式化方法
             balanceWei
           };
         })
@@ -240,17 +246,18 @@ const Index: React.FC = () => {
       }
 
       // 修复：创建正确的Provider实例（使用Hardhat节点地址）
-      const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545/');
+      const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545/');
 
       console.log(privateKey, provider, '???===公私钥和Provider实例')
       const senderSigner = new ethers.Wallet(privateKey, provider);
 
       // 4. 构建交易参数（100 ETH = 100 * 10^18 wei）
+      console.log(provider,'===provider')
       const tx = {
         to: account,
-        value: ethers.utils.parseEther('10.0'),
-        gasLimit: ethers.utils.hexlify(21000), // 简单转账固定gasLimit
-        gasPrice: await provider.getGasPrice()
+        value: ethers.parseEther('10.0'),
+        gasLimit: ethers.toBeHex(21000),// 简单转账固定gasLimit
+        gasPrice: '0x2540be400'
       };
 
       // 5. 发送交易并等待确认
@@ -288,7 +295,7 @@ const Index: React.FC = () => {
 
       // 3. 获取余额（ethers v5语法）
       const balanceWei = await provider.getBalance(publicKey);
-      const balanceEth = ethers.utils.formatEther(balanceWei);
+      const balanceEth = ethers.formatEther(balanceWei);
 
       // 4. 获取交易数量（简化版交易历史计数）
       const transactionCount = await provider.getTransactionCount(publicKey);
@@ -332,12 +339,13 @@ const buyHandler = async (row, item) => {
     }
 
     // 2. 使用MetaMask提供的Provider（关键修复）
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send('eth_requestAccounts', []); // 请求账户访问权限
+   const provider = new ethers.BrowserProvider(rawWindow.ethereum);
+    await provider.send('eth_requestAccounts', []);
 
     // 3. 获取MetaMask签名者（确保使用用户钱包账户）
-        const signer = provider.getSigner();
-    const signerAddress = await signer.getAddress();
+        const signer = await provider.getSigner();
+        console.log(signer,'===signer')
+    const signerAddress = signer.address;
 
         // 验证签名者地址与myInfo.address一致
     if (signerAddress.toLowerCase() !== myInfo.address.toLowerCase()) {
@@ -352,17 +360,20 @@ const buyHandler = async (row, item) => {
       messageApi.error('无效的商品价格');
       return;
     }
-    const value = ethers.utils.parseEther(priceInEther.toString());
+    const value = ethers.parseEther(priceInEther.toString());
 
     // 5. 检查余额是否充足
     const balance = await provider.getBalance(account);
-    const gasPrice = await provider.getGasPrice();
-    const gasLimit = ethers.utils.hexlify(21000); // 简单转账固定gasLimit
-    const totalCost = value.add(gasPrice.mul(gasLimit));
-
-    if (balance.lt(totalCost)) {
+    console.log(ethers,'===ethers===')
+    const gasPrice = ethers.getBigInt('0x2540be400'); // 转换为BigNumber类型
+    
+    const gasLimit = ethers.toBeHex(21000); // 简单转账固定gasLimit
+    console.log(value,'===value.add is not a function')
+    const totalCost = value + (gasPrice * BigInt(gasLimit));
+    console.log(balance,'???')
+    if (balance<totalCost) {
       messageApi.error('余额不足，无法完成购买');
-      console.log(`当前余额: ${ethers.utils.formatEther(balance)} ETH, 所需: ${ethers.utils.formatEther(totalCost)} ETH`);
+      console.log(`当前余额: ${ethers.formatEther(balance)} ETH, 所需: ${ethers.formatEther(totalCost)} ETH`);
       return;
     }
 
@@ -408,12 +419,12 @@ const [transactionHistory, setTransactionHistory] = useState([]);
 
 const getHistoryList = async () => {
   try {
-    if (!myInfo.address || !window.ethereum) {
+    if (!myInfo.address || !rawWindow.ethereum) {
       // messageApi.error('请先连接钱包');
       return;
     }
     // 使用MetaMask提供的Provider
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(rawWindow.ethereum);
     const address = myInfo.address;
 
     // 1. 获取交易总数
@@ -432,19 +443,29 @@ const getHistoryList = async () => {
     const txCount = await provider.getTransactionCount(address);
     const startIndex = Math.max(0, txCount - 50);
 
-    // 错误代码：provider.getTransactionByIndex(address, i) 不存在
     // 正确实现：通过区块遍历获取交易历史
     const latestBlock = await provider.getBlockNumber();
     // 遍历最近100个区块（可根据需要调整）
     for (let blockNumber = latestBlock; blockNumber > Math.max(0, latestBlock - 100); blockNumber--) {
-      const block = await provider.getBlockWithTransactions(blockNumber);
+      const block = await provider.getBlock(blockNumber, { includeTransactions: true });
       if (block && block.transactions) {
-        block.transactions.forEach(tx => {
-          // 筛选与当前地址相关的交易（发送或接收）
-          if (tx.from.toLowerCase() === address.toLowerCase() || tx.to?.toLowerCase() === address.toLowerCase()) {
-            historyPromises.push(Promise.resolve(tx));
-          }
-        });
+        // block.transactions.forEach(tx => {
+        //   // 筛选与当前地址相关的交易（发送或接收）
+        //   console.log(tx,'???tx')
+        //   if (tx.from.toLowerCase() === address.toLowerCase() || tx.to?.toLowerCase() === address.toLowerCase()) {
+        //     historyPromises.push(Promise.resolve(tx));
+        //   }
+        // });
+            for (const txHash of block.transactions) {
+      try {
+        const tx = await provider.getTransaction(txHash);
+        if (tx && (tx.from.toLowerCase() === address.toLowerCase() || tx.to?.toLowerCase() === address.toLowerCase())) {
+          historyPromises.push(tx);
+        }
+      } catch (error) {
+        console.error('获取交易详情失败:', error);
+      }
+    }
       }
     }
 
@@ -460,8 +481,8 @@ const getHistoryList = async () => {
     hash:Item.hash,
     from: Item.from,
     to: Item.to,
-    value: ethers.utils.formatEther(Item.value),
-    gasPrice: ethers.utils.formatUnits(Item.gasPrice, 'gwei'),
+    value: ethers.formatEther(Item.value),
+    gasPrice: ethers.formatUnits(Item.gasPrice, 'gwei'),
     gasUsed: Item.gasUsed?.toString() || '0',
     blockNumber: Item.blockNumber,
     timestamp: Item.blockNumber ? new Date((await provider.getBlock(Item.blockNumber)).timestamp * 1000).toLocaleString() : '未确认',

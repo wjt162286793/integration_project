@@ -76,7 +76,12 @@ const Index: React.FC = () => {
           return;
       }
   
-      const newSocket = new WebSocket('ws://localhost:8001');
+    const wsUrl = import.meta.env.VITE_WS_URL;
+    console.log(wsUrl,'???===wsUrl')
+    const newSocket = new WebSocket(`${wsUrl}/pay`);
+
+    
+    setSocket(newSocket);
       setSocket(newSocket);
   
       newSocket.onopen = () => {

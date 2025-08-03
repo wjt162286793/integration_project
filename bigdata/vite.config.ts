@@ -12,12 +12,12 @@ export default defineConfig({
   },
   server:{
     port: 9003,
-    proxy:{
-      '/api':{
-        target:'http://localhost:3000/',
-        changeOrigin:true,
-        rewrite:(path)=>path.replace(/^\/api/, '')
+      proxy:{
+        '/bigProxy':{
+          target: 'http://127.0.0.1:8051',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/bigProxy/, '')
+        }
       }
-    }
   }
 })

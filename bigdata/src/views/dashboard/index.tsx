@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './index.less';
-import { Menu } from 'antd';
+import { Menu,Button } from 'antd';
 import { menuListType } from './type';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
@@ -24,6 +24,10 @@ export default function Dashboard() {
     {
       key: 'modeBuild',
       label: '模型构建',
+    },
+    {
+      key: 'fileMode',
+      label: '大文件上传',
     },
     // {
     //   key: 'readMe',
@@ -54,8 +58,19 @@ export default function Dashboard() {
   }
 
   const isSubAppFlag = window.__POWERED_BY_WUJIE__
+
+  const logoutHandler = () => {
+    localStorage.removeItem('bigdata_token')
+    navigate('/login')
+  }
   // 
   useEffect(() => {
+    if(!isSubAppFlag){
+      let token = localStorage.getItem('bigdata_token')
+      if(!token){
+        navigate('/login')
+      }
+    }
     initActiveKey()
   }, [])
 
@@ -74,6 +89,7 @@ export default function Dashboard() {
                 style={{ flex: 1, minWidth: 0 }}
                 onClick={menuItemHandler}
               />
+              <Button style={{color:'#fff',marginTop:'16px',marginRight:'16px'}} type='text' onClick={logoutHandler}>退出登录</Button>
             </header>
             <div className="contentDom">
               <Outlet />

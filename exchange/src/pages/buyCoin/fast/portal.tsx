@@ -18,7 +18,7 @@ import { message } from 'antd'
 
 import HistoryCom from './historyCom'
 const Index: React.FC = () => {
-
+    const isSubAppFlag = window.__POWERED_BY_WUJIE__
     const navigate = useNavigate()
 
     const reduxData = useSelector(state => state)
@@ -254,22 +254,22 @@ const Index: React.FC = () => {
 
     const toPayHandler = () => {
         let postData = null
-        if(doneType === 'buy'){
-             postData = {
-            pay_type: doneType,
-            to_type: buy_value_1,
-            to_value: buy_send,
-            get_type: buy_value_2,
-            get_value: buy_get
-        }
-        }else{
-           postData = {
-            pay_type: doneType,
-            to_type: sell_value_1,
-            to_value: sell_send,
-            get_type: sell_value_2,
-            get_value: sell_get
-        }
+        if (doneType === 'buy') {
+            postData = {
+                pay_type: doneType,
+                to_type: buy_value_1,
+                to_value: buy_send,
+                get_type: buy_value_2,
+                get_value: buy_get
+            }
+        } else {
+            postData = {
+                pay_type: doneType,
+                to_type: sell_value_1,
+                to_value: sell_send,
+                get_type: sell_value_2,
+                get_value: sell_get
+            }
         }
         createBuyApi(postData).then(res => {
             if (res.code == 200) {
@@ -291,7 +291,7 @@ const Index: React.FC = () => {
 
     return (
         <>
-        {contextHolder}
+            {contextHolder}
             <div className='fastDom'>
                 <div className='leftTips'>
                     <p className='bigTips'>C2C快捷交易</p>
@@ -419,20 +419,28 @@ const Index: React.FC = () => {
                         }
 
                         <p className='priceTips'>
-                           {
-                            doneType === 'buy' ? (
-                                <span>
-                                    参考价格 1 USDT = 7.13 CNY
-                                </span>
-                            ) : (
-                                <span>
-                                    参考价格 1 CNY = 0.14 USDT
-                                </span>
-                            )
-                           } 
+                            {
+                                doneType === 'buy' ? (
+                                    <span>
+                                        参考价格 1 USDT = 7.13 CNY
+                                    </span>
+                                ) : (
+                                    <span>
+                                        参考价格 1 CNY = 0.14 USDT
+                                    </span>
+                                )
+                            }
                         </p>
                         {
-                            reduxData.userInfoHandler.token ? (<Button className='coinBtn' type="primary" disabled={coinDisabledHandler()} onClick={toPayHandler}>选择付款方式</Button>) : (<Button className='coinBtn' type='primary' onClick={toLogin}>请先登录</Button>)
+                            !isSubAppFlag && 
+                               (reduxData.userInfoHandler.token ? (<Button className='coinBtn' type="primary" disabled={coinDisabledHandler()} onClick={toPayHandler}>选择付款方式</Button>) : (<Button className='coinBtn' type='primary' onClick={toLogin}>请先登录</Button>))
+                            }
+
+                    
+                        {
+                            isSubAppFlag && (
+                                <Button className='coinBtn' type="primary" disabled={coinDisabledHandler()} onClick={toPayHandler}>选择付款方式</Button>
+                            )
                         }
 
 
@@ -441,9 +449,9 @@ const Index: React.FC = () => {
                 </div>
             </div>
             {
-               reduxData.userInfoHandler.token  && (<HistoryCom></HistoryCom>)
+                reduxData.userInfoHandler.token && (<HistoryCom></HistoryCom>)
             }
-            
+
             <div className='tipDom'>
                 <h4>如何在快捷交易使用CNY购买USDT</h4>
                 <ul className='tipList'>

@@ -7,10 +7,12 @@ const request = axios.create({
     timeout:6000
 })
 
+const isSubFlag = window.__POWERED_BY_WUJIE__
+
 request.interceptors.request.use((config)=>{
     // 检查请求路径是否包含login，如果不包含则添加token
     if (!config.url?.includes('login')) {
-        const token = localStorage.getItem('rx-token');
+        const token = isSubFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('rx-token');
         if (token) {
             config.headers.authorization = token;
         } else {

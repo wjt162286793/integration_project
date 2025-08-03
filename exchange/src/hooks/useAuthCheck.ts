@@ -7,7 +7,8 @@ import { message } from 'antd';
 const useAuthCheck = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem('rx-token');
+  const isSubFlag = window.__POWERED_BY_WUJIE__
+  const isLoggedIn = isSubFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('rx-token');
   useEffect(() => {
     // 这里假设登录状态存储在localStorage中，实际项目中可能需要从store获取
     // 如果未登录，跳转到首页

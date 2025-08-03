@@ -7,6 +7,7 @@
         {{item.cname}}
       </li>
     </ul>
+    <span @click="logout" class="logout">退出</span>
   </div>
 </template>
 
@@ -33,6 +34,8 @@ const selectItem = (item:listItem) => {
 };
 
 const logout = () => {
+  console.log('调用')
+  localStorage.removeItem('intergration_token')
   router.push("/login");
 };
 
@@ -62,6 +65,7 @@ watch(
 <style lang="less" scoped>
 .header{
     display: flex;
+    position: relative;
     .logo {
         width: 200px;
         height: 60px;
@@ -99,6 +103,15 @@ watch(
           box-sizing: border-box;
           
         }
+    }
+    .logout{
+       position: absolute;
+       font-size: 16px;
+       font-weight: 600;
+       right: 16px;
+       top: 20px;
+       color: #fff;
+       cursor: pointer;
     }
 }
 

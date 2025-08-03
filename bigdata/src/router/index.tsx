@@ -16,6 +16,7 @@ const Property = lazy(() => import("../views/property/index"))
 const Chart = lazy(() => import("../views/chart/index"))
 const ModeBuild = lazy(() => import("../views/modeBuild/index"))
 const ReadMe = lazy(() => import("../views/readMe/index"))
+const FileMode = lazy(() => import("../views/fileMode/index"))
 
 
 // 定义路由配置的类型
@@ -29,12 +30,7 @@ interface RouteConfig {
 
 // 路由配置
 const routeList: RouteConfig[] = [
-  {
-    name: "login",
-    path: "/login",
-    cname: "登录",
-    element: <Login />,
-  },
+
   {
     name: "dashBoard",
     path: "/dashBoard",
@@ -66,11 +62,18 @@ const routeList: RouteConfig[] = [
         element: <ModeBuild />,
       },
       {
+        name: 'fileMode',
+        path: '/dashBoard/fileMode',
+        cname: '大文件上传',
+        element: <FileMode />,
+      },
+      {
         name: 'readMe',
         path: '/dashBoard/readMe',
         cname: '说明文档',
         element: <ReadMe />,
       },
+
     ]
   },
   {
@@ -81,12 +84,25 @@ const routeList: RouteConfig[] = [
   },
 ];
 
+const isSubAppFlag = window.__POWERED_BY_WUJIE__
+if(!isSubAppFlag){
+  routeList.unshift({
+    name: "login",
+    path: "/login",
+    cname: "登录",
+    element: <Login />,
+  })
+}
+
+
+
+
 const RouterCom: React.FC = () => {
   return (
     <Router>
       <Suspense fallback={<LoadingCom></LoadingCom>}>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/dashBoard" replace />} />
           {routeList.map((item, index) => (
             <Route key={index} path={item.path} element={item.element}>
               {item.children &&

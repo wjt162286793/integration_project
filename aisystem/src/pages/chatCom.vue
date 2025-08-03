@@ -108,7 +108,7 @@ const sendMsg = () => {
   loading.value = true;
   async function postStream() {
     console.log(message.value, "传的是什么");
-    const response = await fetch("http://localhost:3030/aisys", {
+    const response = await fetch("http://localhost:8051/aisys", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
