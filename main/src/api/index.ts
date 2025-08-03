@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-const api_url = '/api'
+const api_url = '/mainapi'
 
 
 const api = {

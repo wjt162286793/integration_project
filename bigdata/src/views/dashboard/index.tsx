@@ -51,8 +51,8 @@ export default function Dashboard() {
       console.log('进来了', routeName)
       changeSelectedKeys([routeName])
     }
-    if(Location.pathname === '/dashboard'){
-      navigate('/dashboard/workbench')
+    if(Location.pathname === '/dashBoard'){
+      navigate('/dashBoard/workbench')
     }
     // const defaultSelectedKeys: string[] = ['workbench'];
   }

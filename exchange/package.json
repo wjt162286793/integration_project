@@ -4,12 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev": "vite --mode development",
     "start": "vite --mode remote",
-    "dev:local": "vite --mode development",
-    "dev:remote": "vite --mode remote",
-    "build:dev": "tsc -b && vite build --mode development",
-    "build:prod": "vite build --mode production",
-    "build:prod-ts": "tsc -b && vite build --mode production",
+    "build": "vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview"
   },

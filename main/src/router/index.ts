@@ -1,7 +1,6 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '@/pages/Login.vue'
-import Portal from '@/pages/Portal.vue'
+
 
 import { reqUserInfoApi } from '@/api'
 import { userStore } from '@/store'
@@ -9,13 +8,30 @@ import { userStore } from '@/store'
 const routes = [
   {
     path: '/login',
-    name: 'Login',
-    component: Login
+    name: 'login',
+    component: () => import('@/pages/Login.vue')
   },
   {
     path: '/portal',
-    name: 'Portal',
-    component: Portal
+    name: 'portal',
+    component: () => import('@/pages/Portal.vue'),
+    children:[
+      {
+        path: '/exchange',
+        name: 'exchange',
+        component: () => import('@/pages/exchange.vue')
+      },
+      {
+        path: '/bigdata',
+        name: 'bigdata',
+        component: () => import('@/pages/bigdata.vue')
+      },
+      {
+        path: '/aisystem',
+        name: 'aisystem',
+        component: () => import('@/pages/aisystem.vue')
+      }
+    ]
   },
   {
     path: '/',

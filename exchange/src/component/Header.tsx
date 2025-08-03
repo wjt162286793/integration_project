@@ -28,7 +28,7 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             key: 'bazaar'
         },
         {
-            name: 'web3',
+            name: 'web3(dev)',
             path: 'webThree',
             key: 'webThree'
         }

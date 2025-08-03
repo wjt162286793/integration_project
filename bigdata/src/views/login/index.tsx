@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('bigdata_token','123456')
       setLoading(false);
       message.success("登录成功！");
-      navigate('/dashboard')
+      navigate('/dashBoard')
     });
   };
   const globalText = useContext(GlobalContext)
@@ -43,12 +43,12 @@ const LoginPage: React.FC = () => {
     // message.success("微前端模式直接登录！");
     let token = localStorage.getItem('intergration_token')
     if(token){
-       navigate('/dashboard')
+       navigate('/dashBoard')
     }
   }else{
           let token = localStorage.getItem('bigdata_token')
       if(token){
-        navigate('/dashboard')
+        navigate('/dashBoard')
       }
   }
   },[])

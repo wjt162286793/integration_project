@@ -433,7 +433,6 @@ const getHistoryList = async () => {
 
     if (transactionCount === 0) {
       setTransactionHistory([]);
-      messageApi.info('当前地址暂无交易记录');
       return;
     }
 

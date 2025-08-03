@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "dev": "vite --mode development",
+    "start": "vite --mode remote",
+    "build": "vue-tsc -b && vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "markdown-it-sup": "^2.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "markdown-it-toc-done-right": "^4.2.0",
+    "path": "^0.12.7",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
