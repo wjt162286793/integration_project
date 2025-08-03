@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-const api_url = '/exchangeApi'
+
 
 const login = '/exchange/login'
 const getInfo = '/exchange/userInfo'
@@ -13,7 +13,7 @@ const payhd = '/exchange/pay/payhd'
 
 export const loginApi = (data: any) => {
     return request({
-        url: api_url+login,
+        url: login,
         method: 'post',
         data
     })
@@ -21,7 +21,7 @@ export const loginApi = (data: any) => {
 
 export const getInfoApi = (params: any) => {
     return request({
-        url: api_url+getInfo,
+        url: getInfo,
         method: 'get',
         params
     })
@@ -29,7 +29,7 @@ export const getInfoApi = (params: any) => {
 
 export const createBuyApi = (data: any) => {
     return request({
-        url: api_url+createBuy,
+        url: createBuy,
         method: 'post',
         data
     })
@@ -37,7 +37,7 @@ export const createBuyApi = (data: any) => {
 
 export const buyInfoApi = (params: any) => {
     return request({
-        url: api_url+buyInfo,
+        url: buyInfo,
         method: 'get',
         params
     })
@@ -45,7 +45,7 @@ export const buyInfoApi = (params: any) => {
 
 export const orderApi = (data: any) => {
     return request({
-        url: api_url+order,
+        url: order,
         method: 'post',
         data
     })
@@ -53,7 +53,7 @@ export const orderApi = (data: any) => {
 
 export const cancelOrderApi = (params: any) => {
     return request({
-        url: api_url+cancelOrder,
+        url: cancelOrder,
         method: 'get',
         params
     })
@@ -61,7 +61,7 @@ export const cancelOrderApi = (params: any) => {
 
 export const historyApi = (params: any) => {
     return request({
-        url: api_url+history,
+        url: history,
         method: 'get',
         params
     })
@@ -69,7 +69,7 @@ export const historyApi = (params: any) => {
 
 export const payhdApi = (data: any) => {
     return request({
-        url: api_url+payhd,
+        url: payhd,
         method: 'post',
         data
     })

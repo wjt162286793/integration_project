@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       port: 9004,
       proxy:{
         '/aisysApi':{
-          target: env.VITE_API_URL || 'http://localhost:8051',
+          target: env.VITE_API_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/aisysApi/, '')
         }

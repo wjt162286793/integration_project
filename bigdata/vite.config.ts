@@ -1,26 +1,35 @@
-import { defineConfig } from 'vite'
+import { defineConfig , loadEnv} from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path';
 
-// 从环境变量读取API地址，默认为本地服务
-const apiUrl = process.env.VITE_API_URL || 'http://127.0.0.1:8051';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
+export default defineConfig(({ mode }) => {
+  // 加载环境变量
+  const env = loadEnv(mode, process.cwd());
+
+  return {
+    plugins: [react()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src')
+      },
     },
-  },
-  server:{
-    port: 9003,
+    server:{// 开发环境服务器配置
+      port: 9003,
       proxy:{
         '/bigProxy':{
-          target: apiUrl,
+          target: env.VITE_API_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/bigProxy/, '')
         }
       }
+    },
+    // 添加生产环境构建配置
+    build: {
+      // 确保环境变量被正确注入
+      rollupOptions: {
+        // 其他配置...
+      }
+    }
   }
 })

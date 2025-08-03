@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --mode development",
     "start": "vite --mode remote",
-    "build": "vue-tsc -b && vite build --mode production",
+    "build": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {

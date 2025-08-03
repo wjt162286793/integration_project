@@ -35,7 +35,6 @@ const ruleList = ref<listItem[]>([]);
 // getActiveApp(activeAppName.value)
 
 const selectItem = (item: listItem) => {
-  console.log(item, "???");
   // activeApp.value = item
   router.push({
     name: item.name,
