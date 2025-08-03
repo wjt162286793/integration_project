@@ -10,10 +10,10 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 9004,
       proxy:{
-        '/aisysApi':{
+        '/aisystemApi':{
           target: env.VITE_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/aisysApi/, '')
+          rewrite: (path) => path.replace(/^\/aisystemApi/, '')
         }
       }
     },

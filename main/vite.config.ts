@@ -31,26 +31,26 @@ export default defineConfig(({ mode }) => {
             'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
           }
         },
-        // '/bigdata-sub-api': {
-        //   target: 'http://82.157.193.128:8083', // 子应用真实地址
-        //   changeOrigin: true,
-        //   rewrite: (path) => path.replace(/^\/bigdata-sub-api/, ''),
-        //   // 关键：添加CORS头
-        //   headers: {
-        //     'Access-Control-Allow-Origin': '*',
-        //     'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
-        //   }
-        // },
-        // '/aisystem-sub-api': {
-        //   target: 'http://82.157.193.128:8085', // 子应用真实地址
-        //   changeOrigin: true,
-        //   rewrite: (path) => path.replace(/^\/aisystem-sub-api/, ''),
-        //   // 关键：添加CORS头
-        //   headers: {
-        //     'Access-Control-Allow-Origin': '*',
-        //     'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
-        //   }
-        // },
+        '/bigdata-sub-api': {
+          target: 'http://82.157.193.128:8083', // 子应用真实地址
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/bigdata-sub-api/, ''),
+          // 关键：添加CORS头
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
+          }
+        },
+        '/aisystem-sub-api': {
+          target: 'http://82.157.193.128:8085', // 子应用真实地址
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/aisystem-sub-api/, ''),
+          // 关键：添加CORS头
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
+          }
+        },
 
       }
     },

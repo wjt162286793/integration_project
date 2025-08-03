@@ -17,10 +17,10 @@ export default defineConfig(({ mode }) => {
     server:{// 开发环境服务器配置
       port: 9003,
       proxy:{
-        '/bigProxy':{
+        '/bigdataApi':{
           target: env.VITE_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/bigProxy/, '')
+          rewrite: (path) => path.replace(/^\/bigdataApi/, '')
         }
       }
     },

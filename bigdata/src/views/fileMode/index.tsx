@@ -79,8 +79,56 @@ const FileUploader: React.FC = () => {
  
   }
 
+
+const api_url = '/bigdataApi'  
+const env_mode = import.meta.env.MODE;
+console.log(env_mode, 'env_mode的值');
+
+// 检查是否通过主应用代理访问
+const isProxy = window.location.pathname.startsWith('/bigdata-sub-api');
+
+// 检查是否在无界微前端环境中
+const isSubFlag = window.__POWERED_BY_WUJIE__;
+
+// 配置API基础路径
+let baseURL = '';
+
+
+if (isProxy) {
+  // 通过主应用代理访问时
+  baseURL = '/bigdata-sub-api/bigdataApi';
+} else if (isSubFlag) {
+  // 在无界微前端环境中但非代理访问
+  if (env_mode === 'development') {
+    baseURL = api_url;
+  } else {
+    // 使用相对路径，让主应用代理处理
+    baseURL = '/bigdata-sub-api/bigdataApi';
+  }
+} else {
+  // 独立运行时
+  baseURL = api_url;
+}
+
+// 添加获取基础URL的函数
+const getBaseUrl = () => {
+  if (isSubFlag) {
+    // 在微前端环境中
+    return '/bigdata-sub-api';
+  } else {
+    // 独立运行时
+    if (env_mode === 'development') {
+      return 'http://127.0.0.1:8051';
+    } else {
+      return 'http://82.157.193.128:8051';
+    }
+  }
+};
+
+// 修改下载处理函数
 const downLoadHandler = (record)=>{
-   window.open(`http://127.0.0.1:8051/uploadFile/${record.hash}`)
+  const baseUrl = getBaseUrl();
+  window.open(`${baseUrl}/uploadFile/${record.hash}`);
 }
 
 const deleteHandler = (record)=>{
@@ -111,7 +159,7 @@ const deleteHandler = (record)=>{
         `  })
       .use(StatusBar, { target: statusBarRef.current! })
       .use(Tus, {
-        endpoint: '/bigProxy/fileMode',   
+        endpoint: `${baseURL}/fileMode`,   
         limit: 5,
         chunkSize: 5 * ONE_MB
       });

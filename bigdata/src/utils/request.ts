@@ -1,5 +1,5 @@
 import axios from 'axios'
-const api_url = '/bigProxy'
+const api_url = '/bigdataApi'
 
 // 判断当前环境
 const env_mode = import.meta.env.MODE;
@@ -14,10 +14,9 @@ const isSubFlag = window.__POWERED_BY_WUJIE__;
 // 配置API基础路径
 let baseURL = '';
 
-
 if (isProxy) {
   // 通过主应用代理访问时
-  baseURL = '/bigdata-sub-api/bigProxy';
+  baseURL = '/bigdata-sub-api/bigdataApi';
 } else if (isSubFlag) {
   // 在无界微前端环境中但非代理访问
   if (env_mode === 'development') {
@@ -29,6 +28,7 @@ if (isProxy) {
   // 独立运行时
   baseURL = api_url;
 }
+
 
 const request = axios.create({
     baseURL: baseURL,

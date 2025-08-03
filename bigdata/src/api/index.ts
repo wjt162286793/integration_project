@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-const api_url = '/bigProxy'
+
 
 const login = '/bigData/login'
 const fileList = '/bigdata/fileList'
@@ -8,7 +8,7 @@ const deleteFile = '/bigdata/deleteFile'
 
 export const loginApi = (data: any) => {
     return request({
-        url: api_url+login,
+        url: login,
         method: 'post',
         data
     })
@@ -16,7 +16,7 @@ export const loginApi = (data: any) => {
 
 export const fileListApi = (data: any) => {
     return request({
-        url: api_url+fileList,
+        url: fileList,
         method: 'get',
         data
     })
@@ -24,7 +24,7 @@ export const fileListApi = (data: any) => {
 
 export const savehashTofileApi = (data: any) => {
     return request({
-        url: api_url+savehashTofile,
+        url: savehashTofile,
         method: 'post',
         data
     })
@@ -32,7 +32,7 @@ export const savehashTofileApi = (data: any) => {
 
 export const deleteFileApi = (data: any) => {
     return request({
-        url: api_url+deleteFile,
+        url: deleteFile,
         method: 'post',
         data
     })

@@ -1,24 +1,17 @@
 import axios from 'axios'
 
-const api_url = '/aisysApi'
-
-
-// 判断当前环境
-const env_mode = import.meta.env.MODE;
-console.log(env_mode, 'env_mode的值');
+const api_url = '/aisystemApi'
 
 // 检查是否通过主应用代理访问
 const isProxy = window.location.pathname.startsWith('/aisystem-sub-api');
-
 // 检查是否在无界微前端环境中
 const isSubFlag = window.__POWERED_BY_WUJIE__;
-
 // 配置API基础路径
 let baseURL = '';
 
 if (isProxy) {
   // 通过主应用代理访问时
-  baseURL = '/aisystem-sub-api/aisysApi';
+  baseURL = '/aisystem-sub-api/aisystemApi';
 } else if (isSubFlag) {
   // 在无界微前端环境中但非代理访问
   if (env_mode === 'development') {
@@ -31,14 +24,16 @@ if (isProxy) {
   baseURL = api_url;
 }
 
-
-const request = axios.create({
-    baseURL: baseURL,
-    timeout:6000
-})
-
+// 添加请求拦截器(参考exchange的token处理)
 request.interceptors.request.use((config)=>{
-    return config;
+  // 检查请求路径是否包含login，如果不包含则添加token
+  if (!config.url?.includes('login')) {
+    const token = isSubFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('aisys-token');
+    if (token) {
+      config.headers.authorization = token;
+    }
+  }
+  return config;
 })
 
 request.interceptors.response.use((config)=>{
