@@ -449,7 +449,7 @@ const Index: React.FC = () => {
                 </div>
             </div>
             {
-                reduxData.userInfoHandler.token && (<HistoryCom></HistoryCom>)
+               (isSubAppFlag || reduxData.userInfoHandler.token) && (<HistoryCom></HistoryCom>)
             }
 
             <div className='tipDom'>
