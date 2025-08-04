@@ -92,7 +92,15 @@ const isSubFlag = window.__POWERED_BY_WUJIE__;
 
 // 配置API基础路径
 let baseURL = '';
+console.log('...==')
 
+
+if (isSubFlag) {
+    // 在无界微前端环境中
+    baseURL = '/bigdata-sub-api';
+} else {
+  baseURL = import.meta.env.VITE_API_URL
+}
 
 if (isProxy) {
   // 通过主应用代理访问时
@@ -150,7 +158,8 @@ const deleteHandler = (record)=>{
         allowedFileTypes: ['.jpg', '.jpeg', '.png', '.zip','rar']
       },
     });
-
+  
+    console.log(baseURL,'baseURL====')
     // 使用插件
     uppyRef.current
       .use(DragDrop, { target: dragDropRef.current!, note: `
@@ -159,10 +168,10 @@ const deleteHandler = (record)=>{
         `  })
       .use(StatusBar, { target: statusBarRef.current! })
       .use(Tus, {
-        endpoint: `${baseURL}/fileMode`,   
+        endpoint: `${baseURL}/fileMode`,
         limit: 5,
-        chunkSize: 5 * ONE_MB
-      });
+        chunkSize: 5 * ONE_MB,
+    });
 
     // 监听上传完成事件
     uppyRef.current.on('complete', (result: any) => {
