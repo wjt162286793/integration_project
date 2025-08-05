@@ -27,25 +27,25 @@ const routes = [
     },
     children: [
       {
-        path: 'appMode',
+        path: '/dashboard/appMode',
         name: 'AppMode',
         component: () => import('../pages/appMode/index.vue'),
         meta: { title: '应用管理' }
       },
       {
-        path: 'taskMode',
+        path: '/dashboard/taskMode',
         name: 'TaskMode',
         component: () => import('../pages/taskMode/index.vue'),
         meta: { title: '任务管理' }
       },
       {
-        path: 'fileMode',
+        path: '/dashboard/fileMode',
         name: 'FileMode',
         component: () => import('../pages/fileMode/index.vue'),
         meta: { title: '文件管理' }
       },
       {
-        path: 'pipelineMode',
+        path: '/dashboard/pipelineMode',
         name: 'PipelineMode',
         component: () => import('../pages/pipelineMode/index.vue'),
         meta: { title: '流水线管理' }
