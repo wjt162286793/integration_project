@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import * as echarts from 'echarts';
+import { useTranslation } from 'react-i18next';
 import {registerMapHandler} from '@/global/china'
 const mapCom:React.FC = ()=> {
+  const { t } = useTranslation();
 
     const points = [
   { value: [118.8062, 31.9208], itemStyle: { color: "#4ab2e5" } },
@@ -27,7 +29,7 @@ const mapCom:React.FC = ()=> {
 const option = {
     backgroundColor: "#013954", //大背景
         title: {
-            text: '上海数据中心',
+            text: t('chart.shanghaiDataCenter'),
             left: 'center',
             top: '8px'
         },

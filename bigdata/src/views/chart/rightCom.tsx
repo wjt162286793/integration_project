@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
 import * as echarts from 'echarts';
+import { useTranslation } from 'react-i18next';
 const RightCom: React.FC = () => {
+  const { t } = useTranslation();
 
     const option1 = {
         title: {
-            text: '模块使用量占比',
+            text: t('chart.moduleUsageDistribution'),
             left: 'center'
         },
         tooltip: {
@@ -20,9 +22,9 @@ const RightCom: React.FC = () => {
                 type: 'pie',
                 radius: '50%',
                 data: [
-                    { value: 1048, name: '数字资产' },
-                    { value: 735, name: '数据看板' },
-                    { value: 580, name: '模型构建' },
+                    { value: 1048, name: t('chart.digitalAssets') },
+                    { value: 735, name: t('chart.dataDashboard') },
+                    { value: 580, name: t('chart.modelBuilding') },
                 ],
                 emphasis: {
                     itemStyle: {
@@ -37,7 +39,7 @@ const RightCom: React.FC = () => {
 
     const option2 = {
         title: {
-            text: '应用领域占比',
+            text: t('chart.applicationDomainDistribution'),
             left: 'center',
             top: '8px'
         },
@@ -70,9 +72,9 @@ const RightCom: React.FC = () => {
                     show: false
                 },
                 data: [
-                    { value: 1048, name: '金融' },
-                    { value: 735, name: '工业' },
-                    { value: 150, name: '农业' },
+                    { value: 1048, name: t('chart.finance') },
+                    { value: 735, name: t('chart.industry') },
+                    { value: 150, name: t('chart.agriculture') },
                 ]
             }
         ]
@@ -80,7 +82,7 @@ const RightCom: React.FC = () => {
 
     const option3 = {
         title: {
-            text: '主要资产增量',
+            text: t('chart.mainAssetGrowth'),
             left: 'center',
             top: '8px'
         },
@@ -96,38 +98,38 @@ const RightCom: React.FC = () => {
         xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+            data: [t('chart.january'), t('chart.february'), t('chart.march'), t('chart.april'), t('chart.may'), t('chart.june'), t('chart.july'), t('chart.august'), t('chart.september'), t('chart.october'), t('chart.november'), t('chart.december')]
         },
         yAxis: {
             type: 'value'
         },
         series: [
             {
-                name: '比特币',
+                name: t('chart.bitcoin'),
                 type: 'line',
                 stack: 'Total',
                 data: [120, 132, 101, 134, 90, 230, 210, 230, 210, 230, 210, 230]
             },
             {
-                name: '以太坊',
+                name: t('chart.ethereum'),
                 type: 'line',
                 stack: 'Total',
                 data: [220, 182, 191, 234, 290, 330, 310, 330, 310, 330, 310, 330]
             },
             {
-                name: '狗狗币',
+                name: t('chart.dogecoin'),
                 type: 'line',
                 stack: 'Total',
                 data: [150, 232, 201, 154, 190, 330, 410, 330, 410, 330, 410, 330]
             },
             {
-                name: '莱特币',
+                name: t('chart.litecoin'),
                 type: 'line',
                 stack: 'Total',
                 data: [320, 332, 301, 334, 390, 330, 320, 320, 332, 301, 334, 390]
             },
             {
-                name: '瑞波币',
+                name: t('chart.ripple'),
                 type: 'line',
                 stack: 'Total',
                 data: [820, 932, 901, 934, 1290, 1330, 1320, 820, 932, 901, 934, 1290]

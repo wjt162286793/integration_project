@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Col, Row, List, Badge,Tag, Button } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 
 interface toItem{
@@ -15,30 +16,31 @@ interface msgItem{
     type:string
 }
 const ListCom: React.FC = () => {
+    const { t } = useTranslation();
 
     const todoList:toItem[] = [
         {
-            title: '构建1个流程图模型',
+            title: t('workbench.buildFlowChartModel'),
             status: 'todo'
         },
         {
-            title: '新增一条以太坊数字资产',
+            title: t('workbench.addEthereumDigitalAsset'),
             status: 'todo'
         },
         {
-            title: '提交一个标签画像的流程审批',
+            title: t('workbench.submitLabelPortraitApproval'),
             status: 'todo'
         },
         {
-            title: '新增一条比特币数字资产',
+            title: t('workbench.addBitcoinDigitalAsset'),
             status: 'doing'
         },
         {
-            title: '新建一条价值流泳道图',
+            title: t('workbench.createValueStreamSwimlane'),
             status: 'doing'
         },
         {
-            title: '新增一条采购流程图',
+            title: t('workbench.addProcurementFlowChart'),
             status: 'done'
         },
 
@@ -46,24 +48,24 @@ const ListCom: React.FC = () => {
 
     const msgList:msgItem[] = [
         {
-            title: '模型已发布',
+            title: t('workbench.modelPublished'),
             time: '2023-12-12',
-            text: '你构建的模型已经发布完成,可以进行查看,链接地址为:xxx',
-            by: '系统',
+            text: t('workbench.modelPublishedText'),
+            by: t('workbench.system'),
             type: 'hasRead'
         },
         {
-            title: '数字资产新增',
+            title: t('workbench.digitalAssetAdded'),
             time: '2023-12-12',
-            text: '你新增的数字资产已经发布完成,可以进行查看,链接地址为:xxx',
-            by: '系统',
+            text: t('workbench.digitalAssetAddedText'),
+            by: t('workbench.system'),
             type: 'noRead'
         },
         {
-            title: '图表统计变化',
+            title: t('workbench.chartStatisticsChanged'),
             time: '2023-12-12',
-            text: '图表统计已经发生变化,可以去图表统计模块进行浏览,链接地址为:xxx',
-            by: '系统',
+            text: t('workbench.chartStatisticsChangedText'),
+            by: t('workbench.system'),
             type: 'noRead'
         }
     ]
@@ -75,7 +77,7 @@ const ListCom: React.FC = () => {
             <Row>
                 <Col span={12}>
                     <Badge count={todoList.length} offset={[10, 8]}>
-                        <h5>待办事项</h5>
+                        <h5>{t('workbench.todoItems')}</h5>
                     </Badge>
 
                     <div className='todoListBox'>
@@ -87,13 +89,13 @@ const ListCom: React.FC = () => {
                                     <div className='todoItem'>
                                         <p>{item.title}</p>
                                         {
-                                            item.status === 'todo' && <Tag color="#2db7f5" className='todoTag'>待办中</Tag> 
+                                            item.status === 'todo' && <Tag color="#2db7f5" className='todoTag'>{t('workbench.todo')}</Tag> 
                                         }
                                         {
-                                            item.status === 'doing' && <Tag color="#108ee9" className='todoTag'>进行中</Tag> 
+                                            item.status === 'doing' && <Tag color="#108ee9" className='todoTag'>{t('workbench.doing')}</Tag> 
                                         }
                                         {
-                                            item.status === 'done' && <Tag color="#87d068" className='todoTag'>已完成</Tag> 
+                                            item.status === 'done' && <Tag color="#87d068" className='todoTag'>{t('workbench.done')}</Tag> 
                                         }
                                          
                                     </div>
@@ -106,7 +108,7 @@ const ListCom: React.FC = () => {
                 </Col>
                 <Col span={12}>
                     <Badge count={2} offset={[10, 8]}>
-                        <h5>系统消息</h5>
+                        <h5>{t('workbench.systemMessages')}</h5>
                     </Badge>
                     <div className='msgListBox'>
                         <List
@@ -119,12 +121,12 @@ const ListCom: React.FC = () => {
                                         <p>{item.title}</p>
                                         {
                                             item.type === 'noRead' && <Button type='link'>
-                                            未读
+                                            {t('workbench.unread')}
                                         </Button>
                                         }
                                         {
                                             item.type === 'hasRead' && <Button type='link'>
-                                                <a style={{color:'#97a0a6'}}>已读</a> 
+                                                <a style={{color:'#97a0a6'}}>{t('workbench.read')}</a> 
                                             </Button> 
                                         }
                                     </div>

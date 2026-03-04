@@ -1,0 +1,115 @@
+server {
+    listen 8083;
+    server_name 82.157.193.128_8083;
+    index index.php index.html index.htm default.php default.htm default.html;
+    root /www/wwwroot/bigData_project;
+    try_files $uri $uri/ /index.html;
+
+    # 全局CORS配置 - 移除或注释
+    # add_header 'Access-Control-Allow-Origin' '$http_origin' always;
+    # add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
+    # add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,tus-resumable,upload-length,upload-metadata' always;
+    # add_header 'Access-Control-Allow-Credentials' 'true' always;
+    # add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,Upload-Offset,Location,Upload-Length,Tus-Version,Tus-Resumable' always;
+
+    # 处理OPTIONS请求
+    if ($request_method = 'OPTIONS') {
+        return 204;
+    }
+
+    # 静态资源配置
+    location ~* \.(html|css|js|png|jpg|jpeg|gif|ico)$ {
+        expires 12h;
+    }
+
+    # 添加bigdata-sub-api路径的代理规则（微前端环境使用）
+     location ~ ^/bigdata-sub-api/ {
+        # 使用rewrite传递修改后的URI
+       rewrite ^/bigdata-sub-api/(.*)$ /$1 break;
+        proxy_pass http://82.157.193.128:8051;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # 移除重复的CORS头设置
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+    }
+
+    # 保留原有的代理配置（修复语法错误）
+    location /fileMode/ {
+        proxy_pass http://82.157.193.128:8051/fileMode/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # 添加CORS头信息
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,tus-resumable,upload-length,upload-metadata' always;
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,Upload-Offset,Location,Upload-Length,Tus-Version,Tus-Resumable' always;
+    }
+
+    location /bigdata/ {
+        proxy_pass http://82.157.193.128:8051/bigdata/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /bigdataApi/ {
+        proxy_pass http://82.157.193.128:8051/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    #SSL-START SSL相关配置，请勿删除或修改下一行带注释的404规则
+    #error_page 404/404.html;
+    #SSL-END
+
+    #ERROR-PAGE-START  错误页配置，可以注释、删除或修改
+    error_page 404 /404.html;
+    #error_page 502 /502.html;
+    #ERROR-PAGE-END
+
+    #PHP-INFO-START  PHP引用配置，可以注释或修改
+    include enable-php-74.conf;
+    #PHP-INFO-END
+
+    #REWRITE-START URL重写规则引用,修改后将导致面板设置的伪静态规则失效
+    include /www/server/panel/vhost/rewrite/82.157.193.128_8083.conf;
+    #REWRITE-END
+
+    #禁止访问的文件或目录
+    location ~ ^/(\.user.ini|\.htaccess|\.git|\.env|\.svn|\.project|LICENSE|README.md) {
+        return 404;
+    }
+
+    #一键申请SSL证书验证目录相关设置
+    location ~ \.well-known{
+        allow all;
+    }
+
+    #禁止在证书验证目录放入敏感文件
+    if ( $uri ~ "^/\.well-known/.*\.(php|jsp|py|js|css|lua|ts|go|zip|tar\.gz|rar|7z|sql|bak)$" ) {
+        return 403;
+    }
+
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
+        expires      30d;
+        error_log /dev/null;
+        access_log /dev/null;
+    }
+
+    location ~ .*\.(js|css)?$ {
+        expires      12h;
+        error_log /dev/null;
+        access_log /dev/null;
+    }
+    access_log  /www/wwwlogs/82.157.193.128_8083.log;
+    error_log  /www/wwwlogs/82.157.193.128_8083.error.log;
+}

@@ -1,0 +1,165 @@
+server {
+    listen 8086;
+    server_name 82.157.193.128_8086;
+    index index.php index.html index.htm;
+    root /www/wwwroot/main_project;
+    try_files $uri $uri/ /index.html;
+
+    # 添加重定向规则，确保子应用请求都通过主应用代理
+    location /bigdata-sub-api/ {
+        proxy_pass http://82.157.193.128:8051/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 只保留这一个CORS配置
+        add_header 'Access-Control-Allow-Origin' 'http://82.157.193.128:8086' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,tus-resumable,upload-length,upload-offset,tus-version,upload-metadata' always;
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,Upload-Offset,Location,Upload-Length,Tus-Version,Tus-Resumable' always;
+
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+    }
+location ~ .*\.(js|css)?$ {
+    expires 12h;
+    error_log /dev/null;
+    access_log /dev/null;
+    
+    # 添加以下CORS头
+    add_header 'Access-Control-Allow-Origin' 'http://82.157.193.128:8086';
+    add_header 'Access-Control-Allow-Methods' 'GET';
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+}
+
+
+    # 主应用API代理
+    location /mainapi/ {
+        proxy_pass http://82.157.193.128:8051/;  # 移除了反引号
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # 为API添加CORS头
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+        # 处理OPTIONS请求
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+    }
+
+    # 子应用API代理
+    location /exchange-sub-api/ {
+        # proxy_pass http://82.157.193.128:8084/;  # 移除了反引号
+        proxy_pass http://82.157.193.128:8051;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # 添加rewrite规则，移除/exchange-sub-api前缀
+        rewrite ^/exchange-sub-api/(.*)$ /$1 break;
+        # 为子应用API添加CORS头
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+        # 处理OPTIONS请求
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+    }
+    
+    location /bigdata-sub-api/ {
+        proxy_pass http://82.157.193.128:8051/;  # 添加末尾的斜杠
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        rewrite ^/bigdata-sub-api/(.*)$ /$1 break;
+        # 为子应用API添加CORS头
+        add_header 'Access-Control-Allow-Origin' 'http://82.157.193.128:8086' always;  # 使用具体origin
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,tus-resumable,upload-length,upload-offset,tus-version,tus-resumable,upload-metadata' always;
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,Upload-Offset,Location,Upload-Length,Tus-Version,Tus-Resumable' always;
+        # 处理OPTIONS请求
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+        }
+    
+        location /aisystem-sub-api/ {
+        proxy_pass http://82.157.193.128:8051/;  # 移除了反引号
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        rewrite ^/aisystem-sub-api/(.*)$ /$1 break;
+        # 为子应用API添加CORS头
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+        # 处理OPTIONS请求
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+    }
+
+   
+   
+   
+    #SSL-START SSL相关配置，请勿删除或修改下一行带注释的404规则
+    #error_page 404/404.html;
+    #SSL-END
+
+    #ERROR-PAGE-START  错误页配置，可以注释、删除或修改
+    error_page 404 /404.html;
+    #error_page 502 /502.html;
+    #ERROR-PAGE-END
+
+    #PHP-INFO-START  PHP引用配置，可以注释或修改
+    include enable-php-74.conf;
+    #PHP-INFO-END
+
+    #REWRITE-START URL重写规则引用,修改后将导致面板设置的伪静态规则失效
+    include /www/server/panel/vhost/rewrite/82.157.193.128_8086.conf;
+    #REWRITE-END
+
+    #禁止访问的文件或目录
+    location ~ ^/(\.user.ini|\.htaccess|\.git|\.env|\.svn|\.project|LICENSE|README.md)
+    {
+        return 404;
+    }
+
+    #一键申请SSL证书验证目录相关设置
+    location ~ \.well-known{
+        allow all;
+    }
+
+    #禁止在证书验证目录放入敏感文件
+    if ( $uri ~ "^/\.well-known/.*\.(php|jsp|py|js|css|lua|ts|go|zip|tar\.gz|rar|7z|sql|bak)$" ) {
+        return 403;
+    }
+
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+    {
+        expires      30d;
+        error_log /dev/null;
+        access_log /dev/null;
+    }
+
+    location ~ .*\.(js|css)?$
+    {
+        expires      12h;
+        error_log /dev/null;
+        access_log /dev/null;
+    }
+    access_log  /www/wwwlogs/82.157.193.128_8086.log;
+    error_log  /www/wwwlogs/82.157.193.128_8086.error.log;
+   
+}

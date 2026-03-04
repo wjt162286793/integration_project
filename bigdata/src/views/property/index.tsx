@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Space, Table, Tag, Input, Select, Button } from 'antd';
 import type { TableProps } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { DataType, queryType, optionsType } from './type'
 import './index.less'
 
@@ -8,36 +9,37 @@ import './index.less'
 
 
 const Index: React.FC = () => {
+  const { t } = useTranslation();
 
   const columns: TableProps<DataType>['columns'] = [
     {
-      title: '名称',
+      title: t('property.name'),
       dataIndex: 'name',
       key: 'name',
       render: (text) => <a>{text}</a>,
     },
     {
-      title: '价值',
+      title: t('property.price'),
       dataIndex: 'price',
       key: 'price',
     },
     {
-      title: '归属',
+      title: t('property.source'),
       dataIndex: 'source',
       key: 'source',
     },
     {
-      title: '分类',
+      title: t('property.type'),
       dataIndex: 'type',
       key: 'type',
     },
     {
-      title: '级别',
+      title: t('property.level'),
       dataIndex: 'level',
       key: 'level',
     },
     {
-      title: '标签',
+      title: t('property.tags'),
       key: 'tags',
       dataIndex: 'tags',
       render: (_, { tags }) => (
@@ -57,22 +59,22 @@ const Index: React.FC = () => {
       ),
     },
     {
-      title: '状态',
+      title: t('property.status'),
       dataIndex: 'status',
       key: 'status',
     },
     {
-      title: '负责人',
+      title: t('property.liableName'),
       dataIndex: 'liable_name',
       key: 'liable_name',
     },
     {
-      title: '创建时间',
+      title: t('property.createTime'),
       dataIndex: 'create_time',
       key: 'create_time',
     },
     {
-      title: '更新时间',
+      title: t('property.updateTime'),
       dataIndex: 'update_time',
       key: 'update_time',
     },
@@ -91,12 +93,12 @@ const Index: React.FC = () => {
   const data: DataType[] = [
     {
       id: 1,
-      name: 'AI模型',
+      name: t('property.aiModel'),
       price: 100000,
-      source: '智能孵化基地',
-      tags: ['大模型', 'AI研发'],
-      status: '应用中',
-      type: 'AI资产',
+      source: t('property.smartHatchingBase'),
+      tags: [t('property.bigModel'), t('property.aiResearch')],
+      status: t('property.inUse'),
+      type: t('property.aiAsset'),
       level: 2,
       liable_name: '王惊涛',
       create_time: '2022-02-11',
@@ -104,12 +106,12 @@ const Index: React.FC = () => {
     },
     {
       id: 2,
-      name: '大水币',
+      name: t('property.bigWaterCoin'),
       price: 450000,
-      source: '加密资产管理部',
-      tags: ['加密货币', '虚拟货币'],
-      status: '封闭中',
-      type: '虚拟资产',
+      source: t('property.cryptoAssetManagement'),
+      tags: [t('property.cryptoCurrency'), t('property.virtualCurrency')],
+      status: t('property.closed'),
+      type: t('property.virtualAsset'),
       level: 3,
       liable_name: '王惊涛',
       create_time: '2024-01-01',
@@ -164,13 +166,13 @@ const Index: React.FC = () => {
 
   return (<>
     <div className='searchBox'>
-      <span className='searchLabel'>资产名称:</span>
-      <Input placeholder="请输入资产名称" value={query.name} className='searchItem' />
+      <span className='searchLabel'>{t('property.searchAssetName')}</span>
+      <Input placeholder={t('property.enterAssetName')} value={query.name} className='searchItem' />
       {/* <span className='searchLabel'>资产等级:</span>
       <Select value={query.level} options={levelOptions} onChange={changeLevel} className='searchItem' />
       <span className='searchLabel'>资产状态:</span>
       <Select value={query.status} options={statusOptions} onChange={changeStatus} className='searchItem' /> */}
-      <Button className='searchBtn' type='primary'>查询</Button>
+      <Button className='searchBtn' type='primary'>{t('property.search')}</Button>
     </div>
     <div className='tableBox'>
       <Table<DataType> columns={columns} dataSource={data} rowKey='id' />

@@ -1,37 +1,40 @@
 import { useEffect, useState } from 'react'
 import './index.less';
-import { Menu,Button } from 'antd';
+import { Menu,Button, Space } from 'antd';
 import { menuListType } from './type';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const Location = useLocation()
+  const { t } = useTranslation();
 
   const menuList: menuListType[] = [
     {
       key: 'workbench',
-      label: '工作台',
+      label: t('common.workbench'),
     },
     {
       key: 'property',
-      label: '数字资产',
+      label: t('common.property'),
     },
     {
       key: 'chart',
-      label: '数据看板',
+      label: t('common.chart'),
     },
     {
       key: 'modeBuild',
-      label: '模型构建',
+      label: t('common.modeBuild'),
     },
     {
       key: 'fileMode',
-      label: '大文件上传',
+      label: t('common.fileMode'),
     },
     // {
     //   key: 'readMe',
-    //   label: '说明文档',
+    //   label: t('common.readMe'),
     // },
   ];
 
@@ -80,7 +83,7 @@ export default function Dashboard() {
         !isSubAppFlag && (
           <div>
             <header className="headerDom">
-              <h1 className="legoWord">WJT数字平台</h1>
+              <h1 className="legoWord">{t('common.platformName')}</h1>
               <Menu
                 theme="dark"
                 mode="horizontal"
@@ -89,7 +92,10 @@ export default function Dashboard() {
                 style={{ flex: 1, minWidth: 0 }}
                 onClick={menuItemHandler}
               />
-              <Button style={{color:'#fff',marginTop:'16px',marginRight:'16px'}} type='text' onClick={logoutHandler}>退出登录</Button>
+              <Space style={{marginTop:'16px',marginRight:'16px'}}>
+                <LanguageSwitcher />
+                <Button style={{color:'#fff'}} type='text' onClick={logoutHandler}>{t('common.logout')}</Button>
+              </Space>
             </header>
             <div className="contentDom">
               <Outlet />

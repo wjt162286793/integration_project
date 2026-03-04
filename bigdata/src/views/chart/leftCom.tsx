@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react'
 import * as echarts from 'echarts';
+import { useTranslation } from 'react-i18next';
 const LeftCom: React.FC = () => {
+  const { t } = useTranslation();
 
     const option1 = {
         title: {
-            text: '日用户量统计',
+            text: t('chart.dailyUserStatistics'),
             left: 'center',
             top: '8px'
         },
         xAxis: {
             type: 'category',
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            data: [t('common.monday'), t('common.tuesday'), t('common.wednesday'), t('common.thursday'), t('common.friday'), t('common.saturday'), t('common.sunday')]
         },
         yAxis: {
             type: 'value'
@@ -25,7 +27,7 @@ const LeftCom: React.FC = () => {
 
     const option2 = {
                 title: {
-            text: '应用领域占比',
+            text: t('chart.applicationDomainDistribution'),
             left: 'center',
             top: '8px'
         },
@@ -58,9 +60,9 @@ const LeftCom: React.FC = () => {
         show: false
       },
       data: [
-        { value: 1048, name: '金融' },
-        { value: 735, name: '工业' },
-        { value: 150, name: '农业' },
+        { value: 1048, name: t('chart.finance') },
+        { value: 735, name: t('chart.industry') },
+        { value: 150, name: t('chart.agriculture') },
       ]
     }
   ]
@@ -68,13 +70,13 @@ const LeftCom: React.FC = () => {
 
 const option3 = {
     title: {
-            text: '主要区域',
+            text: t('chart.mainRegions'),
             left: 'center',
             top: '8px'
  },
   xAxis: {
     type: 'category',
-    data: ['北京', '上海', '广州', '深圳', '西安', '成都', '杭州']
+    data: [t('chart.beijing'), t('chart.shanghai'), t('chart.guangzhou'), t('chart.shenzhen'), t('chart.xiAn'), t('chart.chengdu'), t('chart.hangzhou')]
   },
   yAxis: {
     type: 'value'

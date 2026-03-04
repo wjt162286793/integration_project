@@ -4,6 +4,7 @@ import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 import StatusBar from '@uppy/status-bar';
 import Tus from '@uppy/tus';
+import { useTranslation } from 'react-i18next';
 import {fileListApi,savehashTofileApi,deleteFileApi} from '@/api/index'
 
 // 引入样式
@@ -23,26 +24,28 @@ const FileUploader: React.FC = () => {
   // 拖拽区域和状态栏的DOM引用
   const dragDropRef = useRef<HTMLDivElement>(null);
   const statusBarRef = useRef<HTMLDivElement>(null);
+  // 国际化钩子
+  const { t } = useTranslation();
   
   const [fileList, setFileList] = useState([]);
   const columns = [
     {
-      title: '文件名',
+      title: t('fileMode.fileName'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: '文件类型',
+      title: t('fileMode.fileType'),
       dataIndex: 'extension',
       key: 'extension',
     },
     {
-      title: '文件hash',
+      title: t('fileMode.fileHash'),
       dataIndex: 'hash',
       key: 'hash',
     },
     {
-      title: '文件大小',
+      title: t('fileMode.fileSize'),
       dataIndex: 'size',
       key: 'size',
       render:(text,record)=>{
@@ -50,19 +53,19 @@ const FileUploader: React.FC = () => {
       }
     },
     {
-      title: '上传时间',
+      title: t('fileMode.uploadTime'),
       dataIndex: 'time',
       key: 'time',
     },
     {
-      title: '操作',
+      title: t('fileMode.operation'),
       dataIndex: 'operation',
       key: 'operation',
       render:(text,record)=>{
         return (
           <>
-          <Button onClick={()=>downLoadHandler(record)} type='text'>下载</Button>
-          <Button onClick={()=>showModal(record)} type='text'>删除</Button>
+          <Button onClick={()=>downLoadHandler(record)} type='text'>{t('fileMode.download')}</Button>
+          <Button onClick={()=>showModal(record)} type='text'>{t('fileMode.delete')}</Button>
           </>
 
         )
@@ -80,43 +83,37 @@ const FileUploader: React.FC = () => {
   }
 
 
-const api_url = '/bigdataApi'  
+const api_url = '/bigdataApi';
 const env_mode = import.meta.env.MODE;
 console.log(env_mode, 'env_mode的值');
-
-// 检查是否通过主应用代理访问
-const isProxy = window.location.pathname.startsWith('/bigdata-sub-api');
 
 // 检查是否在无界微前端环境中
 const isSubFlag = window.__POWERED_BY_WUJIE__;
 
+// 检查是否通过主应用代理访问
+const isProxy = window.location.pathname.startsWith('/bigdata-sub-api');
+
 // 配置API基础路径
 let baseURL = '';
-console.log('...==')
 
-
+// 优化baseURL判断逻辑
 if (isSubFlag) {
-    // 在无界微前端环境中
-    baseURL = '/bigdata-sub-api';
-} else {
-  baseURL = import.meta.env.VITE_API_URL
-}
-
-if (isProxy) {
-  // 通过主应用代理访问时
-  baseURL = '/bigdata-sub-api/bigdataApi';
-} else if (isSubFlag) {
-  // 在无界微前端环境中但非代理访问
-  if (env_mode === 'development') {
-    baseURL = api_url;
-  } else {
-    // 使用相对路径，让主应用代理处理
-    baseURL = '/bigdata-sub-api/bigdataApi';
-  }
+  // 在无界微前端环境中
+  baseURL = '/bigdata-sub-api';
 } else {
   // 独立运行时
-  baseURL = api_url;
+  if (env_mode === 'development') {
+    // 本地开发模式
+    baseURL = api_url;
+  } else {
+    // 独立生产模式
+    baseURL = import.meta.env.VITE_API_URL || api_url;
+  }
 }
+
+// 确保baseURL不以斜杠结尾
+baseURL = baseURL.replace(/\/$/, '');
+console.log('Final baseURL:', baseURL);
 
 // 添加获取基础URL的函数
 const getBaseUrl = () => {
@@ -162,10 +159,7 @@ const deleteHandler = (record)=>{
     console.log(baseURL,'baseURL====')
     // 使用插件
     uppyRef.current
-      .use(DragDrop, { target: dragDropRef.current!, note: `
-        请将文件拖放到此处,当前仅限于jpg,jpeg,png,zip,rar文件。
-        由于是个人学习服务器,性能一般,尽量不要上传太大的文件,最好在300MB到700MB之间,不超过1个G。
-        `  })
+      .use(DragDrop, { target: dragDropRef.current!, note: t('fileMode.dragDropHint') })
       .use(StatusBar, { target: statusBarRef.current! })
       .use(Tus, {
         endpoint: `${baseURL}/fileMode`,
@@ -189,9 +183,9 @@ const deleteHandler = (record)=>{
         })
       }
       if (Array.isArray(result.failed) && result.failed.length > 0) {
-        message.error(`文件上传失败，${result.failed}`);
+        message.error(t('fileMode.uploadFailed'));
       } else {
-        message.success('文件上传成功');
+        message.success(t('fileMode.uploadSuccess'));
       }
     });
 
@@ -243,13 +237,13 @@ const deleteHandler = (record)=>{
         {
           uppyRef.current && (
                   <Button type="primary" onClick={pauseOrResume} >
-        {isUploading ? '暂停' : '开始'}
+        {isUploading ? t('fileMode.pause') : t('fileMode.start')}
       </Button>
           )
         }
 
 
-      <Button onClick={getFileList} style={{marginLeft:'16px'}}>刷新列表</Button>
+      <Button onClick={getFileList} style={{marginLeft:'16px'}}>{t('fileMode.refreshList')}</Button>
 
       <Table
         style={{marginTop:'16px'}}
@@ -261,13 +255,13 @@ const deleteHandler = (record)=>{
       />
       </div>
       <Modal
-        title="删除"
+        title={t('fileMode.delete')}
         closable={{ 'aria-label': 'Custom Close Button' }}
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-          <p>确定要删除这个文件?</p>
+          <p>{t('fileMode.confirmDelete')}</p>
       </Modal>
     </div>
   );

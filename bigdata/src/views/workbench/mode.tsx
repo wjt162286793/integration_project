@@ -1,6 +1,7 @@
 import React,{ useEffect,useState } from 'react'
 import { Col, Row  } from 'antd';
 import * as echarts from 'echarts';
+import { t } from 'i18next';
 
 
 const ModeCom:React.FC = ()=>{
@@ -8,7 +9,7 @@ const ModeCom:React.FC = ()=>{
 
 const option1 = {
     title:{
-        text:'上周数字资产日增量',
+        text:t('common.digitalAssetLabel'),
         left:'center'
     },
   tooltip: {
@@ -26,7 +27,7 @@ const option1 = {
   xAxis: [
     {
       type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: [t('common.monday'), t('common.tuesday'), t('common.wednesday'), t('common.thursday'), t('common.friday'), t('common.saturday'), t('common.sunday')],
       axisTick: {
         alignWithLabel: true
       }
@@ -39,7 +40,7 @@ const option1 = {
   ],
   series: [
     {
-      name: '增长量',
+      name: t('common.growth'),
       type: 'bar',
       barWidth: '60%',
       data: [100, 130, 80, 220, 140, 20, 30]
@@ -48,7 +49,7 @@ const option1 = {
 };
 const option2 = {
     title:{
-        text:'上周数据看板访问量',
+        text:t('common.dataBoardLabel'),
         left:'center'
     },
   tooltip: {
@@ -66,7 +67,7 @@ const option2 = {
   xAxis: [
     {
       type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: [t('common.monday'), t('common.tuesday'), t('common.wednesday'), t('common.thursday'), t('common.friday'), t('common.saturday'), t('common.sunday')],
       axisTick: {
         alignWithLabel: true
       }
@@ -79,7 +80,7 @@ const option2 = {
   ],
   series: [
     {
-      name: '增长量',
+      name: t('common.growth'),
       type: 'bar',
       barWidth: '60%',
       data: [4426, 3467, 2468, 5430, 4740, 2620, 3130]
@@ -88,7 +89,7 @@ const option2 = {
 };
 const option3 = {
     title:{
-        text:'上周模型日增量',
+        text:t('common.lastWeekModelDailyGrowth'),
         left:'center'
     },
   tooltip: {
@@ -106,7 +107,7 @@ const option3 = {
   xAxis: [
     {
       type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: [t('common.monday'), t('common.tuesday'), t('common.wednesday'), t('common.thursday'), t('common.friday'), t('common.saturday'), t('common.sunday')],
       axisTick: {
         alignWithLabel: true
       }
@@ -119,7 +120,7 @@ const option3 = {
   ],
   series: [
     {
-      name: '增长量',
+      name: t('common.growth'),
       type: 'bar',
       barWidth: '60%',
       data: [13, 21, 20, 9, 14, 1, 3]
@@ -164,26 +165,26 @@ useEffect(()=>{
 
     return (
       <div className='modeBox'>
-      <h4>应用模块</h4>
+      <h4>{t('common.appMode')}</h4>
       <Row>
       <Col span={8}>
       <div className='colContent'>
-        <h5>数字资产</h5>
-        <p className='desc'>数字资产是指企业或组织拥有或控制的、能够带来经济利益的数据资源。它通过专业化处理（如清洗、分析、建模）将原始数据转化为可量化、可交易的价值形态。</p>
+        <h5>{t('common.digitalAsset')}</h5>
+        <p className='desc'>{t('common.digitalAssetDesc')}</p>
         <div id='chartBox_1' className='workbranch_chartBox'></div>
       </div>
       </Col>
       <Col span={8}>
       <div className='colContent'>
-        <h5>数据看板</h5>
-        <p className='desc'>数据看板是通过图形化手段展示数据关系、趋势和模式的工具，旨在降低理解门槛，辅助决策。</p>
+        <h5>{t('common.dataBoard')}</h5>
+        <p className='desc'>{t('common.dataBoardDesc')}</p>
         <div id='chartBox_2' className='workbranch_chartBox'></div>
       </div>
       </Col>
       <Col span={8}>
       <div className='colContent'>
-      <h5>模型构建</h5>
-        <p className='desc'>模型构建是利用数学、统计学和计算机科学方法，从海量数据中提取规律并构建预测或决策模型的过程。</p>
+      <h5>{t('common.modeBuild')}</h5>
+        <p className='desc'>{t('common.modeBuildDesc')}</p>
         <div id='chartBox_3' className='workbranch_chartBox'></div>
       </div>
       </Col>
