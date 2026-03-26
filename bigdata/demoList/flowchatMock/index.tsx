@@ -10,8 +10,12 @@ import { History } from '@antv/x6-plugin-history'  //历史记录插件
 import './index.less'
 import {Button} from 'antd'
 import {testData} from './data'
+import { useTranslation } from 'react-i18next'
+
+
 
 const Index:React.FC = ()=>{
+  const { t } = useTranslation()
 
   const [graphEntiry,setGraph] = useState(null)
 
@@ -96,7 +100,7 @@ graph
   .use(new History())   //启用历史记录
 
 const stencil = new Stencil({   //左侧的图例
-  title: '流程图',  //图例标题
+  title: t('chart.flowChart'),  //图例标题
   target: graph,  //图形类型
   stencilGraphWidth: 200,  //图例高度
   stencilGraphHeight: 180,  //图例宽度

@@ -24,6 +24,7 @@ interface RouteConfig {
   name: string;
   path: string;
   cname: string;
+  ename: string;
   element: React.ReactElement;
   children?: RouteConfig[]
 }
@@ -35,42 +36,49 @@ const routeList: RouteConfig[] = [
     name: "dashBoard",
     path: "/dashBoard",
     cname: "主页",
+    ename: "dashBoard",
     element: <DashBoard />,
     children: [
       {
         name: 'workbench',
         path: '/dashBoard/workbench',
         cname: '工作台',
+        ename: 'workbench',
         element: <WorkBench />
       },
       {
         name: 'property',
         path: '/dashBoard/property',
         cname: '数字资产',
+        ename: 'property',
         element: <Property />
       },
       {
         name: 'chart',
         path: '/dashBoard/chart',
         cname: '数据看板',
+        ename: 'chart',
         element: <Chart />
       },
       {
         name: 'modeBuild',
         path: '/dashBoard/modeBuild',
         cname: '模型构建',
+        ename: 'modeBuild',
         element: <ModeBuild />,
       },
       {
         name: 'fileMode',
         path: '/dashBoard/fileMode',
         cname: '大文件上传',
+        ename: 'fileMode',
         element: <FileMode />,
       },
       {
         name: 'readMe',
         path: '/dashBoard/readMe',
         cname: '说明文档',
+        ename: 'readMe',
         element: <ReadMe />,
       },
 
@@ -80,6 +88,7 @@ const routeList: RouteConfig[] = [
     name: "notFound",
     path: "*",
     cname: "空页面",
+    ename: "notFound",
     element: <NotFound />,
   },
 ];
@@ -90,6 +99,7 @@ if(!isSubAppFlag){
     name: "login",
     path: "/login",
     cname: "登录",
+    ename: "login",
     element: <Login />,
   })
 }
@@ -118,3 +128,4 @@ const RouterCom: React.FC = () => {
 };
 
 export default RouterCom;
+export { routeList };

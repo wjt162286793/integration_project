@@ -169,14 +169,12 @@ export const registerFun = () => {
 
 
 //创建图例整体函数
-export const createStencilHandler = (Stencil: Stencil, stencilDom: HTMLElement, graph: Graph, Graph: Graph) => {
+export const createStencilHandler = (Stencil: Stencil, stencilDom: HTMLElement, graph: Graph, Graph: Graph, t: (key: string) => string) => {
   registerFun()
-  const stencil: Stencil = createStencilLeftNav(Stencil, stencilDom, graph); //创建左侧容器
+  const stencil: Stencil = createStencilLeftNav(Stencil, stencilDom, graph, t);
 
-  //键盘快捷键绑定
   keyWordAddHandler(graph)
 
-  //鼠标移入节点显示连接端口
   graph.on('node:mouseenter', () => {
     const container = document.getElementById('graph-container')!
     const ports = container.querySelectorAll(
@@ -185,7 +183,6 @@ export const createStencilHandler = (Stencil: Stencil, stencilDom: HTMLElement, 
     showPorts(ports, true)
   })
 
-  //鼠标离开节点时隐藏连接端口
   graph.on('node:mouseleave', () => {
     const container = document.getElementById('graph-container')!
     const ports = container.querySelectorAll(
@@ -194,13 +191,11 @@ export const createStencilHandler = (Stencil: Stencil, stencilDom: HTMLElement, 
     showPorts(ports, false)
   })
 
-  createNodeAndPort(Graph)  //创建端口
+  createNodeAndPort(Graph)
 
-
-
-  const list1 = createGroup1(graph); //创建图例组1
-  const list2 = createGroup2(graph);  //创建图例组2
-  const list3 = createGroup3(graph); //创建图例组3
+  const list1 = createGroup1(graph, t);
+  const list2 = createGroup2(graph, t);
+  const list3 = createGroup3(graph, t);
 
   return {
     stencil: stencil,
@@ -211,80 +206,73 @@ export const createStencilHandler = (Stencil: Stencil, stencilDom: HTMLElement, 
 };
 
 //创建左侧容器
-export const createStencilLeftNav = (Stencil: Stencil, stencilDom: HTMLElement, graph: Graph) => {
+export const createStencilLeftNav = (Stencil: Stencil, stencilDom: HTMLElement, graph: Graph, t: (key: string) => string) => {
   const stencil = new Stencil({
-    //左侧的图例
-    title: "图例集合", //图例标题
-    target: graph, //图形类型
-    stencilGraphWidth: 200, //图例高度
-    stencilGraphHeight: 180, //图例宽度
-    collapsable: true, //可折叠
+    title: t('modeBuild.stencilCollection'),
+    target: graph,
+    stencilGraphWidth: 200,
+    stencilGraphHeight: 180,
+    collapsable: true,
     groups: [
-      //图例分组
       {
-        title: "多边形无状态图例",
+        title: t('modeBuild.polygonGroup'),
         name: "group1",
       },
       {
-        title: "状态图例",
+        title: t('modeBuild.statusGroup'),
         name: "group2",
         layoutOptions: {
-          //图形布局
-          columns: 1, //列数
+          columns: 1,
           columnWidth: 156,
-          rowHeight: 40, //行高
+          rowHeight: 40,
         },
       },
       {
-        title: "图案图例",
+        title: t('modeBuild.imageGroup'),
         name: "group3",
-        graphHeight: 250, //图形高度
+        graphHeight: 250,
         layoutOptions: {
-          //图形布局
-          rowHeight: 70, //行高
+          rowHeight: 70,
         },
       },
     ],
     layoutOptions: {
-      //布局选项
-      columns: 2, //列数
-      columnWidth: 80, //列宽
-      rowHeight: 55, //行高
+      columns: 2,
+      columnWidth: 80,
+      rowHeight: 55,
     },
   });
 
-  stencilDom!.appendChild(stencil.container); //将图例绑定到具体容器
+  stencilDom!.appendChild(stencil.container);
 
   return stencil;
 };
 
 //创建图例组1
-export const createGroup1 = (graph: Graph) => {
-  //定义多边形无状态图例节点
+export const createGroup1 = (graph: Graph, t: (key: string) => string) => {
   const r1 = graph.createNode({
     shape: "1-custom-rect",
     data: {
-      label: '椭圆',
+      label: t('modeBuild.ellipse'),
       desc: '',
       status: null
     },
-    label: '椭圆',
+    label: t('modeBuild.ellipse'),
     attrs: {
       body: {
         rx: 20,
         ry: 26,
       },
-
     },
   });
   const r2 = graph.createNode({
     shape: "1-custom-rect",
     data: {
-      label: '矩形',
+      label: t('modeBuild.rectangle'),
       desc: '',
       status: null
     },
-    label: '矩形',
+    label: t('modeBuild.rectangle'),
   });
   const r3 = graph.createNode({
     shape: "1-custom-rect",
@@ -295,11 +283,11 @@ export const createGroup1 = (graph: Graph) => {
       },
     },
     data: {
-      label: '圆角矩形',
+      label: t('modeBuild.roundedRectangle'),
       desc: '',
       status: null
     },
-    label: '圆角矩形',
+    label: t('modeBuild.roundedRectangle'),
   });
   const r4 = graph.createNode({
     shape: "1-custom-polygon",
@@ -309,11 +297,11 @@ export const createGroup1 = (graph: Graph) => {
       },
     },
     data: {
-      label: '菱形',
+      label: t('modeBuild.diamond'),
       desc: '',
       status: null
     },
-    label: '菱形',
+    label: t('modeBuild.diamond'),
   });
   const r5 = graph.createNode({
     shape: "1-custom-polygon",
@@ -323,33 +311,31 @@ export const createGroup1 = (graph: Graph) => {
       },
     },
     data: {
-      label: '平行四边',
+      label: t('modeBuild.parallelogram'),
       desc: '',
       status: null
     },
-    label: '平行四边',
+    label: t('modeBuild.parallelogram'),
   });
   const r6 = graph.createNode({
     shape: "1-custom-circle",
     data: {
-      label: '圆形',
+      label: t('modeBuild.circle'),
       desc: '',
       status: null
     },
-    label: '圆形',
+    label: t('modeBuild.circle'),
   });
 
   return [r1, r2, r3, r4, r5, r6]
-  //挂载多边形无状态图例节点
-
 };
 
 //创建图例组2
-export const createGroup2 = (graph: Graph) => {
+export const createGroup2 = (graph: Graph, t: (key: string) => string) => {
   const r1 = graph.createNode({
     shape: "2-start-rect",
     data: {
-      label: "起点节点",
+      label: t('modeBuild.startNode'),
       status: "success",
       desc: ''
     }
@@ -357,7 +343,7 @@ export const createGroup2 = (graph: Graph) => {
   const r2 = graph.createNode({
     shape: "2-status-rect",
     data: {
-      label: "中间节点",
+      label: t('modeBuild.middleNode'),
       status: "success",
       desc: ''
     }
@@ -365,7 +351,7 @@ export const createGroup2 = (graph: Graph) => {
   const r3 = graph.createNode({
     shape: "2-end-rect",
     data: {
-      label: "终点节点",
+      label: t('modeBuild.endNode'),
       status: "success",
       desc: ''
     }
@@ -373,7 +359,7 @@ export const createGroup2 = (graph: Graph) => {
   const r4 = graph.createNode({
     shape: "2-alone-rect",
     data: {
-      label: "孤立节点",
+      label: t('modeBuild.isolatedNode'),
       status: "success",
       desc: ''
     }
@@ -384,13 +370,12 @@ export const createGroup2 = (graph: Graph) => {
 }
 
 //创建图例组3
-export const createGroup3 = (graph: Graph) => {
-  //图片图例集合
+export const createGroup3 = (graph: Graph, t: (key: string) => string) => {
   const imageShapes = [
     {
-      label: "客户端",
+      label: t('modeBuild.client'),
       data: {
-        label: '客户端',
+        label: t('modeBuild.client'),
         status: null,
         desc: ''
       },
@@ -398,9 +383,9 @@ export const createGroup3 = (graph: Graph) => {
         "https://gw.alipayobjects.com/zos/bmw-prod/687b6cb9-4b97-42a6-96d0-34b3099133ac.svg",
     },
     {
-      label: "网络请求",
+      label: t('modeBuild.networkRequest'),
       data: {
-        label: '网络请求',
+        label: t('modeBuild.networkRequest'),
         status: null,
         desc: ''
       },
@@ -408,9 +393,9 @@ export const createGroup3 = (graph: Graph) => {
         "https://gw.alipayobjects.com/zos/bmw-prod/dc1ced06-417d-466f-927b-b4a4d3265791.svg",
     },
     {
-      label: "api接口",
+      label: t('modeBuild.apiInterface'),
       data: {
-        label: 'api接口',
+        label: t('modeBuild.apiInterface'),
         status: null,
         desc: ''
       },
@@ -418,9 +403,9 @@ export const createGroup3 = (graph: Graph) => {
         "https://gw.alipayobjects.com/zos/bmw-prod/c55d7ae1-8d20-4585-bd8f-ca23653a4489.svg",
     },
     {
-      label: "数据库",
+      label: t('modeBuild.database'),
       data: {
-        label: '数据库',
+        label: t('modeBuild.database'),
         status: null,
         desc: ''
       },
@@ -428,9 +413,9 @@ export const createGroup3 = (graph: Graph) => {
         "https://gw.alipayobjects.com/zos/bmw-prod/6eb71764-18ed-4149-b868-53ad1542c405.svg",
     },
     {
-      label: "云服务",
+      label: t('modeBuild.cloudService'),
       data: {
-        label: '云服务',
+        label: t('modeBuild.cloudService'),
         status: null,
         desc: ''
       },
@@ -438,9 +423,9 @@ export const createGroup3 = (graph: Graph) => {
         "https://gw.alipayobjects.com/zos/bmw-prod/c36fe7cb-dc24-4854-aeb5-88d8dc36d52e.svg",
     },
     {
-      label: "服务器",
+      label: t('modeBuild.server'),
       data: {
-        label: '服务器',
+        label: t('modeBuild.server'),
         status: null,
         desc: ''
       },
@@ -449,7 +434,6 @@ export const createGroup3 = (graph: Graph) => {
     },
   ];
 
-  //定义图片图例节点
   const imageNodes = imageShapes.map((item) =>
     graph.createNode({
       shape: "3-custom-image",
@@ -464,8 +448,6 @@ export const createGroup3 = (graph: Graph) => {
   );
 
   return imageNodes
-  //挂载图片图例节点
-
 };
 
 //四向端口数据

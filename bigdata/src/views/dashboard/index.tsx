@@ -1,42 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import './index.less';
 import { Menu,Button, Space } from 'antd';
 import { menuListType } from './type';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { routeList } from '@/router/index';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const Location = useLocation()
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const menuList: menuListType[] = [
-    {
-      key: 'workbench',
-      label: t('common.workbench'),
-    },
-    {
-      key: 'property',
-      label: t('common.property'),
-    },
-    {
-      key: 'chart',
-      label: t('common.chart'),
-    },
-    {
-      key: 'modeBuild',
-      label: t('common.modeBuild'),
-    },
-    {
-      key: 'fileMode',
-      label: t('common.fileMode'),
-    },
-    // {
-    //   key: 'readMe',
-    //   label: t('common.readMe'),
-    // },
-  ];
+  const menuList: menuListType[] = useMemo(() => {
+    const dashBoardRoute = routeList.find(item => item.name === 'dashBoard');
+    const children = dashBoardRoute?.children || [];
+    const visibleRoutes = children.filter(child => child.name !== 'readMe');
+    return visibleRoutes.map(child => ({
+      key: child.name,
+      label: i18n.language === 'zh-CN' ? child.cname : child.ename,
+    }));
+  }, [i18n.language]);
 
   const [selectedKeys, changeSelectedKeys] = useState<string[]>(['workbench'])
 
@@ -51,7 +35,6 @@ export default function Dashboard() {
     const routeName: string = pathList[pathList.length - 1]
     
     if (menuList.find(item => item.key === routeName)) {
-      console.log('进来了', routeName)
       changeSelectedKeys([routeName])
     }
     if(Location.pathname === '/dashBoard'){

@@ -5,7 +5,9 @@ import { Modal,Input, Button } from 'antd'
 import {cloneDeep} from 'lodash'
 import dataList from './data'
 import { GlobalContext } from '@/global/context';
+import { useTranslation } from 'react-i18next';
 export default function index(props) {
+    const { t } = useTranslation();
 
     
 
@@ -410,16 +412,16 @@ const globalText = useContext(GlobalContext)
                     }}
                 >
                     <li onClick={addNodeHandler}>
-                        新增成员
+                        {t('modeBuild.addMember')}
                     </li>
                     <li onClick={clearGraph}>
-                        清空画布
+                        {t('modeBuild.clearCanvas')}
                     </li>
                     <li onClick={getInfo}>
-                        保存
+                        {t('modeBuild.save')}
                     </li>
                     <li onClick={closeMenuHandler1}>
-                        关闭菜单
+                        {t('modeBuild.closeMenu')}
                     </li>
                 </ul>
             )}
@@ -434,13 +436,13 @@ const globalText = useContext(GlobalContext)
                     }}
                 >
                     <li onClick={openEditHandler}>
-                        编辑
+                        {t('modeBuild.edit')}
                     </li>
                     <li onClick={removeNodeHandler}>
-                        移除
+                        {t('modeBuild.remove')}
                     </li>
                     <li onClick={closeMenuHandler2}>
-                        关闭菜单
+                        {t('modeBuild.closeMenu')}
                     </li>
                 </ul>
             )}
@@ -455,31 +457,31 @@ const globalText = useContext(GlobalContext)
                     }}
                 >
                     <li onClick={removeEdgeHandler}>
-                        移除
+                        {t('modeBuild.remove')}
                     </li>
                     <li onClick={closeMenuHandler3}>
-                        关闭菜单
+                        {t('modeBuild.closeMenu')}
                     </li>
                 </ul>
             )}
         </div>
               <Modal
-        title="节点信息编辑"
+        title={t('modeBuild.nodeConfig')}
         open={editVisible}
         closable={false}
         footer={[
           <Button key="submit" type="primary" onClick={handleModalOk}>
-            保存
+            {t('modeBuild.save')}
           </Button>
         ]}
 
       >
         <div>
             <div>
-                职务: <Input placeholder="请输入职务" value={selectNodeData?.rank?.text} onChange={(event)=>changeInput(event,'rank')}/>
+                {t('modeBuild.position')}: <Input placeholder={t('modeBuild.pleaseEnterPosition')} value={selectNodeData?.rank?.text} onChange={(event)=>changeInput(event,'rank')}/>
             </div>
             <div>
-                姓名: <Input placeholder="请输入姓名" value={selectNodeData?.name?.text} onChange={(event)=>changeInput(event,'name')}/>
+                {t('modeBuild.name')}: <Input placeholder={t('modeBuild.pleaseEnterName')} value={selectNodeData?.name?.text} onChange={(event)=>changeInput(event,'name')}/>
             </div>
         </div>
       </Modal>

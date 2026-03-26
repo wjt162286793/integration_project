@@ -29,6 +29,7 @@ import {
 import { dataInfoItemType } from './type';
 import "./index.less";
 import { GlobalContext } from '@/global/context';
+import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 
@@ -37,6 +38,7 @@ interface X6EditorProps {
 }
 
 const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
+  const { t } = useTranslation();
   const [graphInstance, setGraphInstance] = useState<Graph | null>(null);
   const [selectNode, setSelectNode] = useState<Node | null>(null);
   const [selectNodeData, setSelectNodeData] = useState<Partial<dataInfoItemType> | null>(null);
@@ -124,7 +126,8 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
       Stencil,
       stencilContainer,
       graph,
-      Graph
+      Graph,
+      t
     );
     stencil.load(list1, "group1");
     stencil.load(list2, "group2");
@@ -211,7 +214,7 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     const dataJson = graphInstance.toJSON();
 
     console.log("图形信息:", { nodes, edges, dataJson });
-    message.success("图形信息已输出到控制台");
+    message.success(t('modeBuild.graphInfoOutput'));
   };
 
   // 节点操作
@@ -239,7 +242,7 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
 
   const handleModalOk = () => {
     if (!selectNodeData?.label?.trim()) {
-      message.warning('节点名称不能为空');
+      message.warning(t('modeBuild.nodeNameCannotBeEmpty'));
       return;
     }
 
@@ -263,25 +266,25 @@ const globalText = useContext(GlobalContext)
       <div id="graph-container" />
 
       <div className="operationDom">
-        <h4 className="title">节点操作</h4>
+        <h4 className="title">{t('modeBuild.nodeOperations')}</h4>
         <ul className="operationList">
-          <li><Button type="primary" size="small" onClick={() => allSelectHandler(graphInstance)}>全选</Button></li>
-          <li><Button type="primary" size="small" onClick={() => copyHandler(graphInstance)}>复制</Button></li>
-          <li><Button type="primary" size="small" onClick={() => cutHandler(graphInstance)}>剪切</Button></li>
-          <li><Button type="primary" size="small" onClick={() => pasteHandler(graphInstance)}>粘贴</Button></li>
-          <li><Button type="primary" size="small" onClick={() => removeHandler(graphInstance)}>移除</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => allSelectHandler(graphInstance)}>{t('modeBuild.selectAll')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => copyHandler(graphInstance)}>{t('modeBuild.copy')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => cutHandler(graphInstance)}>{t('modeBuild.cut')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => pasteHandler(graphInstance)}>{t('modeBuild.paste')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => removeHandler(graphInstance)}>{t('modeBuild.remove')}</Button></li>
         </ul>
 
-        <h4 className="title">画布操作</h4>
+        <h4 className="title">{t('modeBuild.canvasOperations')}</h4>
         <ul className="operationList">
-          <li><Button type="primary" size="small" onClick={() => rollbackHandler(graphInstance)}>回退</Button></li>
-          <li><Button type="primary" size="small" onClick={() => toBigHandler(graphInstance)}>放大</Button></li>
-          <li><Button type="primary" size="small" onClick={() => toSmallHandler(graphInstance)}>缩小</Button></li>
-          <li><Button type="primary" size="small" onClick={() => resetHandler(graphInstance)}>清空</Button></li>
-          <li><Button type="primary" size="small" onClick={getGraphInfo}>保存</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => rollbackHandler(graphInstance)}>{t('modeBuild.undo')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => toBigHandler(graphInstance)}>{t('modeBuild.zoomIn')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => toSmallHandler(graphInstance)}>{t('modeBuild.zoomOut')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={() => resetHandler(graphInstance)}>{t('modeBuild.clear')}</Button></li>
+          <li><Button className="operationBtn" type="primary" size="small" onClick={getGraphInfo}>{t('modeBuild.save')}</Button></li>
         </ul>
-
-        <Button type="primary" size="small" onClick={getGraphInfo}>获取信息</Button>
+        
+        {/* <Button className="operationBtn" type="primary" size="small" onClick={getGraphInfo}>{t('modeBuild.getInfo')}</Button> */}
       </div>
 
       {nodeMenuVisible && (
@@ -293,9 +296,9 @@ const globalText = useContext(GlobalContext)
             top: menuPosition.y,
           }}
         >
-          <li onClick={editNodeHandler}>编辑信息</li>
-          <li onClick={removeNodeHandler}>移除</li>
-          <li onClick={() => setNodeMenuVisible(false)}>关闭菜单</li>
+          <li onClick={editNodeHandler}>{t('modeBuild.editInfo')}</li>
+          <li onClick={removeNodeHandler}>{t('modeBuild.remove')}</li>
+          <li onClick={() => setNodeMenuVisible(false)}>{t('modeBuild.closeMenu')}</li>
         </ul>
       )}
       {edgeMenuVisible && (
@@ -307,34 +310,34 @@ const globalText = useContext(GlobalContext)
             top: menuPosition.y,
           }}
         >
-          <li onClick={removeEdgeHandler}>移除</li>
-          <li onClick={() => setEdgeMenuVisible(false)}>关闭菜单</li>
+          <li onClick={removeEdgeHandler}>{t('modeBuild.remove')}</li>
+          <li onClick={() => setEdgeMenuVisible(false)}>{t('modeBuild.closeMenu')}</li>
         </ul>
       )}
 
 
       <Modal
-        title="节点配置"
+        title={t('modeBuild.nodeConfig')}
         closable={false}
         open={isModalOpen}
         footer={[
           <Button key="submit" type="primary" onClick={handleModalOk}>
-            保存
+            {t('modeBuild.save')}
           </Button>
         ]}
       >
         <div>
-          节点名称:
+          {t('modeBuild.nodeName')}:
 
           <Input
             disabled={selectNode?.shape ? selectNode.shape[0] === '3' : false}
-            placeholder="节点名称不能为空"
+            placeholder={t('modeBuild.nodeNameCannotBeEmpty')}
             value={selectNodeData?.label || ''}
             onChange={(e) => handleInputChange(e, 'label')}
           />
         </div>
         <div>
-          节点简介:
+          {t('modeBuild.nodeDesc')}:
           <TextArea
             rows={4}
             value={selectNodeData?.desc || ''}
@@ -342,7 +345,7 @@ const globalText = useContext(GlobalContext)
           />
         </div>
         {selectNodeData?.status && (
-          <div>节点状态: {selectNodeData.status}</div>
+          <div>{t('modeBuild.nodeStatus')}: {selectNodeData.status}</div>
         )}
       </Modal>
     </div>

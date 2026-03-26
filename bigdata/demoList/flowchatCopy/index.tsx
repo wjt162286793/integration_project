@@ -5,10 +5,12 @@ import { register } from '@antv/x6-react-shape'
 import AlgoNode from './AlgoNode'
 import {NodeStatus} from './type'
 import {Button} from 'antd'
+import { useTranslation } from 'react-i18next'
 
 
 
 const FlowChat:React.FC = ()=> {
+  const { t } = useTranslation()
   
   //节点的上下连接端点的属性配置,节点的长度和高度
   register({
@@ -412,7 +414,7 @@ const showNodeStatus = async (statusList: NodeStatus[][]) => {
 
   return (
     <div>
-        <Button onClick={renderChart}>创建一个流程图</Button>
+        <Button onClick={renderChart}>{t('chart.createFlowChart')}</Button>
     <div id='container' className='container'>
       
     </div>
