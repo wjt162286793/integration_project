@@ -186,6 +186,7 @@ export default {
     server: '服务器'
   },
   property: {
+    create:'创建',
     title: '属性',
     basic: '基本属性',
     advanced: '高级属性',
@@ -231,9 +232,9 @@ export default {
     addBitcoinDigitalAsset: '新增一条比特币数字资产',
     createValueStreamSwimlane: '新建一条价值流泳道图',
     addProcurementFlowChart: '新增一条采购流程图',
-    todo: '待办中',
+    penging: '待办中',
     doing: '进行中',
-    done: '已完成',
+    end: '已完成',
     modelPublished: '模型已发布',
     digitalAssetAdded: '数字资产新增',
     chartStatisticsChanged: '图表统计变化',

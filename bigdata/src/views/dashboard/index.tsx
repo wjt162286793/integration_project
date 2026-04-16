@@ -30,7 +30,6 @@ export default function Dashboard() {
   };
 
   const initActiveKey = () => {
-    console.log(Location, '当前路由信息')
     const pathList = Location.pathname.split('/')
     const routeName: string = pathList[pathList.length - 1]
     
@@ -75,7 +74,7 @@ export default function Dashboard() {
                 style={{ flex: 1, minWidth: 0 }}
                 onClick={menuItemHandler}
               />
-              <Space style={{marginTop:'16px',marginRight:'16px'}}>
+              <Space style={{marginRight:'16px'}}>
                 <LanguageSwitcher />
                 <Button style={{color:'#fff'}} type='text' onClick={logoutHandler}>{t('common.logout')}</Button>
               </Space>

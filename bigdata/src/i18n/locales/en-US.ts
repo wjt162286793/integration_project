@@ -186,6 +186,7 @@ export default {
     server: 'Server'
   },
   property: {
+    create:'Create',
     title: 'Property',
     basic: 'Basic',
     advanced: 'Advanced',

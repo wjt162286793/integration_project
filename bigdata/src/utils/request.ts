@@ -3,7 +3,7 @@ const api_url = '/bigdataApi'
 
 // 判断当前环境
 const env_mode = import.meta.env.MODE;
-console.log(env_mode, 'env_mode的值');
+console.log(env_mode, '当前环境');
 
 // 检查是否通过主应用代理访问
 const isProxy = window.location.pathname.startsWith('/bigdata-sub-api');
@@ -36,12 +36,10 @@ const request = axios.create({
 })
 
 request.interceptors.request.use((config)=>{
-    console.log(config,'请求---')
     return config
 })
 
 request.interceptors.response.use((config)=>{
-    console.log(config,'响应---')
     return config.data
 })
 

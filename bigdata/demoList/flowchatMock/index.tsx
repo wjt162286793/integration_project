@@ -562,14 +562,14 @@ useEffect(()=>{
 },[])
 
 const getInfo = ()=>{
-   console.log(graphEntiry,'graph的实例')
+  //  console.log(graphEntiry,'graph的实例')
    const nodes = graphEntiry.getNodes()  //获取画布上的所有节点
    const edges = graphEntiry.getEdges()  //获取画布上的所有边
    const dataJson = graphEntiry.toJSON()   //获取画布的核心数据(关键api,用于存储和回显)
 
-   console.log(nodes,'节点信息')
-   console.log(edges,'边信息')
-   console.log(dataJson,'核心数据信息')
+  //  console.log(nodes,'节点信息')
+  //  console.log(edges,'边信息')
+  //  console.log(dataJson,'核心数据信息')
 
 }
 

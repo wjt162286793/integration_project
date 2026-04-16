@@ -85,7 +85,7 @@ const FileUploader: React.FC = () => {
 
 const api_url = '/bigdataApi';
 const env_mode = import.meta.env.MODE;
-console.log(env_mode, 'env_mode的值');
+console.log(env_mode, 'env_mode');
 
 // 检查是否在无界微前端环境中
 const isSubFlag = window.__POWERED_BY_WUJIE__;
@@ -156,7 +156,7 @@ const deleteHandler = (record)=>{
       },
     });
   
-    console.log(baseURL,'baseURL====')
+    console.log(baseURL,'baseURL')
     // 使用插件
     uppyRef.current
       .use(DragDrop, { target: dragDropRef.current!, note: t('fileMode.dragDropHint') })

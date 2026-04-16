@@ -140,7 +140,7 @@ const RightCom: React.FC = () => {
 
     const renderChart1 = () => {
         const chartDom = document.getElementById('item_chart_Box_4');
-        console.log(chartDom, '111')
+        console.log(chartDom, 'chartDom')
         const Chart = echarts.init(chartDom, 'dark');
         Chart.setOption(option1);
     }

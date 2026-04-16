@@ -801,7 +801,7 @@ export const clickEdgeHandler = ({ edge }: { edge: Edge }) => {
 
 //右键点击边的监控函数
 export const contextmenuEdgeHandler = ({ edge }: { edge: Edge }) => {
- console.log(edge,'边')
+//  console.log(edge,'边')
 
 };
 

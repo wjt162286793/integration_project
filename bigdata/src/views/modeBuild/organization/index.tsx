@@ -222,13 +222,13 @@ export default function index(props) {
 
     useEffect(()=>{
        if(modeId){
-         console.log(modeId,'modeId有值')
+        //  console.log(modeId,'modeId有值')
          if(graphEntity){
             
             drawerGraph()
          }
        }else{
-          console.log(modeId,'modeId无值')
+        //   console.log(modeId,'modeId无值')
           clearGraph()
        }
     },[modeId,graphEntity])
@@ -246,7 +246,7 @@ export default function index(props) {
         name: string,
         image: string,
     ) => {
-        console.log('新增',x,y)
+        // console.log('新增',x,y)
         setMenuVisible1(false)
         return graphEntity.addNode({
             x:x,
@@ -285,7 +285,7 @@ export default function index(props) {
     }
 
     const graphContextMenuHandler = (event) => {
-        console.log(event, '???')
+        // console.log(event, 'event')
         event.preventDefault();
         setMenuVisible1(true)
         let params = globalText.isSubAppFlag ? {x: event.clientX-272-200, y: event.clientY-76 } : {x: event.clientX-272, y: event.clientY-76 }
@@ -301,25 +301,23 @@ export default function index(props) {
 
     const addNodeHandler = () => {
         member(menuPosition?.x,menuPosition?.y,'职务','姓名',male)
-        
-        console.log(graphEntity,'???===')
+        // console.log(graphEntity,'graphEntity')
     }
     
     const getInfo = ()=>{
         const dataJson = graphEntity.toJSON();
-        console.log(dataJson,'dataJson===')
+        // console.log(dataJson,'dataJson')
         setMenuVisible1(false)
     }
 
     const openEditHandler = ()=>{
          setEditVisible(true)
          setMenuVisible2(false)
-         console.log(selectNode,'打开编辑')
+        //  console.log(selectNode,'打开编辑')
          setSelectNodeData(selectNode?.attrs)
     }
 
     const changeInput = (event,prop) =>{
-        console.log(selectNodeData,event.target.value,prop,'??')
         const newAttrs = cloneDeep(selectNodeData)
         newAttrs[prop].text = event.target.value
         setSelectNodeData(newAttrs)
