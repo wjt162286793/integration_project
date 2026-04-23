@@ -1,160 +1,207 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Table, Tag, Input, Button, Tabs } from 'antd';
-import type { TableProps } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Input, Button, Tabs, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { aiPropertyListApi, virtualAssetListApi } from '@/api'
+import AiList, { AiListRef } from './aiList'
+import VirtualList, { VirtualListRef } from './virtualList'
+import PhysicalList, { PhysicalListRef } from './physicalList'
+import { dictAiStatusApi, dictPhysicalCategoryApi, dictVirtualStatusApi, dictVirtualTypeApi } from '@/api'
 import './index.less'
 
-interface VirtualAssetItem{
-  id: string
-  symbol: string
-  name: string
-  chain: string
-  type: string
-  contract_address: string
-  decimals: number
-  current_price: number
-  price_change_24h: number
-  status: string
-  created_at: string
-  updated_at: string
-}
-
-interface AiPropertyItem{
-  id: string
-  cname: string
-  ename: string
-  type: string
-  level: number
-  tags: string
-  department_ename: string
-  update_time: string
-  create_time: string
-  remark: string
-  status: string
-  context_length: number
-}
+type DictItem = { value: string, label: string }
 
 const Index: React.FC = () => {
   const { t } = useTranslation();
   const [activeKey,setActiveKey] = useState<'ai' | 'virtual' | 'physical'>('virtual')
-  const [keyword,setKeyword] = useState('')
-  const [loading,setLoading] = useState(false)
-  const [virtualList,setVirtualList] = useState<VirtualAssetItem[]>([])
-  const [aiList,setAiList] = useState<AiPropertyItem[]>([])
+  const [aiQuery,setAiQuery] = useState({ id:'', name:'', level:'', tags:'', status:'' })
+  const [virtualQuery,setVirtualQuery] = useState({ id:'', name:'', status:'', type:'' })
+  const [physicalQuery,setPhysicalQuery] = useState({ id:'', name:'', category:'' })
+  const [aiFilters,setAiFilters] = useState({ id:'', name:'', level:'', tags:'', status:'' })
+  const [virtualFilters,setVirtualFilters] = useState({ id:'', name:'', status:'', type:'' })
+  const [physicalFilters,setPhysicalFilters] = useState({ id:'', name:'', category:'' })
 
-  const fetchVirtualList = async ()=>{
-    setLoading(true)
-    const res:any = await virtualAssetListApi({})
-    if(res && res.code === 200 && Array.isArray(res.data)){
-      setVirtualList(res.data)
-    }else{
-      setVirtualList([])
-    }
-    setLoading(false)
-  }
-
-  const fetchAiList = async ()=>{
-    setLoading(true)
-    const res:any = await aiPropertyListApi({})
-    if(res && res.code === 200 && Array.isArray(res.data)){
-      setAiList(res.data)
-    }else{
-      setAiList([])
-    }
-    setLoading(false)
-  }
+  const [aiStatusList,setAiStatusList] = useState<DictItem[]>([])
+  const [virtualStatusList,setVirtualStatusList] = useState<DictItem[]>([])
+  const [virtualTypeList,setVirtualTypeList] = useState<DictItem[]>([])
+  const [physicalCategoryList,setPhysicalCategoryList] = useState<DictItem[]>([])
+  const aiRef = useRef<AiListRef>(null)
+  const virtualRef = useRef<VirtualListRef>(null)
+  const physicalRef = useRef<PhysicalListRef>(null)
 
   useEffect(()=>{
-    if(activeKey === 'virtual'){
-      fetchVirtualList()
-    }
+    dictAiStatusApi({}).then((res:any)=>{
+      if(res && res.code === 200 && Array.isArray(res.data)) setAiStatusList(res.data)
+    })
+    dictVirtualStatusApi({}).then((res:any)=>{
+      if(res && res.code === 200 && Array.isArray(res.data)) setVirtualStatusList(res.data)
+    })
+    dictVirtualTypeApi({}).then((res:any)=>{
+      if(res && res.code === 200 && Array.isArray(res.data)) setVirtualTypeList(res.data)
+    })
+    dictPhysicalCategoryApi({}).then((res:any)=>{
+      if(res && res.code === 200 && Array.isArray(res.data)) setPhysicalCategoryList(res.data)
+    })
+  },[])
+
+  const onSearch = ()=>{
     if(activeKey === 'ai'){
-      fetchAiList()
+      setAiFilters({ ...aiQuery })
+      return
     }
-  },[activeKey])
+    if(activeKey === 'virtual'){
+      setVirtualFilters({ ...virtualQuery })
+      return
+    }
+    setPhysicalFilters({ ...physicalQuery })
+  }
 
-  const virtualTableData = useMemo(()=>{
-    const kw = keyword.trim().toLowerCase()
-    if(!kw) return virtualList
-    return virtualList.filter(item=>{
-      return String(item.name || '').toLowerCase().includes(kw) || String(item.symbol || '').toLowerCase().includes(kw)
-    })
-  },[keyword,virtualList])
+  const onReset = ()=>{
+    const nextAi = { id:'', name:'', level:'', tags:'', status:'' }
+    const nextVirtual = { id:'', name:'', status:'', type:'' }
+    const nextPhysical = { id:'', name:'', category:'' }
+    setAiQuery(nextAi)
+    setVirtualQuery(nextVirtual)
+    setPhysicalQuery(nextPhysical)
+    setAiFilters(nextAi)
+    setVirtualFilters(nextVirtual)
+    setPhysicalFilters(nextPhysical)
+  }
 
-  const aiTableData = useMemo(()=>{
-    const kw = keyword.trim().toLowerCase()
-    if(!kw) return aiList
-    return aiList.filter(item=>{
-      return String(item.cname || '').toLowerCase().includes(kw) || String(item.ename || '').toLowerCase().includes(kw)
-    })
-  },[keyword,aiList])
+  const onEnterSearch = (e:any)=>{
+    if(e && e.key === 'Enter'){
+      onSearch()
+    }
+  }
 
-  const virtualColumns: TableProps<VirtualAssetItem>['columns'] = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Symbol', dataIndex: 'symbol', key: 'symbol' },
-    { title: t('property.name'), dataIndex: 'name', key: 'name' },
-    { title: 'Chain', dataIndex: 'chain', key: 'chain' },
-    { title: 'Type', dataIndex: 'type', key: 'type' },
-    { title: 'Contract', dataIndex: 'contract_address', key: 'contract_address' },
-    { title: 'Decimals', dataIndex: 'decimals', key: 'decimals' },
-    { title: 'Price', dataIndex: 'current_price', key: 'current_price' },
-    { title: '24h%', dataIndex: 'price_change_24h', key: 'price_change_24h' },
-    { title: t('property.status'), dataIndex: 'status', key: 'status' },
-    { title: t('property.createTime'), dataIndex: 'created_at', key: 'created_at' },
-    { title: t('property.updateTime'), dataIndex: 'updated_at', key: 'updated_at' },
-  ];
-
-  const aiColumns: TableProps<AiPropertyItem>['columns'] = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'CName', dataIndex: 'cname', key: 'cname' },
-    { title: 'EName', dataIndex: 'ename', key: 'ename' },
-    { title: 'Type', dataIndex: 'type', key: 'type' },
-    { title: t('property.level'), dataIndex: 'level', key: 'level' },
-    {
-      title: t('property.tags'),
-      dataIndex: 'tags',
-      key: 'tags',
-      render: (val)=>{
-        const tags = typeof val === 'string' ? val.split(',').map(s=>s.trim()).filter(Boolean) : []
-        return (
-          <>
-            {tags.map((tag)=>(
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </>
-        )
-      }
-    },
-    { title: 'Department', dataIndex: 'department_ename', key: 'department_ename' },
-    { title: t('property.status'), dataIndex: 'status', key: 'status' },
-    { title: 'Context', dataIndex: 'context_length', key: 'context_length' },
-    { title: 'Remark', dataIndex: 'remark', key: 'remark' },
-    { title: t('property.createTime'), dataIndex: 'create_time', key: 'create_time' },
-    { title: t('property.updateTime'), dataIndex: 'update_time', key: 'update_time' },
-  ];
+  const onAdd = ()=>{
+    if(activeKey === 'ai'){
+      aiRef.current?.openCreate()
+      return
+    }
+    if(activeKey === 'virtual'){
+      virtualRef.current?.openCreate()
+      return
+    }
+    physicalRef.current?.openCreate()
+  }
 
   return (<>
     <Tabs
       activeKey={activeKey}
       onChange={(key)=>setActiveKey(key as any)}
       items={[
-        { key: 'ai', label: 'AI资产' },
-        { key: 'virtual', label: '虚拟资产' },
-        { key: 'physical', label: '实体资产' }
+        { key: 'ai', label: t('property.tabAi') },
+        { key: 'virtual', label: t('property.tabVirtual') },
+        { key: 'physical', label: t('property.tabPhysical') }
       ]}
     />
-    {activeKey !== 'physical' && (
-      <div className='searchBox'>
-        <span className='searchLabel'>{t('property.searchAssetName')}</span>
-        <Input placeholder={t('property.enterAssetName')} value={keyword} onChange={(e)=>setKeyword(e.target.value)} className='searchItem' />
-        <Button className='searchBtn' type='primary'>{t('property.search')}</Button>
+    <div className='searchBox'>
+      {activeKey === 'ai' && (
+        <>
+          <span className='searchLabel'>{t('property.id')}</span>
+          <Input placeholder={t('property.placeholderId')} value={aiQuery.id} onChange={(e)=>setAiQuery({...aiQuery,id:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.name')}</span>
+          <Input placeholder={t('property.placeholderName')} value={aiQuery.name} onChange={(e)=>setAiQuery({...aiQuery,name:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.level')}</span>
+          <Select
+            value={aiQuery.level || undefined}
+            onChange={(val)=>{
+              const next = { ...aiQuery, level: val || '' }
+              setAiQuery(next)
+              setAiFilters(next)
+            }}
+            placeholder={t('property.placeholderLevel')}
+            allowClear
+            className='searchItem'
+            options={[
+              { value: '1', label: '1' },
+              { value: '2', label: '2' },
+              { value: '3', label: '3' },
+            ]}
+          />
+          <span className='searchLabel'>{t('property.tags')}</span>
+          <Input placeholder={t('property.placeholderTags')} value={aiQuery.tags} onChange={(e)=>setAiQuery({...aiQuery,tags:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.status')}</span>
+          <Select
+            value={aiQuery.status || undefined}
+            onChange={(val)=>{
+              const next = { ...aiQuery, status: val || '' }
+              setAiQuery(next)
+              setAiFilters(next)
+            }}
+            placeholder={t('property.status')}
+            allowClear
+            className='searchItem'
+            options={aiStatusList.map(item=>({ value: item.value, label: item.label }))}
+          />
+        </>
+      )}
+      {activeKey === 'virtual' && (
+        <>
+          <span className='searchLabel'>{t('property.id')}</span>
+          <Input placeholder={t('property.placeholderId')} value={virtualQuery.id} onChange={(e)=>setVirtualQuery({...virtualQuery,id:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.name')}</span>
+          <Input placeholder={t('property.placeholderName')} value={virtualQuery.name} onChange={(e)=>setVirtualQuery({...virtualQuery,name:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.status')}</span>
+          <Select
+            value={virtualQuery.status || undefined}
+            onChange={(val)=>{
+              const next = { ...virtualQuery, status: val || '' }
+              setVirtualQuery(next)
+              setVirtualFilters(next)
+            }}
+            placeholder={t('property.status')}
+            allowClear
+            className='searchItem'
+            options={virtualStatusList.map(item=>({ value: item.value, label: item.label }))}
+          />
+          <span className='searchLabel'>{t('property.assetType')}</span>
+          <Select
+            value={virtualQuery.type || undefined}
+            onChange={(val)=>{
+              const next = { ...virtualQuery, type: val || '' }
+              setVirtualQuery(next)
+              setVirtualFilters(next)
+            }}
+            placeholder={t('property.placeholderType')}
+            allowClear
+            className='searchItem'
+            options={virtualTypeList.map(item=>({ value: item.value, label: item.label }))}
+          />
+        </>
+      )}
+      {activeKey === 'physical' && (
+        <>
+          <span className='searchLabel'>{t('property.id')}</span>
+          <Input placeholder={t('property.placeholderId')} value={physicalQuery.id} onChange={(e)=>setPhysicalQuery({...physicalQuery,id:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.name')}</span>
+          <Input placeholder={t('property.placeholderName')} value={physicalQuery.name} onChange={(e)=>setPhysicalQuery({...physicalQuery,name:e.target.value})} onKeyDown={onEnterSearch} className='searchItem' />
+          <span className='searchLabel'>{t('property.category')}</span>
+          <Select
+            value={physicalQuery.category || undefined}
+            onChange={(val)=>{
+              const next = { ...physicalQuery, category: val || '' }
+              setPhysicalQuery(next)
+              setPhysicalFilters(next)
+            }}
+            placeholder={t('property.placeholderCategory')}
+            allowClear
+            className='searchItem'
+            options={physicalCategoryList.map(item=>({ value: item.value, label: item.label }))}
+          />
+        </>
+      )}
+      <div className='searchActions'>
+        <Button className='searchBtn' type='primary' onClick={onSearch}>{t('common.search')}</Button>
+        <Button className='resetBtn' onClick={onReset}>{t('common.reset')}</Button>
       </div>
-    )}
+      <div className='addAction'>
+        <Button className='addBtn' type='primary' onClick={onAdd}>{t('common.add')}</Button>
+      </div>
+    </div>
     <div className='tableBox'>
-      {activeKey === 'virtual' && <Table<VirtualAssetItem> loading={loading} columns={virtualColumns} dataSource={virtualTableData} rowKey='id' />}
-      {activeKey === 'ai' && <Table<AiPropertyItem> loading={loading} columns={aiColumns} dataSource={aiTableData} rowKey='id' />}
-      {activeKey === 'physical' && <div />}
+      {activeKey === 'virtual' && <VirtualList ref={virtualRef} filters={virtualFilters} />}
+      {activeKey === 'ai' && <AiList ref={aiRef} filters={aiFilters} />}
+      {activeKey === 'physical' && <PhysicalList ref={physicalRef} filters={physicalFilters} />}
     </div>
   </>)
 }

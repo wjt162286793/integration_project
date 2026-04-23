@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState,useContext } from 'react'
+import React, { useEffect, useState,useContext } from 'react'
 import { Graph, Node, Point, Shape, Cell } from '@antv/x6'
 import './index.less'
 import { Modal,Input, Button } from 'antd'
@@ -6,6 +6,7 @@ import {cloneDeep} from 'lodash'
 import dataList from './data'
 import { GlobalContext } from '@/global/context';
 import { useTranslation } from 'react-i18next';
+import { modeBuildOrgDetailApi, modeBuildOrgSaveApi } from '@/api'
 export default function index(props) {
     const { t } = useTranslation();
 
@@ -143,9 +144,7 @@ export default function index(props) {
         )
     }
 
-    initFun()
-
-    const [graphEntity, setGraphEntity] = useState<Cell | null>(null)
+    const [graphEntity, setGraphEntity] = useState<Graph | null>(null)
 
     const createGraph = () => {
         const graph = new Graph({
@@ -211,24 +210,34 @@ export default function index(props) {
     const [selectEdge,setSelectEdge] = useState<Cell | null>(null)
  
     useEffect(() => {
+        initFun()
         createGraph()
     }, [])
 
 
-    useLayoutEffect(()=>{
-        setModeId(props.id)
-    })
+    useEffect(()=>{
+        setModeId(props.id || null)
+    },[props.id])
 
 
     useEffect(()=>{
+       if(!graphEntity) return
        if(modeId){
-        //  console.log(modeId,'modeId有值')
-         if(graphEntity){
-            
-            drawerGraph()
-         }
+        modeBuildOrgDetailApi({ id: modeId }).then((res:any)=>{
+            if(res && res.code === 200 && res.data){
+                const graphJson = res.data.graph_json
+                if(graphJson && Array.isArray(graphJson.cells)){
+                    try{
+                        graphEntity.fromJSON(graphJson)
+                    }catch(e){
+                        drawerGraph()
+                    }
+                }else{
+                    drawerGraph()
+                }
+            }
+        })
        }else{
-        //   console.log(modeId,'modeId无值')
           clearGraph()
        }
     },[modeId,graphEntity])
@@ -248,7 +257,7 @@ export default function index(props) {
     ) => {
         // console.log('新增',x,y)
         setMenuVisible1(false)
-        return graphEntity.addNode({
+        return graphEntity?.addNode({
             x:x,
             y:y,
             shape: 'org-node',
@@ -272,7 +281,7 @@ export default function index(props) {
         })
     }
     const link = (source: Node, target: Node, vertices: Point.PointLike[]) => {
-        return graphEntity.addEdge({
+        return graphEntity?.addEdge({
             vertices,
             source: {
                 cell: source,
@@ -300,13 +309,23 @@ export default function index(props) {
     }
 
     const addNodeHandler = () => {
+        if(!graphEntity) return
         member(menuPosition?.x,menuPosition?.y,'职务','姓名',male)
         // console.log(graphEntity,'graphEntity')
     }
     
     const getInfo = ()=>{
+        if(!graphEntity) return
+        if(!modeId){
+            setMenuVisible1(false)
+            return
+        }
         const dataJson = graphEntity.toJSON();
-        // console.log(dataJson,'dataJson')
+        modeBuildOrgSaveApi({ id: modeId, graph_json: dataJson }).then((res:any)=>{
+            if(res && res.code === 200){
+                setMenuVisible1(false)
+            }
+        })
         setMenuVisible1(false)
     }
 
@@ -333,12 +352,12 @@ export default function index(props) {
         setMenuVisible1(false)
     }
     const removeNodeHandler = ()=>{
-        graphEntity.removeCell(selectNode)
+        graphEntity?.removeCell(selectNode)
         setMenuVisible2(false)
     }
 
     const removeEdgeHandler = ()=>{
-        graphEntity.removeCell(selectEdge)
+        graphEntity?.removeCell(selectEdge)
         setMenuVisible3(false)
     }
     const closeMenuHandler3 = ()=>{
@@ -347,9 +366,8 @@ export default function index(props) {
 
 const drawerGraph = () => {
     const dataInfo = dataList.find(item => item.name === modeId);
-    console.log(dataInfo, '数据信息');
     const cells = [];
-    graphEntity.clearCells();
+    graphEntity?.clearCells();
  
     // 存储所有创建的节点，以便后续创建边时使用
     const nodeMap = new Map();
@@ -364,8 +382,10 @@ const drawerGraph = () => {
                 item.attrs.name?.text,
                 item.attrs.avatar['xlink:href']
             );
-            nodeMap.set(item.id, nodeItem); // 将节点存储到 Map 中
-            cells.push(nodeItem);
+            if(nodeItem){
+                nodeMap.set(item.id, nodeItem);
+                cells.push(nodeItem);
+            }
         }
     });
  
@@ -376,7 +396,7 @@ const drawerGraph = () => {
             const targetNode = nodeMap.get(item.target.cell);
  
             if (sourceNode && targetNode) {
-                const edge = graphEntity.addEdge({
+                const edge = graphEntity?.addEdge({
                     source: {
                         cell: sourceNode,
                         port: item.source.port
@@ -389,7 +409,9 @@ const drawerGraph = () => {
                     zIndex: item.zIndex,
                     id: item.id
                 });
-                cells.push(edge);
+                if(edge){
+                    cells.push(edge);
+                }
             }
         }
     });

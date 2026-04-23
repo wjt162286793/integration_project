@@ -49,7 +49,7 @@ const routeList: RouteConfig[] = [
       {
         name: 'property',
         path: '/dashBoard/property',
-        cname: '数字资产',
+        cname: '资产管理',
         ename: 'property',
         element: <Property />
       },

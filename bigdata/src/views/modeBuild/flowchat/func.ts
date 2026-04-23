@@ -794,6 +794,42 @@ export const contextmenuNodeHandler = (event, setNode, setNodeData, setNodeMenuV
 
 }
 
+export const applyFlowNodeStyle = (node: Node, status?: string) => {
+  const s = status || 'default'
+  const map: any = {
+    default: { stroke: '#5F95FF', fill: '#EFF4FF', text: '#262626' },
+    pending: { stroke: '#8c8c8c', fill: '#f5f5f5', text: '#262626' },
+    running: { stroke: '#1677ff', fill: '#e6f4ff', text: '#1677ff' },
+    success: { stroke: '#52c41a', fill: '#f6ffed', text: '#52c41a' },
+    failed: { stroke: '#ff4d4f', fill: '#fff2f0', text: '#ff4d4f' },
+    skipped: { stroke: '#faad14', fill: '#fffbe6', text: '#faad14' }
+  }
+  const style = map[s] || map.default
+  try {
+    node.attr('body/stroke', style.stroke)
+    node.attr('body/fill', style.fill)
+  } catch (e) {}
+  try {
+    node.attr('text/fill', style.text)
+  } catch (e) {}
+  try {
+    node.attr('label/fill', style.text)
+  } catch (e) {}
+}
+
+export const applyFlowNodeLabel = (node: Node, label?: string) => {
+  const text = label || ''
+  try {
+    node.attr('text/text', text)
+  } catch (e) {}
+  try {
+    node.attr('label/text', text)
+  } catch (e) {}
+  try {
+    node.label = text as any
+  } catch (e) {}
+}
+
 //左键点击边的监控函数
 export const clickEdgeHandler = ({ edge }: { edge: Edge }) => {
 
@@ -842,7 +878,22 @@ export const contextmenuEdgeHandler = ({ edge }: { edge: Edge }) => {
 
 
 export const addNodeHandler = ({ node }: { node: Node }) => {
-  node.label = node.data.label
+  const data: any = node.getData ? node.getData() : (node as any).data
+  const label =
+    (data && data.label) ||
+    (node.attr && (node.attr('text/text') as any)) ||
+    (node.attr && (node.attr('label/text') as any)) ||
+    ''
+  const desc = data && data.desc ? data.desc : ''
+  const status = data && data.status ? data.status : 'default'
+  const next = { ...(data || {}), label, desc, status }
+  try {
+    node.setData(next)
+  } catch (e) {
+    ;(node as any).data = next
+  }
+  applyFlowNodeLabel(node, label)
+  applyFlowNodeStyle(node, status)
 
 
 

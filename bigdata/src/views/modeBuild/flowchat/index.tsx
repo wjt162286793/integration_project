@@ -7,7 +7,7 @@ import { Snapline } from "@antv/x6-plugin-snapline";
 import { Keyboard } from "@antv/x6-plugin-keyboard";
 import { Clipboard } from "@antv/x6-plugin-clipboard";
 import { History } from "@antv/x6-plugin-history";
-import { Button, Modal, Input, message } from "antd";
+import { Button, Modal, Input, message, Select } from "antd";
 import { cloneDeep } from 'lodash';
 import { dataLists } from "./data";
 import {
@@ -30,11 +30,13 @@ import { dataInfoItemType } from './type';
 import "./index.less";
 import { GlobalContext } from '@/global/context';
 import { useTranslation } from 'react-i18next';
+import { modeBuildFlowDetailApi, modeBuildFlowSaveApi } from '@/api';
+import { applyFlowNodeLabel, applyFlowNodeStyle } from './func';
 
 const { TextArea } = Input;
 
 interface X6EditorProps {
-  id?: string;
+  id?: string | null;
 }
 
 const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
@@ -47,6 +49,20 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
   const [edgeMenuVisible, setEdgeMenuVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [statusSummary, setStatusSummary] = useState<Record<string, number>>({})
+
+  const calcStatusSummary = (graph: Graph | null) => {
+    if (!graph) return
+    const nodes = graph.getNodes()
+    const m: Record<string, number> = { default: 0, pending: 0, running: 0, success: 0, failed: 0, skipped: 0 }
+    nodes.forEach((n) => {
+      const d: any = n.getData ? n.getData() : (n as any).data
+      const s = d && d.status ? String(d.status) : 'default'
+      if (m[s] === undefined) m[s] = 0
+      m[s] += 1
+    })
+    setStatusSummary(m)
+  }
 
   // 初始化图形实例
   const initGraph = (): Graph => {
@@ -162,8 +178,18 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     initStencil(graph);
 
     // 注册事件
-    graph.on("node:added", ({ node }) => addNodeHandler({ node }));
+    graph.on("node:added", ({ node }) => {
+      addNodeHandler({ node })
+      calcStatusSummary(graph)
+    });
     graph.on("edge:added", addEdgeHandler);
+    graph.on("node:removed", () => calcStatusSummary(graph));
+    graph.on("node:change:data", ({ node }) => {
+      const d: any = node.getData ? node.getData() : (node as any).data
+      applyFlowNodeStyle(node, d && d.status ? d.status : 'default')
+      calcStatusSummary(graph)
+    })
+    graph.on("edge:removed", () => calcStatusSummary(graph));
     graph.on("node:contextmenu", (event) => {
       setEdgeMenuVisible(false)
       contextmenuNodeHandler(
@@ -198,23 +224,50 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
   // 数据加载效果
   useEffect(() => {
     if (!isReady || !graphInstance) return;
-
-    const data = id
-      ? dataLists.find(item => item.id === id)?.data
-      : [];
-    drawData(graphInstance, data);
+    if (!id) {
+      drawData(graphInstance, []);
+      calcStatusSummary(graphInstance)
+      return;
+    }
+    modeBuildFlowDetailApi({ id }).then((res: any) => {
+      if (res && res.code === 200 && res.data) {
+        const graphJson = res.data.graph_json
+        if (graphJson && Array.isArray(graphJson.cells)) {
+          try {
+            graphInstance.fromJSON(graphJson)
+            graphInstance.getNodes().forEach((n) => {
+              const d: any = n.getData ? n.getData() : (n as any).data
+              applyFlowNodeStyle(n, d && d.status ? d.status : 'default')
+              applyFlowNodeLabel(n, d && d.label ? d.label : '')
+            })
+            calcStatusSummary(graphInstance)
+          } catch (e) {
+            const data = dataLists.find(item => item.id === id)?.data || []
+            drawData(graphInstance, data)
+            calcStatusSummary(graphInstance)
+          }
+        } else {
+          const data = dataLists.find(item => item.id === id)?.data || []
+          drawData(graphInstance, data)
+          calcStatusSummary(graphInstance)
+        }
+      }
+    })
   }, [id, isReady, graphInstance]);
 
   // 获取图形信息
   const getGraphInfo = () => {
     if (!graphInstance) return;
-
-    const nodes = graphInstance.getNodes();
-    const edges = graphInstance.getEdges();
+    if (!id) {
+      message.warning(t('modeBuild.emptyTitle'))
+      return
+    }
     const dataJson = graphInstance.toJSON();
-
-    console.log("图形信息:", { nodes, edges, dataJson });
-    message.success(t('modeBuild.graphInfoOutput'));
+    modeBuildFlowSaveApi({ id, graph_json: dataJson }).then((res: any) => {
+      if (res && res.code === 200) {
+        message.success(t('modeBuild.save'))
+      }
+    })
   };
 
   // 节点操作
@@ -247,7 +300,11 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     }
 
     if (selectNode && selectNodeData) {
-      selectNode.setData(selectNodeData);
+      const next = cloneDeep(selectNodeData)
+      if (!next.status) next.status = 'default'
+      selectNode.setData(next);
+      applyFlowNodeLabel(selectNode, next.label)
+      applyFlowNodeStyle(selectNode, next.status)
       setIsModalOpen(false);
     }
   };
@@ -260,6 +317,17 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     setSelectNodeData(newData);
   };
 const globalText = useContext(GlobalContext)
+
+  const setStatus = (status: string) => {
+    if (!selectNode) return
+    const d: any = selectNode.getData ? selectNode.getData() : (selectNode as any).data
+    const next = { ...(d || {}), status }
+    selectNode.setData(next)
+    setSelectNodeData(next)
+    applyFlowNodeStyle(selectNode, status)
+    setNodeMenuVisible(false)
+  }
+
   return (
     <div id="container" className={globalText?.isSubAppFlag?'container_subApp':'container'}>
       <div id="stencil" />
@@ -283,6 +351,16 @@ const globalText = useContext(GlobalContext)
           <li><Button className="operationBtn" type="primary" size="small" onClick={() => resetHandler(graphInstance)}>{t('modeBuild.clear')}</Button></li>
           <li><Button className="operationBtn" type="primary" size="small" onClick={getGraphInfo}>{t('modeBuild.save')}</Button></li>
         </ul>
+
+        <h4 className="title">{t('modeBuild.statusSummary')}</h4>
+        <ul className="operationList">
+          <li>{t('modeBuild.statusDefault')}: {statusSummary.default || 0}</li>
+          <li>{t('modeBuild.statusPending')}: {statusSummary.pending || 0}</li>
+          <li>{t('modeBuild.statusRunning')}: {statusSummary.running || 0}</li>
+          <li>{t('modeBuild.statusSuccess')}: {statusSummary.success || 0}</li>
+          <li>{t('modeBuild.statusFailed')}: {statusSummary.failed || 0}</li>
+          <li>{t('modeBuild.statusSkipped')}: {statusSummary.skipped || 0}</li>
+        </ul>
         
         {/* <Button className="operationBtn" type="primary" size="small" onClick={getGraphInfo}>{t('modeBuild.getInfo')}</Button> */}
       </div>
@@ -297,6 +375,12 @@ const globalText = useContext(GlobalContext)
           }}
         >
           <li onClick={editNodeHandler}>{t('modeBuild.editInfo')}</li>
+          <li onClick={() => setStatus('pending')}>{t('modeBuild.setStatusPending')}</li>
+          <li onClick={() => setStatus('running')}>{t('modeBuild.setStatusRunning')}</li>
+          <li onClick={() => setStatus('success')}>{t('modeBuild.setStatusSuccess')}</li>
+          <li onClick={() => setStatus('failed')}>{t('modeBuild.setStatusFailed')}</li>
+          <li onClick={() => setStatus('skipped')}>{t('modeBuild.setStatusSkipped')}</li>
+          <li onClick={() => setStatus('default')}>{t('modeBuild.clearStatus')}</li>
           <li onClick={removeNodeHandler}>{t('modeBuild.remove')}</li>
           <li onClick={() => setNodeMenuVisible(false)}>{t('modeBuild.closeMenu')}</li>
         </ul>
@@ -330,7 +414,6 @@ const globalText = useContext(GlobalContext)
           {t('modeBuild.nodeName')}:
 
           <Input
-            disabled={selectNode?.shape ? selectNode.shape[0] === '3' : false}
             placeholder={t('modeBuild.nodeNameCannotBeEmpty')}
             value={selectNodeData?.label || ''}
             onChange={(e) => handleInputChange(e, 'label')}
@@ -344,9 +427,27 @@ const globalText = useContext(GlobalContext)
             onChange={(e) => handleInputChange(e, 'desc')}
           />
         </div>
-        {selectNodeData?.status && (
-          <div>{t('modeBuild.nodeStatus')}: {selectNodeData.status}</div>
-        )}
+        <div>
+          {t('modeBuild.nodeStatus')}:
+          <Select
+            style={{ width: '100%', marginTop: 8 }}
+            value={selectNodeData?.status || 'default'}
+            options={[
+              { value: 'default', label: t('modeBuild.statusDefault') },
+              { value: 'pending', label: t('modeBuild.statusPending') },
+              { value: 'running', label: t('modeBuild.statusRunning') },
+              { value: 'success', label: t('modeBuild.statusSuccess') },
+              { value: 'failed', label: t('modeBuild.statusFailed') },
+              { value: 'skipped', label: t('modeBuild.statusSkipped') }
+            ]}
+            onChange={(val) => {
+              if (!selectNodeData) return
+              const next = cloneDeep(selectNodeData)
+              next.status = val
+              setSelectNodeData(next)
+            }}
+          />
+        </div>
       </Modal>
     </div>
   );

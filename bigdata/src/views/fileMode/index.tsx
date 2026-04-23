@@ -5,7 +5,7 @@ import DragDrop from '@uppy/drag-drop';
 import StatusBar from '@uppy/status-bar';
 import Tus from '@uppy/tus';
 import { useTranslation } from 'react-i18next';
-import {fileListApi,savehashTofileApi,deleteFileApi} from '@/api/index'
+import {fileListApi,deleteFileApi,fileCheckApi} from '@/api/index'
 
 // 引入样式
 import '@uppy/core/dist/style.min.css';
@@ -15,6 +15,22 @@ import './index.less'
 
 // 1MB大小
 const ONE_MB = 1024 * 1024;
+const MAX_FILE_SIZE = 100 * ONE_MB;
+
+const toHex = (buffer: ArrayBuffer) => {
+  const bytes = new Uint8Array(buffer);
+  let hex = '';
+  for (let i = 0; i < bytes.length; i += 1) {
+    hex += bytes[i].toString(16).padStart(2, '0');
+  }
+  return hex;
+}
+
+const sha256File = async (file: File | Blob) => {
+  const arrayBuffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+  return toHex(hashBuffer);
+}
 
 const FileUploader: React.FC = () => {
   // 是否正在上传的状态
@@ -133,7 +149,7 @@ const getBaseUrl = () => {
 // 修改下载处理函数
 const downLoadHandler = (record)=>{
   const baseUrl = getBaseUrl();
-  window.open(`${baseUrl}/uploadFile/${record.hash}`);
+  window.open(`${baseUrl}/uploadFile/${record.tus_id || record.hash}`);
 }
 
 const deleteHandler = (record)=>{
@@ -147,12 +163,12 @@ const deleteHandler = (record)=>{
   useEffect(() => {
     // 初始化Uppy
     uppyRef.current = new Uppy({
-      debug: true,
+      debug: false,
       autoProceed: false,
       restrictions: {
-        maxFileSize: 1000 * ONE_MB,
+        maxFileSize: MAX_FILE_SIZE,
         maxNumberOfFiles: 5,
-        allowedFileTypes: ['.jpg', '.jpeg', '.png', '.zip','rar']
+        allowedFileTypes: ['.jpg', '.jpeg', '.png', '.zip', '.rar']
       },
     });
   
@@ -165,28 +181,53 @@ const deleteHandler = (record)=>{
         endpoint: `${baseURL}/fileMode`,
         limit: 5,
         chunkSize: 5 * ONE_MB,
+        resume: true,
+        allowedMetaFields: ['hash','name','extension','size','filename','filetype','type']
     });
+
+    ;(uppyRef.current as any).addPreProcessor(async (fileIDs: string[]) => {
+      const uppy = uppyRef.current
+      if (!uppy) return
+      try {
+        message.loading({ content: t('fileMode.hashing'), key: 'hashing', duration: 0 })
+        for (let i = 0; i < fileIDs.length; i += 1) {
+          const file = uppy.getFile(fileIDs[i])
+          if (!file) continue
+          if (typeof file.size === 'number' && file.size > MAX_FILE_SIZE) {
+            message.error(t('fileMode.maxSizeTip'))
+            uppy.removeFile(file.id)
+            continue
+          }
+          const hash = await sha256File(file.data)
+          uppy.setFileMeta(file.id, {
+            hash,
+            name: file.name,
+            filename: file.name,
+            type: file.type || '',
+            filetype: file.type || '',
+            extension: file.extension || '',
+            size: String(file.size || 0)
+          })
+          const checkRes: any = await fileCheckApi({ hash })
+          if (checkRes && checkRes.code === 200 && checkRes.data && checkRes.data.exists) {
+            uppy.removeFile(file.id)
+            message.success(t('fileMode.instantUploadSuccess'))
+          }
+        }
+        message.destroy('hashing')
+      } catch (e) {
+        message.destroy('hashing')
+      }
+    })
 
     // 监听上传完成事件
     uppyRef.current.on('complete', (result: any) => {
-      let successList = result.successful
-      if(successList.length>0){
-        let result = successList[0]
-        let hash = result.uploadURL.split('/').pop();
-        savehashTofileApi({
-          hash,
-          name:result.name,
-          extension:result.extension,
-          size:result.size
-        }).then(res=>{
-          getFileList()
-        })
-      }
       if (Array.isArray(result.failed) && result.failed.length > 0) {
         message.error(t('fileMode.uploadFailed'));
       } else {
         message.success(t('fileMode.uploadSuccess'));
       }
+      getFileList()
     });
 
     getFileList()

@@ -34,6 +34,9 @@
             font-weight: 400;
             border-bottom: 1px solid #000;
             cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .liItem:hover {
             color: #1677ff;
@@ -48,6 +51,22 @@
             cursor: pointer;
             color: #1677ff;
             background: #f3f3f3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .deleteBtn{
+            display: none;
+            font-size: 12px;
+            color: #1677ff;
+        }
+        .liItem:hover .deleteBtn,
+        .liItemActive:hover .deleteBtn{
+            display: inline;
+        }
+        .deleteBtn:hover{
+            text-decoration: underline;
         }
     }
 
@@ -58,5 +77,15 @@
         border: #000 1px solid;
         box-shadow: #b9b9b9 2px 2px 2px 2px;
     }
+}
+
+.createRow{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.createLabel{
+    width: 80px;
+    text-align: right;
 }
 

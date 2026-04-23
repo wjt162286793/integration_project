@@ -1,12 +1,27 @@
 .searchBox{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
     .searchLabel{
-        margin: 0px 8px 0px 16px;
+        margin: 0;
     }
    .searchItem{
      width: 200px;
     }
     .searchBtn{
-        margin-left: 16px;
+        margin-left: 0;
+    }
+    .searchActions{
+        display: flex;
+        gap: 12px;
+    }
+    .resetBtn{
+        margin-left: 0;
+    }
+    .addAction{
+        margin-left: auto;
+        display: flex;
     }
     .addBtn{
         margin-left: 16px;
@@ -16,6 +31,11 @@
     max-height: 500px;
     overflow: auto;
     padding: 0 16px;
+}
+.propertyModalBody{
+    height: 500px;
+    overflow-y: auto;
+    padding-right: 8px;
 }
 .tableBox{
     margin-top:8px;
