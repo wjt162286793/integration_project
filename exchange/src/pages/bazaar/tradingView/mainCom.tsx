@@ -1,249 +1,223 @@
-import React, { useEffect, useState } from 'react';
-import { createChart, HistogramSeries, CandlestickSeries, LineSeries } from 'lightweight-charts';
+import React, { useEffect, useRef, useState } from 'react';
+import { createChart, CandlestickSeries, HistogramSeries, LineSeries } from 'lightweight-charts';
+import { getKlineApi, getTickerApi } from '@/api';
 
+type KlineItem = {
+    time: number;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+};
+
+type InfoData = {
+    time?: number;
+    filterTime?: string;
+    open?: number;
+    high?: number;
+    low?: number;
+    close?: number;
+    ema7?: number;
+    ema25?: number;
+    volume?: number;
+};
+
+const intervalOptions = ['1m', '15m', '4h', '1d'];
+const symbolOptions = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
 
 const Index: React.FC = () => {
-    const renderFun = () => {
-        let chartDom = document.getElementById('main_chart_container');
-        if (chartDom) {
-            chartDom.innerHTML = '';
-        }
+    const chartRef = useRef<any>(null);
+    const candleSeriesRef = useRef<any>(null);
+    const volumeSeriesRef = useRef<any>(null);
+    const ema7SeriesRef = useRef<any>(null);
+    const ema25SeriesRef = useRef<any>(null);
 
-        const chartOptions = {
+    const [symbol, setSymbol] = useState('BTCUSDT');
+    const [interval, setInterval] = useState('15m');
+    const [showEma, setShowEma] = useState(true);
+    const [showVolume, setShowVolume] = useState(true);
+    const [infoData, setInfo] = useState<InfoData>({});
+    const [ticker, setTicker] = useState<any>(null);
+
+    const containerId = 'main_chart_container';
+
+    const formatTime = (time: number) => {
+        const date = new Date(time * 1000);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        return `${year}/${month}/${day} ${hour}:${minute}`;
+    };
+
+    const buildEma = (data: KlineItem[], period: number) => {
+        if (!data.length) return [];
+        const k = 2 / (period + 1);
+        let ema = data[0].close;
+        return data.map((item, index) => {
+            if (index === 0) {
+                ema = item.close;
+            } else {
+                ema = item.close * k + ema * (1 - k);
+            }
+            return { time: item.time, value: Number(ema.toFixed(8)) };
+        });
+    };
+
+    const initChart = () => {
+        const chartDom = document.getElementById(containerId);
+        if (!chartDom) return;
+        chartDom.innerHTML = '';
+
+        const chart = createChart(chartDom, {
             layout: {
-                textColor: '#fff',
-                background: { type: 'solid', color: '#000' }
+                textColor: '#d9d9d9',
+                background: { type: 'solid', color: '#0b0b0b' }
             },
-        };
+            grid: {
+                vertLines: { color: '#1f1f1f' },
+                horzLines: { color: '#1f1f1f' }
+            },
+            rightPriceScale: {
+                borderColor: '#2a2a2a'
+            },
+            timeScale: {
+                borderColor: '#2a2a2a',
+                timeVisible: true,
+                secondsVisible: false
+            },
+            crosshair: {
+                mode: 1
+            }
+        });
 
-        const chart = createChart(document.getElementById('main_chart_container'), chartOptions);
-
-        // K线图配置 - 使用字面量写死30个数据点
-        const candlestickSeries = chart.addSeries(CandlestickSeries, {
+        const candleSeries = chart.addSeries(CandlestickSeries, {
             upColor: '#26a69a',
             downColor: '#ef5350',
             borderVisible: false,
             wickUpColor: '#26a69a',
-            wickDownColor: '#ef5350',
-            priceScale: {
-                position: 'right',
-                visible: true
-            }
+            wickDownColor: '#ef5350'
         });
 
-        // K线图数据 (30天, 2025-01-01至2025-01-30)
-        const data1 = [
-            { type: '1', open: 100.00, high: 105.20, low: 98.50, close: 102.80, time: 1735689600 },
-            { type: '1', open: 102.80, high: 108.30, low: 101.20, close: 106.50, time: 1735776000 },
-            { type: '1', open: 106.50, high: 109.80, low: 103.10, close: 104.30, time: 1735862400 },
-            { type: '1', open: 104.30, high: 107.50, low: 101.80, close: 106.90, time: 1735948800 },
-            { type: '1', open: 106.90, high: 112.40, low: 105.70, close: 110.20, time: 1736035200 },
-            { type: '1', open: 110.20, high: 115.80, low: 108.50, close: 113.70, time: 1736121600 },
-            { type: '1', open: 113.70, high: 118.20, low: 111.30, close: 116.50, time: 1736208000 },
-            { type: '1', open: 116.50, high: 119.80, low: 114.20, close: 115.70, time: 1736294400 },
-            { type: '1', open: 115.70, high: 120.50, low: 113.80, close: 119.20, time: 1736380800 },
-            { type: '1', open: 119.20, high: 123.40, low: 117.50, close: 121.80, time: 1736467200 },
-            { type: '1', open: 121.80, high: 125.60, low: 119.30, close: 120.50, time: 1736553600 },
-            { type: '1', open: 120.50, high: 124.80, low: 118.70, close: 123.20, time: 1736640000 },
-            { type: '1', open: 123.20, high: 128.50, low: 121.40, close: 126.70, time: 1736726400 },
-            { type: '1', open: 126.70, high: 130.20, low: 124.30, close: 125.80, time: 1736812800 },
-            { type: '1', open: 125.80, high: 129.50, low: 123.10, close: 128.30, time: 1736899200 },
-            { type: '1', open: 128.30, high: 132.70, low: 126.50, close: 131.20, time: 1736985600 },
-            { type: '1', open: 131.20, high: 135.40, low: 129.80, close: 133.70, time: 1737072000 },
-            { type: '1', open: 133.70, high: 138.20, low: 132.10, close: 136.50, time: 1737158400 },
-            { type: '1', open: 136.50, high: 140.80, low: 134.30, close: 138.70, time: 1737244800 },
-            { type: '1', open: 138.70, high: 142.50, low: 136.90, close: 137.40, time: 1737331200 },
-            { type: '1', open: 137.40, high: 141.20, low: 135.80, close: 139.60, time: 1737417600 },
-            { type: '1', open: 139.60, high: 145.30, low: 138.20, close: 143.80, time: 1737504000 },
-            { type: '1', open: 143.80, high: 148.50, low: 141.70, close: 146.20, time: 1737590400 },
-            { type: '1', open: 146.20, high: 150.30, low: 144.10, close: 145.50, time: 1737676800 },
-            { type: '1', open: 145.50, high: 149.80, low: 143.20, close: 147.90, time: 1737763200 },
-            { type: '1', open: 147.90, high: 153.50, low: 146.30, close: 151.20, time: 1737849600 },
-            { type: '1', open: 151.20, high: 155.80, low: 149.70, close: 153.40, time: 1737936000 },
-            { type: '1', open: 153.40, high: 158.20, low: 151.50, close: 156.70, time: 1738022400 },
-            { type: '1', open: 156.70, high: 160.50, low: 154.30, close: 155.80, time: 1738108800 },
-            { type: '1', open: 155.80, high: 159.20, low: 153.10, close: 157.60, time: 1738195200 }
-        ];
-        candlestickSeries.setData(data1);
-
-        // 折线图配置 - 使用字面量写死30个数据点
-        const lineSeries = chart.addSeries(LineSeries, {
-            title: 'Line Series',
-            color: '#2962FF',
-            lineWidth: 2,
-            priceScaleId: 'right',
+        const volumeSeries = chart.addSeries(HistogramSeries, {
+            color: '#2f7d32',
+            priceFormat: { type: 'volume' },
+            priceScaleId: ''
+        });
+        volumeSeries.priceScale().applyOptions({
+            scaleMargins: { top: 0.8, bottom: 0 }
         });
 
-        const data2 = [
-            { type: '2', value: 102.30, time: 1735689600 },
-            { type: '2', value: 103.80, time: 1735776000 },
-            { type: '2', value: 105.10, time: 1735862400 },
-            { type: '2', value: 104.20, time: 1735948800 },
-            { type: '2', value: 106.50, time: 1736035200 },
-            { type: '2', value: 107.20, time: 1736121600 },
-            { type: '2', value: 108.50, time: 1736208000 },
-            { type: '2', value: 109.10, time: 1736294400 },
-            { type: '2', value: 110.30, time: 1736380800 },
-            { type: '2', value: 111.20, time: 1736467200 },
-            { type: '2', value: 112.50, time: 1736553600 },
-            { type: '2', value: 113.70, time: 1736640000 },
-            { type: '2', value: 114.30, time: 1736726400 },
-            { type: '2', value: 115.80, time: 1736812800 },
-            { type: '2', value: 116.50, time: 1736899200 },
-            { type: '2', value: 117.90, time: 1736985600 },
-            { type: '2', value: 118.70, time: 1737072000 },
-            { type: '2', value: 119.50, time: 1737158400 },
-            { type: '2', value: 120.80, time: 1737244800 },
-            { type: '2', value: 121.50, time: 1737331200 },
-            { type: '2', value: 122.90, time: 1737417600 },
-            { type: '2', value: 123.70, time: 1737504000 },
-            { type: '2', value: 124.90, time: 1737590400 },
-            { type: '2', value: 125.80, time: 1737676800 },
-            { type: '2', value: 127.20, time: 1737763200 },
-            { type: '2', value: 128.50, time: 1737849600 },
-            { type: '2', value: 129.30, time: 1737936000 },
-            { type: '2', value: 130.70, time: 1738022400 },
-            { type: '2', value: 131.50, time: 1738108800 },
-            { type: '2', value: 132.90, time: 1738195200 }
-        ];
-        lineSeries.setData(data2);
+        const ema7Series = chart.addSeries(LineSeries, {
+            color: '#f5c542',
+            lineWidth: 1
+        });
+        const ema25Series = chart.addSeries(LineSeries, {
+            color: '#6f8cff',
+            lineWidth: 1
+        });
 
-        // 直方图配置 - 使用字面量写死30个数据点
-        const histogramSeries = chart.addSeries(HistogramSeries, { color: '#26a69a' });
+        chartRef.current = chart;
+        candleSeriesRef.current = candleSeries;
+        volumeSeriesRef.current = volumeSeries;
+        ema7SeriesRef.current = ema7Series;
+        ema25SeriesRef.current = ema25Series;
 
-        const data3 = [
-            { type: '3', value: 28.42, time: 1735689600 },
-            { type: '3', value: 32.15, time: 1735776000 },
-            { type: '3', value: 26.95, time: 1735862400 },
-            { type: '3', value: 34.73, time: 1735948800 },
-            { type: '3', value: 27.84, time: 1736035200 },
-            { type: '3', value: 31.82, time: 1736121600 },
-            { type: '3', value: 29.32, time: 1736208000 },
-            { type: '3', value: 33.67, time: 1736294400 },
-            { type: '3', value: 30.08, time: 1736380800 },
-            { type: '3', value: 35.23, time: 1736467200 },
-            { type: '3', value: 28.13, time: 1736553600 },
-            { type: '3', value: 33.51, time: 1736640000 },
-            { type: '3', value: 31.24, time: 1736726400 },
-            { type: '3', value: 29.76, time: 1736812800 },
-            { type: '3', value: 34.13, time: 1736899200 },
-            { type: '3', value: 30.59, time: 1736985600 },
-            { type: '3', value: 32.84, time: 1737072000 },
-            { type: '3', value: 27.92, time: 1737158400 },
-            { type: '3', value: 33.26, time: 1737244800 },
-            { type: '3', value: 31.58, time: 1737331200 },
-            { type: '3', value: 30.23, time: 1737417600 },
-            { type: '3', value: 34.81, time: 1737504000 },
-            { type: '3', value: 28.76, time: 1737590400 },
-            { type: '3', value: 32.45, time: 1737676800 },
-            { type: '3', value: 30.89, time: 1737763200 },
-            { type: '3', value: 33.72, time: 1737849600 },
-            { type: '3', value: 29.54, time: 1737936000 },
-            { type: '3', value: 34.15, time: 1738022400 },
-            { type: '3', value: 31.32, time: 1738108800 },
-            { type: '3', value: 33.03, time: 1738195200 }
-        ];
-        histogramSeries.setData(data3);
-
-
-
-        chart.timeScale().fitContent();
-
-
-        chart.subscribeCrosshairMove((param) => {
-            if (param.time && (param.time !== infoData.time)) {
-
-                let candleData = null;
-                let lineData = null;
-                let histData = null;
-                let Index = 0
-                param.seriesData.forEach((value, key) => {
-                    if (Index === 0) {
-                        candleData = value
-                    } else if (Index === 1) {
-                        lineData = value
-                    } else if (Index === 2) {
-                        histData = value
-                    }
-                    Index++
-
+        chart.subscribeCrosshairMove((param: any) => {
+            if (!param || !param.time) return;
+            const candle = param.seriesData.get(candleSeriesRef.current);
+            const volume = param.seriesData.get(volumeSeriesRef.current);
+            const ema7 = param.seriesData.get(ema7SeriesRef.current);
+            const ema25 = param.seriesData.get(ema25SeriesRef.current);
+            if (candle) {
+                setInfo({
+                    time: candle.time,
+                    filterTime: formatTime(candle.time),
+                    open: candle.open,
+                    high: candle.high,
+                    low: candle.low,
+                    close: candle.close,
+                    ema7: ema7?.value,
+                    ema25: ema25?.value,
+                    volume: volume?.value
                 });
-                const info = {
-                    //time转化为时间格式
-                    time: candleData.time,
-                    filterTime: getTime(candleData.time),
-                    open: candleData.open,
-                    high: candleData.high,
-                    low: candleData.low,
-                    close: candleData.close,
-                    line: lineData.value,
-                    hist: histData.value,
-                }
-                setInfo(info)
-            } else {
-
             }
         });
-
-        const getTime = (time) => {
-            const date = new Date(time * 1000);
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            return `${year}/${month}/${day}`;
-        }
-
-        // 添加点击事件
-        chart.subscribeClick((param) => {
-            console.log('图表点击事件:', {
-                点击位置: param.point,
-                点击时间: param.time ? new Date(param.time * 1000).toLocaleString() : '未选择时间'
-            });
-            // 标记
-            if (param.time && candlestickSeries) {
-                // const price = param.seriesPrices.get(candlestickSeries);
-                // if (price !== undefined) {
-                //     candlestickSeries.createPriceLine({
-                //         price: price.close || price,
-                //         color: '#FF6B6B',
-                //         lineWidth: 2,
-                //         lineStyle: 2, // 虚线
-                //         axisLabelVisible: true,
-                //         title: `点击位置: ${price.close || price}`
-                //     });
-
-                //     // 3秒后移除标记
-                //     setTimeout(() => {
-                //         candlestickSeries.removePriceLine();
-                //     }, 3000);
-                // }
-            }
-        });
-
     };
 
-    const [infoData, setInfo] = useState({
-        time: undefined,
-        filterTime: undefined,
-        open: undefined,
-        high: undefined,
-        low: undefined,
-        close: undefined,
-        line: undefined,
-        hist: undefined,
-    })
+    const updateChart = (data: KlineItem[]) => {
+        if (!chartRef.current || !candleSeriesRef.current) return;
+        candleSeriesRef.current.setData(data);
+
+        if (volumeSeriesRef.current) {
+            const volumeData = data.map((item) => ({
+                time: item.time,
+                value: item.volume,
+                color: item.close >= item.open ? '#2f7d32' : '#ab312e'
+            }));
+            volumeSeriesRef.current.setData(volumeData);
+        }
+
+        if (showEma) {
+            const ema7 = buildEma(data, 7);
+            const ema25 = buildEma(data, 25);
+            ema7SeriesRef.current.setData(ema7);
+            ema25SeriesRef.current.setData(ema25);
+        } else {
+            ema7SeriesRef.current.setData([]);
+            ema25SeriesRef.current.setData([]);
+        }
+
+        if (volumeSeriesRef.current) {
+            volumeSeriesRef.current.applyOptions({ visible: showVolume });
+        }
+
+        chartRef.current.timeScale().fitContent();
+    };
+
+    const fetchKline = async () => {
+        const res = await getKlineApi({ symbol, interval, limit: 200 });
+        if (res?.code === 200) {
+            updateChart(res.data as KlineItem[]);
+        }
+    };
+
+    const fetchTicker = async () => {
+        const res = await getTickerApi({ symbol, interval });
+        if (res?.code === 200) {
+            setTicker(res.data);
+        }
+    };
 
     useEffect(() => {
-        renderFun();
-        // const task = setInterval(() => {
-        //     console.log('执行---')
-        //     renderFun();
-        // }, 3000);
-
-        // return () => {
-        //     clearInterval(task);
-        // };
+        initChart();
+        const handleResize = () => {
+            if (chartRef.current) {
+                chartRef.current.applyOptions({ width: document.getElementById(containerId)?.clientWidth || 0 });
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            if (chartRef.current) {
+                chartRef.current.remove();
+            }
+        };
     }, []);
+
+    useEffect(() => {
+        fetchKline();
+        fetchTicker();
+        const task = setInterval(() => {
+            fetchKline();
+            fetchTicker();
+        }, 5000);
+        return () => clearInterval(task);
+    }, [symbol, interval, showEma, showVolume]);
+
+    const changeClass = (value: string, current: string) => (value === current ? 'toolbarBtn active' : 'toolbarBtn');
 
     return (
         <div className='tradingmainDom'>
@@ -257,17 +231,53 @@ const Index: React.FC = () => {
                             <span className='infoItem'>高: <span className='value'>{infoData.high}</span></span>
                             <span className='infoItem'>低: <span className='value'>{infoData.low}</span></span>
                             <span className='infoItem'>收: <span className='value'>{infoData.close}</span></span>
-                            <span className='infoItem'>折线: <span className='value'>{infoData.line}</span></span>
-                            <span className='infoItem'>直方图: <span className='value'>{infoData.hist}</span></span>
+                            <span className='infoItem'>EMA7: <span className='value'>{infoData.ema7?.toFixed(2)}</span></span>
+                            <span className='infoItem'>EMA25: <span className='value'>{infoData.ema25?.toFixed(2)}</span></span>
+                            <span className='infoItem'>量: <span className='value'>{infoData.volume?.toFixed(2)}</span></span>
                         </div>
                     )
                 }
-
             </div>
+
+            <div className='chartToolbar'>
+                <div className='toolbarGroup'>
+                    {symbolOptions.map((item) => (
+                        <button key={item} className={changeClass(item, symbol)} onClick={() => setSymbol(item)}>
+                            {item.replace('USDT', '/USDT')}
+                        </button>
+                    ))}
+                </div>
+                <div className='toolbarGroup'>
+                    {intervalOptions.map((item) => (
+                        <button key={item} className={changeClass(item, interval)} onClick={() => setInterval(item)}>
+                            {item}
+                        </button>
+                    ))}
+                </div>
+                <div className='toolbarGroup'>
+                    <button className={showEma ? 'toolbarBtn active' : 'toolbarBtn'} onClick={() => setShowEma(!showEma)}>
+                        EMA
+                    </button>
+                    <button className={showVolume ? 'toolbarBtn active' : 'toolbarBtn'} onClick={() => setShowVolume(!showVolume)}>
+                        VOL
+                    </button>
+                </div>
+                {ticker && (
+                    <div className='tickerInfo'>
+                        <span>最新价: {ticker.close?.toFixed(2)}</span>
+                        <span style={{ color: ticker.changePct >= 0 ? '#2f7d32' : '#ab312e' }}>
+                            {ticker.changePct >= 0 ? '+' : ''}{ticker.changePct?.toFixed(2)}%
+                        </span>
+                        <span>24h 高: {ticker.high?.toFixed(2)}</span>
+                        <span>24h 低: {ticker.low?.toFixed(2)}</span>
+                    </div>
+                )}
+            </div>
+
             <div className='mainChartOutDom'>
                 <div
                     className='mainChartDom'
-                    id='main_chart_container'
+                    id={containerId}
                     style={{ width: '100%', height: '400px' }}
                 ></div>
             </div>
@@ -275,20 +285,16 @@ const Index: React.FC = () => {
                 <h5>工具</h5>
                 <ul className='toolsUl'>
                     <li>
-                        <p className='label'>现货网络</p>
-                        <p>低买高卖 / 震荡向上行情 / 断中长线</p>
+                        <p className='label'>现货网格</p>
+                        <p>低买高卖 / 震荡行情 / 分批建仓</p>
                     </li>
                     <li>
-                        <p className='label'>现货马丁格尔</p>
-                        <p>信号触发 / 震荡行情 / 分批加仓 </p>
+                        <p className='label'>马丁格尔</p>
+                        <p>信号触发 / 回撤加仓 / 风控提示</p>
                     </li>
                     <li>
                         <p className='label'>策略交易</p>
-                        <p>多种智能策略,祝您轻松交易</p>
-                    </li>
-                    <li>
-                        <p className='label'>现货跟单</p>
-                        <p>与全球顶级交易员一起赚钱 </p>
+                        <p>多维指标组合,动态调整仓位</p>
                     </li>
                 </ul>
             </div>

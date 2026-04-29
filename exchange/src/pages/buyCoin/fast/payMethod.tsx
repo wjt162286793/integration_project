@@ -185,9 +185,11 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     if (payInfo) {
-      if(payInfo.status){
-        setOrder(true)
-        setPayType(payInfo.pay_from)
+      const status = payInfo.status
+      const isOrdered = status === 'pending' || status === 'cancel' || status === 'success'
+      setOrder(isOrdered)
+      if (isOrdered) {
+        setPayType(payInfo.pay_from || '')
         setChecked(true)
       }
 

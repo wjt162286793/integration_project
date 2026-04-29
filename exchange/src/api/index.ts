@@ -9,6 +9,9 @@ const order = '/exchange/pay/order'
 const cancelOrder = '/exchange/pay/cancelOrder'
 const history = '/exchange/pay/history'
 const payhd = '/exchange/pay/payhd'
+const kline = '/exchange/market/kline'
+const ticker = '/exchange/market/ticker'
+const symbols = '/exchange/market/symbols'
 
 
 export const loginApi = (data: any) => {
@@ -72,5 +75,28 @@ export const payhdApi = (data: any) => {
         url: payhd,
         method: 'post',
         data
+    })
+}
+
+export const getKlineApi = (params: any) => {
+    return request({
+        url: kline,
+        method: 'get',
+        params
+    })
+}
+
+export const getTickerApi = (params: any) => {
+    return request({
+        url: ticker,
+        method: 'get',
+        params
+    })
+}
+
+export const getSymbolsApi = () => {
+    return request({
+        url: symbols,
+        method: 'get'
     })
 }
