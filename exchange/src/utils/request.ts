@@ -1,5 +1,6 @@
 import axios from 'axios'
 const api_url = '/exchangeApi'
+const TOKEN_KEY = 'intergration_token'
 // import router from '@/router';
 
 // 判断当前环境
@@ -42,14 +43,11 @@ const request = axios.create({
 // }
 
 request.interceptors.request.use((config)=>{
-    // 检查请求路径是否包含login，如果不包含则添加token
     if (!config.url?.includes('login')) {
-        const token = isSubFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('rx-token');
+        const token = localStorage.getItem(TOKEN_KEY);
         if (token) {
-            config.headers.authorization = token;
+            config.headers.authorization = `Bearer ${token}`;
         } else {
-            // 显示未登录警告并跳转到登录页
-            // 阻止请求继续执行
             return Promise.reject(new Error('未登录'));
         }
     }
@@ -57,6 +55,9 @@ request.interceptors.request.use((config)=>{
 })
 
 request.interceptors.response.use((config)=>{
+    if ([7001, 7002, 7006].includes(config.data.code)) {
+      localStorage.removeItem(TOKEN_KEY)
+    }
     return config.data
 })
 

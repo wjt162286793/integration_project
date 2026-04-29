@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { listItem } from "@/types/index";
+import type { listItem } from "@/types/index";
 import { userStore } from "@/store";
 import Header from "@/components/Header.vue";
 
@@ -19,42 +19,28 @@ import { useRouter, useRoute } from "vue-router";
 import { onMounted, ref } from "vue";
 import list from "@/app-config";
 
-import WujieVue from "wujie-vue3";
-
 const router = useRouter();
-const route = useRoute();
 const userInfo = userStore();
-// const activeAppName:Ref<string> = ref('exchange')
-// const activeApp:Ref<listItem | null> = ref(null)
 
 const ruleList = ref<listItem[]>([]);
 
-// const getActiveApp = (name:string)=>{
-//   activeApp.value = list.find(item => item.name === name)
-// }
-// getActiveApp(activeAppName.value)
-
 const selectItem = (item: listItem) => {
-  // activeApp.value = item
   router.push({
     name: item.name,
   });
 };
 
 const filterRuleList = () => {
-  // console.log(userInfo.user,'???===')
-  // let arr = []
-  // list.forEach(item=>{
-  //   if(userInfo.user.appRuleList.includes(item.name)){
-  //     arr.push(item)
-  //   }
-  // })
-  // ruleList.value = arr
+  const appRuleList = Array.isArray(userInfo.user?.appRuleList) ? userInfo.user.appRuleList : []
+  if (!appRuleList.length) {
+    ruleList.value = list
+    return
+  }
+  ruleList.value = list.filter(item => appRuleList.includes(item.name))
 };
 
 onMounted(() => {
-  // filterRuleList()
-  // getActiveApp(activeAppName.value)
+  filterRuleList()
 });
 </script>
 

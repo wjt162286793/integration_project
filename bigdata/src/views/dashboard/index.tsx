@@ -45,13 +45,13 @@ export default function Dashboard() {
   const isSubAppFlag = window.__POWERED_BY_WUJIE__
 
   const logoutHandler = () => {
-    localStorage.removeItem('bigdata_token')
+    localStorage.removeItem('intergration_token')
     navigate('/login')
   }
   // 
   useEffect(() => {
     if(!isSubAppFlag){
-      let token = localStorage.getItem('bigdata_token')
+      let token = localStorage.getItem('intergration_token')
       if(!token){
         navigate('/login')
       }

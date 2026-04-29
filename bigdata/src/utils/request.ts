@@ -1,5 +1,6 @@
 import axios from 'axios'
 const api_url = '/bigdataApi'
+const TOKEN_KEY = 'intergration_token'
 
 // 判断当前环境
 const env_mode = import.meta.env.MODE;
@@ -36,10 +37,19 @@ const request = axios.create({
 })
 
 request.interceptors.request.use((config)=>{
+    if (!config.url?.includes('/auth/login')) {
+      const token = localStorage.getItem(TOKEN_KEY)
+      if (token) {
+        config.headers.authorization = `Bearer ${token}`
+      }
+    }
     return config
 })
 
 request.interceptors.response.use((config)=>{
+    if ([7001, 7002, 7006].includes(config.data.code)) {
+      localStorage.removeItem(TOKEN_KEY)
+    }
     return config.data
 })
 

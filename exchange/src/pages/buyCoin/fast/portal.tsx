@@ -11,7 +11,7 @@ import CNYImg from '@/assets/img/CNY.png'
 import USDImg from '@/assets/img/USD.png'
 
 import { Decimal } from 'decimal.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { createBuyApi } from '@/api'
 import { message } from 'antd'
@@ -20,6 +20,7 @@ import HistoryCom from './historyCom'
 const Index: React.FC = () => {
     const isSubAppFlag = window.__POWERED_BY_WUJIE__
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams();
 
     const reduxData = useSelector(state => state)
     const disPatch = useDispatch()
@@ -102,6 +103,13 @@ const Index: React.FC = () => {
     const changeDoneType = (type: string) => {
         setDoneType(type)
     }
+
+    useEffect(() => {
+        const queryType = searchParams.get('doneType')
+        if (queryType === 'buy' || queryType === 'sell') {
+            setDoneType(queryType)
+        }
+    }, [])
 
 
     const [buy_value_1, setBuyValue1] = useState('CNY')

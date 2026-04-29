@@ -46,44 +46,48 @@ const router = createRouter({
 })
 
 
-const reqUserInfoHandler = (next,redirectPath)=>{
+const TOKEN_KEY = 'intergration_token'
 
-  reqUserInfoApi().then(res => {
+const reqUserInfoHandler = async (next:any, redirectPath?:string) => {
+  try {
+    const res = await reqUserInfoApi()
     const userInfo = userStore()
     userInfo.setUser(res.data)
-    if(redirectPath){
-       next(redirectPath)
-    }else{
+    if (redirectPath) {
+      next(redirectPath)
+    } else {
       next()
     }
-    
-  })
+  } catch (error) {
+    localStorage.removeItem(TOKEN_KEY)
+    next('/login')
+  }
 }
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('intergration_token');
-
-  // 已存在token，重定向到portal
+  const token = localStorage.getItem(TOKEN_KEY);
+  const needAuth = to.path !== '/login'
   if (to.path === '/login') {
     if (token) {
-        reqUserInfoHandler(next,'/portal')
+      reqUserInfoHandler(next, '/portal')
     } else {
-      next();
+      next()
     }
+    return
   }
-  // 不存在token，重定向到login
-  else if (to.path === '/portal') {
-    if (token) {
-          reqUserInfoHandler(next,false)
-    } else {
-      next('/login');
-    }
+
+  if (!needAuth) {
+    next()
+    return
   }
-  // 其他页面放行
-  else {
-    next();
+
+  if (!token) {
+    next('/login')
+    return
   }
+
+  reqUserInfoHandler(next)
 })
 
 export default router

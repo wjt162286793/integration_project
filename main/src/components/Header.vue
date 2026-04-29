@@ -16,20 +16,20 @@
 
 
 import { useRouter,useRoute } from "vue-router";
-import { ref,defineEmits,defineProps,watch, onMounted } from "vue";
+import { ref,defineEmits,defineProps, onMounted, computed } from "vue";
 import list from "@/app-config";
-import {listItem} from '@/types/index'
+import type { listItem } from '@/types/index'
 const emit = defineEmits(['selectItem'])
 const router = useRouter();
 const route = useRoute()
-// const props = defineProps({
-//   ruleList: {
-//     type: Array,
-//     default: () => []
-//   }
-// })
+const props = defineProps({
+  ruleList: {
+    type: Array,
+    default: () => []
+  }
+})
 
-const ruleList = list
+const ruleList = computed(() => props.ruleList.length ? props.ruleList : list)
 const setActiveItem = ref(list[0])
 const selectItem = (item:listItem) => {
   emit('selectItem',item)
@@ -37,48 +37,24 @@ const selectItem = (item:listItem) => {
 };
 
 const logout = () => {
-  console.log('调用')
   localStorage.removeItem('intergration_token')
   router.push("/login");
 };
 
 onMounted(()=>{
   console.log(route,'???==')
-  let item = ruleList.find(val => val.name === route.name)
+  let item = ruleList.value.find((val:listItem) => val.name === route.name)
   if(item){
     setActiveItem.value = item
   }else{
-    console.log(route.name)
     if(route.name === 'portal'){
-      setActiveItem.value = list[0]
+      setActiveItem.value = ruleList.value[0] || list[0]
       router.push({
-        name:list[0].name
+        name:(ruleList.value[0] || list[0]).name
       })
     }
   }
 })
-
-// watch(
-//   () => props.ruleList,
-//   (newVal, oldVal) => {
-//     console.log('ruleList发生变化:', newVal, oldVal,route);
-//     if(newVal.length>0){
-//       if(route.fullPath === '/portal'){
-//         console.log('进入了没')
-//         selectItem(newVal[0])
-//       }else{
-//         let match = route.fullPath.match(/\?([^=]+)=/);
-//         let name = match ? match[1] : null;
-//         let Item = newVal.find(val => val.name === name)
-//         if(Item){
-//           selectItem(Item)
-//         }
-//       }
-//     }
-//     // 在这里可以添加对ruleList变化的响应逻辑
-//   },
-//   { deep: true } // 深度监听数组内容的变化
-// )
 </script>
 
 <style lang="less" scoped>

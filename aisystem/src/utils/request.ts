@@ -1,6 +1,8 @@
 import axios from 'axios'
 
 const api_url = '/aisystemApi'
+const TOKEN_KEY = 'intergration_token'
+const env_mode = import.meta.env.MODE;
 
 // 检查是否通过主应用代理访问
 const isProxy = window.location.pathname.startsWith('/aisystem-sub-api');
@@ -24,22 +26,30 @@ if (isProxy) {
   baseURL = api_url;
 }
 
+const request = axios.create({
+  baseURL,
+  timeout: 6000
+})
+
 // 添加请求拦截器(参考exchange的token处理)
 request.interceptors.request.use((config)=>{
-  // 检查请求路径是否包含login，如果不包含则添加token
-  if (!config.url?.includes('login')) {
-    const token = isSubFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('aisys-token');
+  if (!config.url?.includes('/auth/login')) {
+    const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
-      config.headers.authorization = token;
+      config.headers.authorization = `Bearer ${token}`;
     }
   }
   return config;
 })
 
 request.interceptors.response.use((config)=>{
+   if ([7001, 7002, 7006].includes(config.data.code)) {
+    localStorage.removeItem(TOKEN_KEY)
+   }
    if(config.data.code === 200){
     return config.data
    }
+   return Promise.reject(new Error(config.data.msg || '请求失败'))
 })
 
 export default request

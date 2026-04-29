@@ -16,15 +16,17 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import WujieVue from "wujie-vue3";
+import list from "@/app-config";
 
-const url = ref("http://82.157.193.128:8083");
+const url = ref((list.find(item => item.name === 'bigdata')?.url) || "http://localhost:9003");
+const appOrigin = url.value.replace(/\/+$/, '');
 
 const wujieProps = ref({
   fetch: (url: string, options: RequestInit) => {
     // 拦截所有来自 bigdata 子应用的API请求
-    if (url.includes("8083/bigdataApi")) {
+    if (url.startsWith(`${appOrigin}/bigdataApi`)) {
       return window.fetch(
-        url.replace("http://82.157.193.128:8083", "/bigdata-sub-api"),
+        url.replace(appOrigin, "/bigdata-sub-api"),
         {
           ...options,
           credentials: "include",

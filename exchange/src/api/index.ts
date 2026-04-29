@@ -12,6 +12,7 @@ const payhd = '/exchange/pay/payhd'
 const kline = '/exchange/market/kline'
 const ticker = '/exchange/market/ticker'
 const symbols = '/exchange/market/symbols'
+const assistantChat = '/assistant/chat'
 
 
 export const loginApi = (data: any) => {
@@ -98,5 +99,13 @@ export const getSymbolsApi = () => {
     return request({
         url: symbols,
         method: 'get'
+    })
+}
+
+export const assistantChatApi = (data: any) => {
+    return request({
+        url: assistantChat,
+        method: 'post',
+        data
     })
 }

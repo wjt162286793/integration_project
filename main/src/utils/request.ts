@@ -2,22 +2,24 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 
+const TOKEN_KEY = 'intergration_token'
+const isAuthFreeRequest = (url:string = '')=>{
+    return url.includes('/auth/login') || url.includes('/portal/login')
+}
+
 const request = axios.create({
     // baseURL:'/api',
     timeout:6000
 })
 
 request.interceptors.request.use((config)=>{
-    // 检查请求路径是否包含login，如果不包含则添加token
-    if (!config.url?.includes('login')) {
-        const token = localStorage.getItem('intergration_token');
+    if (!isAuthFreeRequest(config.url)) {
+        const token = localStorage.getItem(TOKEN_KEY);
         if (token) {
-            config.headers.authorization = token;
+            config.headers.authorization = `Bearer ${token}`;
         } else {
-            // 显示未登录警告并跳转到登录页
             ElMessage.warning('未登录，请先登录');
             router.push('/login');
-            // 阻止请求继续执行
             return Promise.reject(new Error('未登录'));
         }
     }
@@ -29,15 +31,21 @@ request.interceptors.response.use((config)=>{
     return config.data
    }else if(config.data.code === 7001){
     ElMessage.warning('未登录，请先登录');
-    localStorage.removeItem('intergration_token')
+    localStorage.removeItem(TOKEN_KEY)
     router.push('/login');
     return Promise.reject(new Error('未登录'));
    }else if(config.data.code === 7002){
     ElMessage.warning('token过期');
-    localStorage.removeItem('intergration_token')
+    localStorage.removeItem(TOKEN_KEY)
+    router.push('/login');
+    return Promise.reject(new Error('未登录'));
+   }else if(config.data.code === 7006){
+    ElMessage.warning('当前账号没有权限访问该系统');
+    localStorage.removeItem(TOKEN_KEY)
     router.push('/login');
     return Promise.reject(new Error('未登录'));
    }
+   return Promise.reject(new Error(config.data.msg || '请求失败'))
 })
 
 export default request

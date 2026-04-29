@@ -16,15 +16,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import WujieVue from 'wujie-vue3'
+import list from '@/app-config'
 
-const url = ref('http://82.157.193.128:8084')
+const url = ref((list.find(item => item.name === 'exchange')?.url) || 'http://localhost:9001')
+const appOrigin = url.value.replace(/\/+$/, '')
 
 const wujieProps = ref({
   fetch: (url: string, options: RequestInit) => {
     // 匹配子应用所有API请求
-    if (url.includes('8084/exchangeApi')) {
+    if (url.startsWith(`${appOrigin}/exchangeApi`)) {
       return window.fetch(
-        url.replace('http://82.157.193.128:8084', '/exchange-sub-api'),
+        url.replace(appOrigin, '/exchange-sub-api'),
         { 
           ...options, 
           credentials: 'include',

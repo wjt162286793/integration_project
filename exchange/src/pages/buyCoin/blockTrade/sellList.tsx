@@ -1,5 +1,6 @@
 import React from 'react'
 import { Row, Col,Button,message } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 const butListData = [
     {
@@ -51,8 +52,10 @@ const butListData = [
 const Index: React.FC = () => {
 
     const [messageApi, contextHolder] = message.useMessage();
+    const navigate = useNavigate()
         const sellHandler = () => {
-        messageApi.info('功能建设中');
+        messageApi.success('已跳转到快捷交易');
+        navigate('/home/buyCoin/fast/portal?doneType=sell')
     }
 
     return (

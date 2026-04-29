@@ -1,14 +1,15 @@
 <template>
   <div class="login-container">
-    <el-card class="login-card">
-      <template #header>
-        <h3>系统登录</h3>
-      </template>
+    <el-card class="login-card" shadow="never">
+      <div class="login-header">
+        <div class="login-title">集成平台</div>
+        <div class="login-subtitle">统一认证登录</div>
+      </div>
       <el-form
         ref="loginFormRef"
         :model="loginForm"
         :rules="loginRules"
-        label-width="80px"
+        label-position="top"
         class="login-form"
       >
         <el-form-item label="账号" prop="username">
@@ -17,7 +18,7 @@
             placeholder="请输入账号"
             prefix-icon="User"
             autocomplete="off"
-            style="width:360px"
+            class="login-input"
           />
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -27,7 +28,7 @@
             placeholder="请输入密码"
             prefix-icon="Lock"
             show-password
-            style="width:360px"
+            class="login-input"
           />
         </el-form-item>
         <el-form-item>
@@ -48,7 +49,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElForm } from 'element-plus'
+import { ElForm, ElMessage } from 'element-plus'
 import {testApi,loginApi} from '@/api'
 import {userStore} from '@/store'
 
@@ -111,25 +112,56 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
+  background: linear-gradient(180deg, #f7f8fb 0%, #eef2ff 100%);
+  padding: 24px;
+  box-sizing: border-box;
 
   .login-card {
-    width: 520px;
-    background: #fff;
-    border-radius: 8px;
+    width: 420px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    :deep(.el-card__body) {
+      padding: 28px 28px 18px;
+    }
   }
-  h3{
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
+
+  .login-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+    .login-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.2px;
+      text-align: center;
+    }
+    .login-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      text-align: center;
+    }
   }
 
   .login-form {
-    margin-top: 20px;
+    margin-top: 8px;
+  }
+
+  .login-input {
+    width: 100%;
+    :deep(.el-input__wrapper) {
+      border-radius: 10px;
+      padding: 2px 12px;
+    }
   }
 
   .login-btn {
-    width: 360px;
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
   }
 }
 </style>

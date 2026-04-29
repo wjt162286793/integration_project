@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Row, Col, Tag, Checkbox, message } from 'antd'
 import { useNavigate } from 'react-router-dom';
 import { Flex, Radio, Card } from 'antd';
@@ -40,18 +40,9 @@ const Index: React.FC = () => {
 
   const [order, setOrder] = useState(false)
   const [paySuccess, setPaySuccess] = useState(false)
-  const orderHandler = () => {
-    orderApi({
-      id: payInfo.id,
-      pay_from: payType,
-      pay_with: 'chinaBank'
-    }).then(res => {
-      messageApi.success('委托单下单成功,请尽快支付');
-      setOrder(true)
-    })
-  }
-
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [ordering, setOrdering] = useState(false)
+  const [paying, setPaying] = useState(false)
+  const socketRef = useRef<WebSocket | null>(null)
 
   useEffect(() => {
       if (order === true) {
@@ -63,11 +54,51 @@ const Index: React.FC = () => {
       // }
       // 卸载时清理掉这个ws
       return () => {
-          if (socket) {
-              socket.close(1000, '组件卸载');
+          if (socketRef.current) {
+              socketRef.current.close(1000, '组件卸载');
           }
       };
   }, [order])
+
+  const refreshPayInfo = () => {
+    const payId = searchParams.get('pay_id');
+    if (!payId) return Promise.resolve();
+    return buyInfoApi({ id: payId }).then(res => {
+      if (res.code === 200) {
+        setPayInfo(res.data)
+      } else {
+        messageApi.error('该交易单不存在')
+      }
+    })
+  }
+
+  const orderHandler = () => {
+    if (!payInfo?.id) return
+    if (!payType) {
+      messageApi.error('请先选择付款方式')
+      return
+    }
+    if (!checked) {
+      messageApi.error('请先勾选委托单')
+      return
+    }
+    if (ordering) return
+    setOrdering(true)
+    orderApi({
+      id: payInfo.id,
+      pay_from: payType,
+      pay_with: 'chinaBank'
+    }).then(res => {
+      if (res.code === 200) {
+        messageApi.success('委托单下单成功,请尽快支付');
+        return refreshPayInfo()
+      } else {
+        messageApi.error(res.msg || '下单失败')
+      }
+    }).finally(() => {
+      setOrdering(false)
+    })
+  }
   
   const createWs = () => {
       const payId = searchParams.get('pay_id');
@@ -77,12 +108,11 @@ const Index: React.FC = () => {
       }
   
     const wsUrl = import.meta.env.VITE_WS_URL;
-    console.log(wsUrl,'???===wsUrl')
     const newSocket = new WebSocket(`${wsUrl}/pay`);
-
-    
-    setSocket(newSocket);
-      setSocket(newSocket);
+    if (socketRef.current) {
+      socketRef.current.close(1000, '建立新连接');
+    }
+    socketRef.current = newSocket;
   
       newSocket.onopen = () => {
           // ✅ 在连接成功后发送数据
@@ -124,19 +154,24 @@ const Index: React.FC = () => {
 
   useEffect(()=>{
     if(paySuccess){
-      buyInfoApi({ id: payInfo.id }).then(res => {
-      if (res.code === 200) {
-        setPayInfo(res.data)
-      } else {
-      }
-    })
+      refreshPayInfo()
     }
 
   },[paySuccess])
 
 
   const payHandler = () => {
-    // 调用支付接口
+    if (!payInfo?.id) return
+    if (!payType) {
+      messageApi.error('请先选择付款方式')
+      return
+    }
+    if (payInfo.status !== 'pending') {
+      messageApi.error('请先下单后再支付')
+      return
+    }
+    if (paying) return
+    setPaying(true)
     payhdApi({
       id: payInfo.id,
       pay_from: payType,
@@ -144,10 +179,13 @@ const Index: React.FC = () => {
     }).then(res => {
       if (res.code === 200) {
         messageApi.success('模拟进行扫码支付');
+        return refreshPayInfo()
       } else {
+        messageApi.error(res.msg || '支付失败')
       }
+    }).finally(() => {
+      setPaying(false)
     })
-    
   }
 
   const jumptoPortal = () => {
@@ -163,6 +201,7 @@ const Index: React.FC = () => {
       if (res.code === 200) {
         messageApi.success('取消支付')
         setPayInfo(res.data)
+        setPaySuccess(false)
       }
     })
   }
@@ -173,14 +212,7 @@ const Index: React.FC = () => {
 
 
   useEffect(() => {
-    const payId = searchParams.get('pay_id');
-    buyInfoApi({ id: payId }).then(res => {
-      if (res.code === 200) {
-        setPayInfo(res.data)
-      } else {
-        messageApi.error('该交易单不存在')
-      }
-    })
+    refreshPayInfo()
   }, [])
 
   useEffect(() => {
@@ -241,7 +273,7 @@ const Index: React.FC = () => {
                         ></Checkbox>
                       </div>
                       
-                      <Button style={{ width: '100%' }} type='primary' disabled={order} onClick={orderHandler}>下&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单</Button>
+                      <Button style={{ width: '100%' }} type='primary' disabled={order || ordering || !checked} loading={ordering} onClick={orderHandler}>下&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单</Button>
                     </div>
                   </Card>
                 </Col>
@@ -293,29 +325,29 @@ const Index: React.FC = () => {
                     </p>
                     <p className='orderItem'>
                       <span>支付方式</span>
-                      <span>{payInfo.pay_from === 'zfb' ? '支付宝' : '微信'}</span>
+                      <span>{payInfo.pay_from === 'zfb' ? '支付宝' : payInfo.pay_from === 'wx' ? '微信' : '--'}</span>
                     </p>
                   </div>
                 </Col>
                 {
-                  (payInfo.status === 'pending' || !payInfo.status) && (
+                  (payInfo.status === 'pending') && (
                     <Col span={12}>
-                      <img src={CodeImg} alt="" style={{ width: '300px', height: '300px', cursor: 'pointer' }} onClick={payHandler} />
+                      <img src={CodeImg} alt="" style={{ width: '300px', height: '300px', cursor: paying ? 'not-allowed' : 'pointer', opacity: paying ? 0.7 : 1 }} onClick={payHandler} />
                     </Col>
                   )
                 }
 
               </Row>
               {
-                (payInfo.status === 'pending' || !payInfo.status) && (
+                (payInfo.status === 'pending') && (
                   <p style={{ color: '#ff2633' }}>作者注:此处的支付二维码为本人的微信号,服务端没有实现具体的支付二维码。左键单击二维码可以模仿支付功能。</p>
                 )
               }
 
               {
-                (payInfo.status === 'pending' || !payInfo.status) && (
+                (payInfo.status === 'pending') && (
                   <div className='paySureDom'>
-                    <Button type='primary'>我已支付</Button>
+                    <Button type='primary' onClick={refreshPayInfo}>我已支付</Button>
                     <Button type="link" style={{ color: '#000' }} onClick={cancelHandler}>取消支付</Button>
                   </div>
                 )

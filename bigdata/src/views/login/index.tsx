@@ -12,6 +12,7 @@ import {useNavigate} from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import './index.less'
 import { GlobalContext } from '@/global/context';
+import { loginApi } from '@/api';
  
 const { Title } = Typography;
  
@@ -29,13 +30,21 @@ const LoginPage: React.FC = () => {
  
   const onFinish = (values: LoginFormData) => {
     setLoading(true);
-    console.log("Received values of form: ", values);
-    setTimeout(() => {
-      localStorage.setItem('bigdata_token','123456')
+    loginApi({
+      account: values.username,
+      password: values.password,
+      appName: 'bigdata'
+    }).then((res:any)=>{
+      if (res.code === 200) {
+        localStorage.setItem('intergration_token', res.data.token)
+        message.success(t('login.loginSuccess'));
+        navigate('/dashBoard')
+      } else {
+        message.error(res.msg || t('login.loginFail'));
+      }
+    }).finally(()=>{
       setLoading(false);
-      message.success(t('login.loginSuccess'));
-      navigate('/dashBoard')
-    });
+    })
   };
   const globalText = useContext(GlobalContext)
 
@@ -48,7 +57,7 @@ const LoginPage: React.FC = () => {
        navigate('/dashBoard')
     }
   }else{
-          let token = localStorage.getItem('bigdata_token')
+          let token = localStorage.getItem('intergration_token')
       if(token){
         navigate('/dashBoard')
       }

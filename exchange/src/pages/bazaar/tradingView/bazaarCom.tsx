@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import { Tabs, Input, Row, Col } from 'antd';
 import type { TabsProps } from 'antd';
+import VirtualList from '@/component/VirtualList';
 
 
 const data1 = [
@@ -135,10 +136,30 @@ const Index: React.FC = () => {
 
     const [activeKey, setActiveKey] = useState('1');
     const onChange = (key: string) => {
-        console.log(key);
         setActiveKey(key)
     };
 
+    const [keyword, setKeyword] = useState('')
+
+    const marketList = useMemo(() => {
+        const normalized = keyword.trim().toUpperCase()
+        const base = normalized ? data1.filter((x) => x.name.toUpperCase().includes(normalized)) : data1
+        const list: typeof data1 = []
+        for (let i = 0; i < 2000; i += 1) {
+            list.push(base[i % base.length])
+        }
+        return list
+    }, [keyword])
+
+    const abnormalList = useMemo(() => {
+        const normalized = keyword.trim().toUpperCase()
+        const base = normalized ? data2.filter((x) => x.name.toUpperCase().includes(normalized)) : data2
+        const list: typeof data2 = []
+        for (let i = 0; i < 3000; i += 1) {
+            list.push(base[i % base.length])
+        }
+        return list
+    }, [keyword])
 
 
 
@@ -161,7 +182,7 @@ const Index: React.FC = () => {
                     activeKey === '1' && (
                         
                         <div className='searchDom'>
-                            <Input placeholder="搜索币对" />
+                            <Input placeholder="搜索币对" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
                             <div className='listDom1'>
                                 <Row className='titleRow'>
                                     <Col span={10}>
@@ -174,22 +195,26 @@ const Index: React.FC = () => {
                                         涨跌幅
                                     </Col>
                                 </Row>
-                                {
-                                    data1.map((item) => (
-                                        <Row key={item.name} className='dataRow'>
+                                <VirtualList
+                                    items={marketList}
+                                    itemHeight={56}
+                                    style={{ flex: 1 }}
+                                    getKey={(item, index) => `${item.name}-${index}`}
+                                    renderItem={(item) => (
+                                        <Row className='dataRow'>
                                             <Col span={10}>
                                                 <p>{item.name} <span style={{ color: '#b3611b' }}>10x</span></p>
-                                                <p style={{color:'#888'}}>{item.scale}</p>
+                                                <p style={{ color: '#888' }}>{item.scale}</p>
                                             </Col>
                                             <Col span={7} className='rightItem'>
                                                 {item.newPrice}
                                             </Col>
-                                            <Col span={7} className='rightItem' style={ item.range.includes('-') ? {color:'#d93a2c'} : {color:'#4fb850'}}>
+                                            <Col span={7} className='rightItem' style={item.range.includes('-') ? { color: '#d93a2c' } : { color: '#4fb850' }}>
                                                 {item.range}
                                             </Col>
                                         </Row>
-                                    ))
-                                }
+                                    )}
+                                />
 
                             </div>
                         </div>
@@ -201,22 +226,26 @@ const Index: React.FC = () => {
                     activeKey === '2' && (
                         <div className='searchDom'>
                        <div className='listDom2'>
-                                {
-                                    data2.map((item) => (
-                                        <Row key={item.name} className='dataRow'>
+                                <VirtualList
+                                    items={abnormalList}
+                                    itemHeight={52}
+                                    style={{ flex: 1 }}
+                                    getKey={(item, index) => `${item.name}-${item.time}-${index}`}
+                                    renderItem={(item) => (
+                                        <Row className='dataRow'>
                                             <Col span={10}>
                                                 <p>{item.name}</p>
-                                                <p style={{color:'#888'}}>{item.time}</p>
+                                                <p style={{ color: '#888' }}>{item.time}</p>
                                             </Col>
-                                            <Col span={7} className='rightItem' style={ item.range.includes('-') ? {color:'#d93a2c'} : {color:'#4fb850'}}>
+                                            <Col span={7} className='rightItem' style={item.range.includes('-') ? { color: '#d93a2c' } : { color: '#4fb850' }}>
                                                 {item.log}
                                             </Col>
-                                            <Col span={7} className='rightItem' style={ item.range.includes('-') ? {color:'#d93a2c'} : {color:'#4fb850'}}>
+                                            <Col span={7} className='rightItem' style={item.range.includes('-') ? { color: '#d93a2c' } : { color: '#4fb850' }}>
                                                 {item.range}
                                             </Col>
                                         </Row>
-                                    ))
-                                }
+                                    )}
+                                />
                        </div>
                        </div>
                     )

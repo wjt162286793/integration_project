@@ -52,7 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, Ref } from "vue";
+import { ref, nextTick } from "vue";
+import type { Ref } from "vue";
 import MarkdownIt from "markdown-it";
 import MarkdownItAbbr from "markdown-it-abbr";
 import MarkdownItAnchor from "markdown-it-anchor";
@@ -98,6 +99,7 @@ const msgList: Ref<MsgItem[]> = ref([
 
 const loading: Ref<boolean> = ref(false);
 const newAiContext: Ref<string> = ref("");
+const TOKEN_KEY = 'intergration_token'
 
 
 const api_url = '/aisystemApi'
@@ -141,11 +143,13 @@ const sendMsg = () => {
   loading.value = true;
   async function postStream() {
     console.log(message.value, "传的是什么");
+    const token = localStorage.getItem(TOKEN_KEY) || ''
     const response = await fetch(`${baseURL}/aisys`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "text/event-stream", // 明确告知我们需要SSE
+        authorization: token ? `Bearer ${token}` : '',
       },
 
       body: JSON.stringify({ message: message.value }),

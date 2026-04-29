@@ -31,6 +31,11 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             name: 'web3(dev)',
             path: 'webThree',
             key: 'webThree'
+        },
+        {
+            name: 'AI助手',
+            path: 'assistant',
+            key: 'assistant'
         }
     ]
 
@@ -51,6 +56,8 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             setActiveKey('bazaar')
         } else if (list.includes('webThree')) {
             setActiveKey('webThree')
+        } else if (list.includes('assistant')) {
+            setActiveKey('assistant')
         } else {
             setActiveKey('buyCoin')
         }
@@ -79,7 +86,7 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
                 user_id: ''
             }
         })
-        localStorage.removeItem('rx-token')
+        localStorage.removeItem('intergration_token')
 
         messageApi.success('退出登录');
 

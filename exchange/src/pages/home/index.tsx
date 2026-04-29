@@ -16,6 +16,7 @@ import TelegramImg from '@/assets/img/telegram.png'
 import WalletImg from '@/assets/img/wallet.png' 
 
 import {loginApi,getInfoApi} from '@/api'
+const TOKEN_KEY = 'intergration_token'
 
 type FieldType = {
     account?: string;
@@ -48,13 +49,15 @@ const Index: React.FC = () => {
         setLoadChild(true)
 
       
-      let token = isSubAppFlag ? localStorage.getItem('intergration_token') : localStorage.getItem('rx-token')
+      let token = localStorage.getItem(TOKEN_KEY)
       if(token){
         getInfoApi().then(res=>{
           disPatch({
             type: 'setUserInfo',
             data: res.data
           })
+        }).catch(()=>{
+            localStorage.removeItem(TOKEN_KEY)
         })
       }else{
       }
@@ -86,6 +89,10 @@ const Index: React.FC = () => {
             account:values.account,
             password:values.password
         }).then(res=>{
+            if(res.code !== 200){
+                messageApi.error(res.msg || '登录失败');
+                return
+            }
   
             messageApi.success('登录成功');
  
@@ -100,11 +107,7 @@ const Index: React.FC = () => {
 
     useEffect(() => {
         if(reduxData?.userInfoHandler.token){
-            if(isSubAppFlag){
-                localStorage.setItem('intergration_token',reduxData?.userInfoHandler.token)
-            }else{
-                localStorage.setItem('rx-token',reduxData?.userInfoHandler.token)
-            }
+            localStorage.setItem(TOKEN_KEY,reduxData?.userInfoHandler.token)
         }
     }, [reduxData])
 

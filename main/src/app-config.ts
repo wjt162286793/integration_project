@@ -5,11 +5,10 @@ interface listItem {
   sync:boolean;
 }
 
-
 const list:listItem[] = [
     {
       name: 'exchange',
-      url: 'http://localhost:9001',
+      url: (import.meta as any).env?.VITE_EXCHANGE_URL || 'http://localhost:9001',
       cname:'交易所',
       sync: true
     },
@@ -21,14 +20,13 @@ const list:listItem[] = [
     // },
     {
       name: 'bigdata',
-      url: 'http://localhost:9003',
-      // url:'http://82.157.193.128:8083',
+      url: (import.meta as any).env?.VITE_BIGDATA_URL || 'http://localhost:9003',
       cname:'大数据系统',
       sync: true
     },
     {
       name: 'aisystem',
-      url: 'http://localhost:9004',
+      url: (import.meta as any).env?.VITE_AISYSTEM_URL || 'http://localhost:9004',
       cname:'ai系统',
       sync: true
     }

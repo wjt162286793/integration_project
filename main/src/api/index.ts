@@ -4,8 +4,8 @@ const api_url = '/mainapi'
 
 const api = {
     test:'/',
-    login:'/portal/login',
-    reqUserInfo:'/portal/userInfo',
+    login:'/auth/login',
+    reqUserInfo:'/auth/userInfo',
 }
 
 export const testApi = ()=>{

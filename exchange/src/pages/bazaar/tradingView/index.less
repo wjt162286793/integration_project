@@ -112,11 +112,15 @@
         }
         .listDom1{
             height: calc(100vh - 250px);
-            overflow: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .listDom2{
             height: calc(100vh - 210px);
-            overflow: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
     }
@@ -232,8 +236,10 @@
         }
         .content{
             flex: 1;
-            overflow: auto;
+            overflow: hidden;
             padding: 0 8px;
+            display: flex;
+            flex-direction: column;
             .titleRow{
                    color: #888;
             }

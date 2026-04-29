@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 
-const login = '/bigData/login'
+const login = '/auth/login'
 const fileList = '/bigdata/fileList'
 const savehashTofile = '/bigdata/savehashTofile'
 const deleteFile = '/bigdata/deleteFile'
