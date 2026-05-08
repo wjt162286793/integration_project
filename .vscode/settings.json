@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.vue": "vue"
+  },
+  "vue.server.hybridMode": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
