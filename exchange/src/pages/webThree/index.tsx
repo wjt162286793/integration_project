@@ -189,8 +189,13 @@ const Index: React.FC = () => {
   const getTestAccount = async () => {
     // 获取http://127.0.0.1:8545/下所有的账户 (v5语法)
     try {
-      // 1. 创建JsonRpcProvider (v5通过providers属性访问)
-          const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545/');
+      const rpcUrl = import.meta.env.VITE_ETH_RPC_URL;
+      if (!rpcUrl) {
+        messageApi.warning('未配置 ETH RPC（VITE_ETH_RPC_URL），Web3 演示功能不可用');
+        return;
+      }
+
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
 
       // 2. 获取所有账户地址 (v5使用listAccounts方法)
       const accounts = await provider.send('eth_accounts', []);
@@ -245,8 +250,13 @@ const Index: React.FC = () => {
         privateKey = addressItem.privateKey
       }
 
-      // 修复：创建正确的Provider实例（使用Hardhat节点地址）
-      const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545/');
+      const rpcUrl = import.meta.env.VITE_ETH_RPC_URL;
+      if (!rpcUrl) {
+        messageApi.warning('未配置 ETH RPC（VITE_ETH_RPC_URL），无法发起链上转账');
+        return;
+      }
+
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
 
       console.log(privateKey, provider, '???===公私钥和Provider实例')
       const senderSigner = new ethers.Wallet(privateKey, provider);
