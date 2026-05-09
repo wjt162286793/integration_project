@@ -3,7 +3,7 @@ import { Button, message,Table,Modal } from 'antd';
 import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 import StatusBar from '@uppy/status-bar';
-import Tus from '@uppy/tus';
+import XHRUpload from '@uppy/xhr-upload';
 import { useTranslation } from 'react-i18next';
 import {fileListApi,deleteFileApi,fileCheckApi} from '@/api/index'
 
@@ -15,7 +15,8 @@ import './index.less'
 
 // 1MB大小
 const ONE_MB = 1024 * 1024;
-const MAX_FILE_SIZE = 100 * ONE_MB;
+const MAX_UPLOAD_MB = Number(import.meta.env.VITE_MAX_UPLOAD_MB || 1024)
+const MAX_FILE_SIZE = (Number.isFinite(MAX_UPLOAD_MB) && MAX_UPLOAD_MB > 0 ? MAX_UPLOAD_MB : 1024) * ONE_MB;
 
 const toHex = (buffer: ArrayBuffer) => {
   const bytes = new Uint8Array(buffer);
@@ -30,6 +31,13 @@ const sha256File = async (file: File | Blob) => {
   const arrayBuffer = await file.arrayBuffer();
   const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
   return toHex(hashBuffer);
+}
+
+const buildFallbackHash = (file: any) => {
+  const name = String(file?.name || '')
+  const size = String(file?.size || 0)
+  const mtime = String(file?.data?.lastModified || '')
+  return `upload_${Date.now()}_${size}_${name}_${mtime}`
 }
 
 const FileUploader: React.FC = () => {
@@ -99,7 +107,6 @@ const FileUploader: React.FC = () => {
   }
 
 
-const api_url = '/bigdataApi';
 const env_mode = import.meta.env.MODE;
 console.log(env_mode, 'env_mode');
 
@@ -112,19 +119,12 @@ const isProxy = window.location.pathname.startsWith('/bigdata-sub-api');
 // 配置API基础路径
 let baseURL = '';
 
-// 优化baseURL判断逻辑
 if (isSubFlag) {
-  // 在无界微前端环境中
   baseURL = '/bigdata-sub-api';
+} else if (env_mode === 'development') {
+  baseURL = '/bigdataApi';
 } else {
-  // 独立运行时
-  if (env_mode === 'development') {
-    // 本地开发模式
-    baseURL = api_url;
-  } else {
-    // 独立生产模式
-    baseURL = import.meta.env.VITE_API_URL || api_url;
-  }
+  baseURL = import.meta.env.VITE_API_URL || '/bigdata-sub-api';
 }
 
 // 确保baseURL不以斜杠结尾
@@ -133,17 +133,10 @@ console.log('Final baseURL:', baseURL);
 
 // 添加获取基础URL的函数
 const getBaseUrl = () => {
-  if (isSubFlag) {
-    // 在微前端环境中
-    return '/bigdata-sub-api';
-  } else {
-    // 独立运行时
-    if (env_mode === 'development') {
-      return 'http://127.0.0.1:8051';
-    } else {
-      return 'http://82.157.193.128:8051';
-    }
+  if (env_mode === 'development' && !isSubFlag) {
+    return import.meta.env.VITE_API_URL || 'http://127.0.0.1:8051';
   }
+  return `${window.location.origin}/bigdata-sub-api`;
 };
 
 // 修改下载处理函数
@@ -177,13 +170,14 @@ const deleteHandler = (record)=>{
     uppyRef.current
       .use(DragDrop, { target: dragDropRef.current!, note: t('fileMode.dragDropHint') })
       .use(StatusBar, { target: statusBarRef.current! })
-      .use(Tus, {
-        endpoint: `${baseURL}/fileMode`,
+      .use(XHRUpload, {
+        endpoint: `${baseURL}/fileMode/upload`,
+        formData: true,
+        fieldName: 'file',
+        bundle: false,
         limit: 5,
-        chunkSize: 5 * ONE_MB,
-        resume: true,
         allowedMetaFields: ['hash','name','extension','size','filename','filetype','type']
-    });
+      });
 
     ;(uppyRef.current as any).addPreProcessor(async (fileIDs: string[]) => {
       const uppy = uppyRef.current
@@ -198,7 +192,8 @@ const deleteHandler = (record)=>{
             uppy.removeFile(file.id)
             continue
           }
-          const hash = await sha256File(file.data)
+          const shouldSkipHash = typeof file.size === 'number' && file.size >= 200 * ONE_MB
+          const hash = shouldSkipHash ? buildFallbackHash(file) : await sha256File(file.data)
           uppy.setFileMeta(file.id, {
             hash,
             name: file.name,
@@ -208,10 +203,12 @@ const deleteHandler = (record)=>{
             extension: file.extension || '',
             size: String(file.size || 0)
           })
-          const checkRes: any = await fileCheckApi({ hash })
-          if (checkRes && checkRes.code === 200 && checkRes.data && checkRes.data.exists) {
-            uppy.removeFile(file.id)
-            message.success(t('fileMode.instantUploadSuccess'))
+          if (!shouldSkipHash) {
+            const checkRes: any = await fileCheckApi({ hash })
+            if (checkRes && checkRes.code === 200 && checkRes.data && checkRes.data.exists) {
+              uppy.removeFile(file.id)
+              message.success(t('fileMode.instantUploadSuccess'))
+            }
           }
         }
         message.destroy('hashing')

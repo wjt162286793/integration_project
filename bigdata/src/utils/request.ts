@@ -1,13 +1,9 @@
 import axios from 'axios'
-const api_url = '/bigdataApi'
 const TOKEN_KEY = 'intergration_token'
 
 // 判断当前环境
 const env_mode = import.meta.env.MODE;
 console.log(env_mode, '当前环境');
-
-// 检查是否通过主应用代理访问
-const isProxy = window.location.pathname.startsWith('/bigdata-sub-api');
 
 // 检查是否在无界微前端环境中
 const isSubFlag = window.__POWERED_BY_WUJIE__;
@@ -15,19 +11,13 @@ const isSubFlag = window.__POWERED_BY_WUJIE__;
 // 配置API基础路径
 let baseURL = '';
 
-if (isProxy) {
-  // 通过主应用代理访问时
+if (isSubFlag) {
   baseURL = '/bigdata-sub-api/bigdataApi';
-} else if (isSubFlag) {
-  // 在无界微前端环境中但非代理访问
-  if (env_mode === 'development') {
-    baseURL = api_url;
-  } else {
-    baseURL = 'http://82.157.193.128:8086/bigdata-sub-api';
-  }
+} else if (env_mode === 'development') {
+  baseURL = '/bigdataApi';
 } else {
-  // 独立运行时
-  baseURL = api_url;
+  const apiPrefix = (import.meta.env.VITE_API_URL || '/bigdata-sub-api').replace(/\/$/, '');
+  baseURL = `${apiPrefix}/bigdataApi`;
 }
 
 

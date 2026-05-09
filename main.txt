@@ -6,6 +6,36 @@ server {
     try_files $uri $uri/ /index.html;
 
     # 添加重定向规则，确保子应用请求都通过主应用代理
+    location = /bigdata-sub-api/fileMode {
+        proxy_pass http://82.157.193.128:8051/fileMode;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        client_max_body_size 1000M;
+        proxy_read_timeout 3600;
+        proxy_send_timeout 3600;
+        proxy_connect_timeout 3600;
+        proxy_request_buffering off;
+        proxy_buffering off;
+    }
+
+    location ^~ /bigdata-sub-api/fileMode/ {
+        proxy_pass http://82.157.193.128:8051/fileMode/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        client_max_body_size 1000M;
+        proxy_read_timeout 3600;
+        proxy_send_timeout 3600;
+        proxy_connect_timeout 3600;
+        proxy_request_buffering off;
+        proxy_buffering off;
+    }
+
     location /bigdata-sub-api/ {
         proxy_pass http://82.157.193.128:8051/;
         proxy_set_header Host $host;
