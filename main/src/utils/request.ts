@@ -37,7 +37,14 @@ request.interceptors.response.use((config)=>{
     localStorage.removeItem('intergration_token')
     router.push('/login');
     return Promise.reject(new Error('未登录'));
+   }else{
+    // 其它业务码（如登录失败 7003）：原实现此处无返回值，导致调用方 res.code 恒为 undefined
+    return config.data
    }
+},(error)=>{
+   // 网络错误 / 超时 / 5xx：统一提示并向下抛出，避免静默失败
+   ElMessage.error(error?.message || '网络异常，请稍后重试');
+   return Promise.reject(error);
 })
 
 export default request
