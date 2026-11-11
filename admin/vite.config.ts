@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue'
 import monacoEditorPlugin from 'vite-plugin-monaco-editor'
 import path from 'path'
 
+const monacoEditorPluginFactory =
+  (monacoEditorPlugin as unknown as { default?: typeof monacoEditorPlugin }).default ?? monacoEditorPlugin
+
 // https://vite.dev/config/
 export default defineConfig({
   resolve: {
@@ -22,7 +25,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    monacoEditorPlugin()
+    monacoEditorPluginFactory({})
 
   ],
 

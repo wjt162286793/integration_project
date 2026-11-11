@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="micro-app-host">
     <WujieVue
       name="bigdata"
       :url="url"
       :keep-alive="true"
-      :sync="true"
+      :sync="false"
       width="100%"
       height="100%"
       :alive="true"
@@ -14,32 +14,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import WujieVue from "wujie-vue3";
+import WujieVue from 'wujie-vue3'
+import { createUiBridgeProps } from '@/ui-preferences'
 
-const url = ref("http://82.157.193.128:8083");
+const url = 'http://localhost:9003'
 
-const wujieProps = ref({
+const wujieProps = createUiBridgeProps({
   fetch: (url: string, options: RequestInit) => {
-    // 拦截所有来自 bigdata 子应用的API请求
-    if (url.includes("8083/bigdataApi")) {
-      return window.fetch(
-        url.replace("http://82.157.193.128:8083", "/bigdata-sub-api"),
-        {
-          ...options,
-          credentials: "include",
-          headers: {
-            ...options.headers,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
     return window.fetch(url, options);
   },
-});
+})
 </script>
 
 <style lang="less" scoped>
+.micro-app-host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 </style>

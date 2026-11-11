@@ -28,6 +28,7 @@ const RouterCom: React.FC = () => {
           {/* 使用递归函数替代原来的嵌套map */}
           {renderRoutes(routeList)}
           <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Suspense>
     </Router>

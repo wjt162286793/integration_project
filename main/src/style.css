@@ -11,8 +11,19 @@ html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input,
     box-sizing: border-box;
 }
 
-html, body {
+html, body, #app {
+    width: 100%;
     min-height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+:root {
+    --el-color-primary: #356be8;
+    --el-color-primary-dark-2: #2c59c6;
+  --app-primary: #356be8;
 }
   /*滚动条宽高 */
   ::-webkit-scrollbar {
@@ -23,7 +34,7 @@ html, body {
   /* 滚动条上的滚动滑块。样式 */
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: #0051ff;
+    background: var(--app-primary);
   }
 
   /* 鼠标悬停时，设置滑块的背景颜色为深灰色 */
@@ -37,9 +48,11 @@ html, body {
   }
 
 body {
-    font-family: "Microsoft YaHei";
+    min-height: 100vh;
+    font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
     font-size: 14px;
-    color: #333;
+    color: #263347;
+    background: #f4f6fa;
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const api_url = '/aisystemApi'
+const env_mode = import.meta.env.MODE
 
 // 检查是否通过主应用代理访问
 const isProxy = window.location.pathname.startsWith('/aisystem-sub-api');
@@ -23,6 +24,11 @@ if (isProxy) {
   // 独立运行时
   baseURL = api_url;
 }
+
+const request = axios.create({
+  baseURL,
+  timeout: 6000,
+})
 
 // 添加请求拦截器(参考exchange的token处理)
 request.interceptors.request.use((config)=>{

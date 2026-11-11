@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="micro-app-host">
     <WujieVue 
       name="exchange" 
       :url="url" 
       :props="wujieProps"
       :keep-alive="true" 
-      :sync="true" 
+      :sync="false"
       width="100%" 
       height="100%" 
       :alive="true"
@@ -14,28 +14,24 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import WujieVue from 'wujie-vue3'
+import { createUiBridgeProps } from '@/ui-preferences'
+import { registerSubAppNavigation } from '@/subapp-navigation'
 
-const url = ref('http://82.157.193.128:8084')
+const url = 'http://localhost:9001'
 
-const wujieProps = ref({
+const wujieProps = createUiBridgeProps({
+  registerSubAppNavigation,
   fetch: (url: string, options: RequestInit) => {
-    // 匹配子应用所有API请求
-    if (url.includes('8084/exchangeApi')) {
-      return window.fetch(
-        url.replace('http://82.157.193.128:8084', '/exchange-sub-api'),
-        { 
-          ...options, 
-          credentials: 'include',
-          headers: {
-            ...options.headers,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-    }
     return window.fetch(url, options)
-  }
+  },
 })
 </script>
+
+<style lang="less" scoped>
+.micro-app-host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+</style>

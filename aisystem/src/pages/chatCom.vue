@@ -52,7 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, Ref } from "vue";
+import { ref, nextTick } from "vue";
+import type { Ref } from "vue";
 import MarkdownIt from "markdown-it";
 import MarkdownItAbbr from "markdown-it-abbr";
 import MarkdownItAnchor from "markdown-it-anchor";
@@ -240,7 +241,7 @@ const renderMdText = (text) => {
 .searchBox {
   width: 1000px;
   margin: auto;
-  border: 1px solid #c2b2f8;
+    border: 1px solid color-mix(in srgb, var(--app-primary) 35%, white);
   border-radius: 8px;
   position: relative;
   .sendBtn {
@@ -296,7 +297,7 @@ const renderMdText = (text) => {
       width: 500px;
     }
     :deep(a) {
-      color: #335fee;
+      color: var(--app-primary);
       line-height: 20px;
     }
     :deep(p) {
@@ -316,7 +317,7 @@ const renderMdText = (text) => {
   .chatContent {
     padding: 16px;
     border-radius: 8px;
-    background: #3fb59f;
+    background: var(--app-primary);
     max-width: 900px;
     line-height: 14px;
   }

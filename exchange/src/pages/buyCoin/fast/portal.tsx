@@ -319,49 +319,43 @@ const Index: React.FC = () => {
                                 <div className='buyBox'>
                                     <div className='inputBox'>
                                         <span className='inputTitle'>我要支付</span>
-                                        <Input className='inputItem' value={buy_send} onChange={(e) => inputChange1(e.target.value)} placeholder='0' />
-                                        <div className='selectItem'>
-                                            <Select
-                                                style={{ width: '120px' }}
-
-                                                value={buy_value_1}
-                                                onChange={handleChange1}
-                                                options={entiry_options}
-                                                optionRender={(option) => (
-                                                    <Space>
-                                                        {
-                                                            option.data.img
-                                                        }
-                                                        <span>
-                                                            {option.data.label}
-                                                        </span>
-                                                    </Space>
-                                                )}
-                                            />
+                                        <div className='inputControl'>
+                                            <Input className='inputItem' value={buy_send} onChange={(e) => inputChange1(e.target.value)} placeholder='0' />
+                                            <div className='selectItem'>
+                                                <Select
+                                                    style={{ width: '120px' }}
+                                                    value={buy_value_1}
+                                                    onChange={handleChange1}
+                                                    options={entiry_options}
+                                                    optionRender={(option) => (
+                                                        <Space>
+                                                            {option.data.img}
+                                                            <span>{option.data.label}</span>
+                                                        </Space>
+                                                    )}
+                                                />
+                                            </div>
                                         </div>
                                         <span className='tipsTitle'>10 - 5000,000 {buy_value_1}</span>
                                     </div>
                                     <div className='inputBox'>
                                         <span className='inputTitle'>我将收到</span>
-                                        <Input className='inputItem' value={buy_get} onChange={(e) => inputChange2(e.target.value)} placeholder='0' />
-                                        <div className='selectItem'>
-                                            <Select
-                                                style={{ width: '120px' }}
-
-                                                value={buy_value_2}
-                                                onChange={handleChange2}
-                                                options={num_options}
-                                                optionRender={(option) => (
-                                                    <Space>
-                                                        {
-                                                            option.data.img
-                                                        }
-                                                        <span>
-                                                            {option.data.label}
-                                                        </span>
-                                                    </Space>
-                                                )}
-                                            />
+                                        <div className='inputControl'>
+                                            <Input className='inputItem' value={buy_get} onChange={(e) => inputChange2(e.target.value)} placeholder='0' />
+                                            <div className='selectItem'>
+                                                <Select
+                                                    style={{ width: '120px' }}
+                                                    value={buy_value_2}
+                                                    onChange={handleChange2}
+                                                    options={num_options}
+                                                    optionRender={(option) => (
+                                                        <Space>
+                                                            {option.data.img}
+                                                            <span>{option.data.label}</span>
+                                                        </Space>
+                                                    )}
+                                                />
+                                            </div>
                                         </div>
 
                                     </div>
@@ -369,49 +363,43 @@ const Index: React.FC = () => {
                             ) : (<div className='sellBox'>
                                 <div className='inputBox'>
                                     <span className='inputTitle'>我要出售</span>
-                                    <Input className='inputItem' value={sell_send} onChange={(e) => inputChange3(e.target.value)} placeholder='0' />
-                                    <div className='selectItem'>
-                                        <Select
-                                            style={{ width: '120px' }}
-
-                                            value={sell_value_1}
-                                            onChange={handleChange3}
-                                            options={num_options}
-                                            optionRender={(option) => (
-                                                <Space>
-                                                    {
-                                                        option.data.img
-                                                    }
-                                                    <span>
-                                                        {option.data.label}
-                                                    </span>
-                                                </Space>
-                                            )}
-                                        />
+                                    <div className='inputControl'>
+                                        <Input className='inputItem' value={sell_send} onChange={(e) => inputChange3(e.target.value)} placeholder='0' />
+                                        <div className='selectItem'>
+                                            <Select
+                                                style={{ width: '120px' }}
+                                                value={sell_value_1}
+                                                onChange={handleChange3}
+                                                options={num_options}
+                                                optionRender={(option) => (
+                                                    <Space>
+                                                        {option.data.img}
+                                                        <span>{option.data.label}</span>
+                                                    </Space>
+                                                )}
+                                            />
+                                        </div>
                                     </div>
                                     <span className='tipsTitle'>10 - 5000,000 {sell_value_1}</span>
                                 </div>
                                 <div className='inputBox'>
                                     <span className='inputTitle'>我将收到</span>
-                                    <Input className='inputItem' value={sell_get} onChange={(e) => inputChange4(e.target.value)} placeholder='0' />
-                                    <div className='selectItem'>
-                                        <Select
-                                            style={{ width: '120px' }}
-
-                                            value={sell_value_2}
-                                            onChange={handleChange4}
-                                            options={entiry_options}
-                                            optionRender={(option) => (
-                                                <Space>
-                                                    {
-                                                        option.data.img
-                                                    }
-                                                    <span>
-                                                        {option.data.label}
-                                                    </span>
-                                                </Space>
-                                            )}
-                                        />
+                                    <div className='inputControl'>
+                                        <Input className='inputItem' value={sell_get} onChange={(e) => inputChange4(e.target.value)} placeholder='0' />
+                                        <div className='selectItem'>
+                                            <Select
+                                                style={{ width: '120px' }}
+                                                value={sell_value_2}
+                                                onChange={handleChange4}
+                                                options={entiry_options}
+                                                optionRender={(option) => (
+                                                    <Space>
+                                                        {option.data.img}
+                                                        <span>{option.data.label}</span>
+                                                    </Space>
+                                                )}
+                                            />
+                                        </div>
                                     </div>
 
                                 </div>

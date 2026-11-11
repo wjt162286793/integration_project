@@ -1,50 +1,37 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import './header.less'
 import { Button, message } from 'antd'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import type { UiSubAppNavigationItem } from '../../../shared/ui-runtime'
+
+const menuList: UiSubAppNavigationItem[] = [
+    { name: '买币', path: 'buyCoin', key: 'buyCoin' },
+    { name: '市场', path: 'bazaar', key: 'bazaar' },
+    { name: 'web3(dev)', path: 'webThree', key: 'webThree' },
+]
 
 // 修改组件定义，添加props类型
-const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showModal }) => {
+const Index: React.FC<{
+    jumpRoute: (item: UiSubAppNavigationItem) => void
+    showModal: () => void
+}> = ({ jumpRoute, showModal }) => {
     const isSubAppFlag = window.__POWERED_BY_WUJIE__
 
     const userToken = useSelector(state => state.userInfoHandler.token)
 
     const location = useLocation()
-    const navigate = useNavigate()
     const disPatch = useDispatch()
 
     const [messageApi, contextHolder] = message.useMessage();
-    const menuList = [
-        {
-            name: '买币',
-            path: 'buyCoin',
-            key: 'buyCoin'
-
-        },
-        {
-            name: '市场',
-            path: 'bazaar',
-            key: 'bazaar'
-        },
-        {
-            name: 'web3(dev)',
-            path: 'webThree',
-            key: 'webThree'
-        }
-    ]
-
-    // 修改jumpItem函数，调用父组件方法
-    const jumpItem = (item: any) => {
-
-        setActiveKey(item.key)
-        jumpRoute(item);
-    }
-
     const [activeKey, setActiveKey] = useState('')
+    const jumpItem = useCallback((item: UiSubAppNavigationItem) => {
+        setActiveKey(item.key)
+        jumpRoute(item)
+    }, [jumpRoute])
 
     useEffect(() => {
-        let list = location.pathname.split('/')
+        const list = location.pathname.split('/')
         if (list.includes('buyCoin')) {
             setActiveKey('buyCoin')
         } else if (list.includes('bazaar')) {
@@ -55,15 +42,17 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
             setActiveKey('buyCoin')
         }
 
-    }, [])
+    }, [location.pathname])
 
     useEffect(() => {
-        if (activeKey) {
-            let Item = menuList.find(item => item.key === activeKey)
-            jumpItem(Item)
-        }
+        if (!isSubAppFlag) return
 
-    }, [activeKey])
+        window.$wujie?.props?.registerSubAppNavigation?.(
+            menuList,
+            activeKey,
+            (item: UiSubAppNavigationItem) => jumpItem(item),
+        )
+    }, [activeKey, isSubAppFlag, jumpItem])
 
 
     const toLogin = () => {
@@ -94,7 +83,7 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
                     <h1 className='exLogo'>wjt交易所</h1>
                     <ul className='menuList'>
                         {
-                            menuList.map((item, index) => {
+                            menuList.map((item) => {
                                 return (
                                     <li className={item.key === activeKey ? 'activeMenuItem' : 'menuItem'} key={item.key} onClick={() => jumpItem(item)}>{item.name}</li>
                                 )
@@ -110,22 +99,6 @@ const Index: React.FC<{ jumpRoute: (item: any) => void }> = ({ jumpRoute, showMo
                     }
                 </div>
             }
-            {
-                isSubAppFlag && <div className='subHeader'>
-                                       <ul className='menuList'>
-                                        <li className='lineLi'></li>
-                        {
-                            menuList.map((item, index) => {
-                                return (
-                                    <li className={item.key === activeKey ? 'activeMenuItem' : 'menuItem'} key={item.key} onClick={() => jumpItem(item)}>{item.name}</li>
-                                )
-                            })
-                        }
-
-                    </ul>
-                </div>
-            }
-
         </>
 
 

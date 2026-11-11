@@ -4,7 +4,9 @@ import App from './App.vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
+import { initializeUiRuntime } from '../../shared/ui-runtime'
 
+initializeUiRuntime()
 const app =  createApp(App)
 app.use(ElementPlus)
 

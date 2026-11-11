@@ -110,7 +110,7 @@ const Index: React.FC = () => {
 
     
     return (
-        <div>
+        <div className={isSubAppFlag ? 'exchangeHome exchangeHome-subApp' : 'exchangeHome'}>
             {contextHolder}
             <Header jumpRoute={jumpRoute} showModal={showModal}></Header>
             {

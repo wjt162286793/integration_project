@@ -128,3 +128,99 @@
     color: #1677ff;
   }
 }
+
+.container,
+.container_subApp {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.container .operationDom,
+.container_subApp .operationDom {
+  flex: 0 0 132px;
+  width: 132px;
+  box-sizing: border-box;
+  min-height: 0;
+  align-items: stretch;
+  overflow-y: auto;
+  padding: 12px 10px;
+  border-left: 1px solid #e6eaf0;
+  background: #fff;
+
+  .title {
+    margin: 8px 0;
+    color: #243247;
+    font-size: 15px;
+    font-weight: 650;
+    text-align: center;
+  }
+
+  .operationList {
+    li {
+      padding: 6px 0;
+      text-align: center;
+    }
+
+    .ant-btn {
+      min-width: 72px;
+    }
+  }
+
+  > .ant-btn {
+    align-self: center;
+    margin-top: 6px;
+  }
+}
+
+#stencil {
+  flex: 0 0 180px;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#graph-container {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 1100px) {
+  #stencil {
+    flex-basis: 144px;
+    width: 144px;
+  }
+
+  .container .operationDom,
+  .container_subApp .operationDom {
+    flex-basis: 116px;
+    width: 116px;
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+}
+
+@media (max-width: 760px) {
+  #stencil {
+    flex-basis: 108px;
+    width: 108px;
+  }
+
+  .container .operationDom,
+  .container_subApp .operationDom {
+    flex-basis: 96px;
+    width: 96px;
+
+    .operationList .ant-btn {
+      min-width: 60px;
+      padding-right: 6px;
+      padding-left: 6px;
+    }
+  }
+}

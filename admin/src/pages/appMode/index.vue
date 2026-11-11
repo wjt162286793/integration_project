@@ -35,7 +35,7 @@ declare global {
   }
 }
 
-const editorContainer = ref<HTMLDivElement>(null)
+const editorContainer = ref<HTMLDivElement | null>(null)
 let editor: monaco.editor.IStandaloneCodeEditor | null = null
 const currentTheme = ref<string>('vs-dark')
 const currentLanguage = ref<string>('javascript')

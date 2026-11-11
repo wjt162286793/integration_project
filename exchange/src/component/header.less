@@ -1,19 +1,29 @@
 .headerBox{
+    width: 100%;
+    min-width: 0;
     height: 60px;
-    background: #000;
+    flex: 0 0 60px;
+    background: #111b2b;
     display: flex;
     position:relative;
+    align-items: center;
+    color: #eef3fb;
     .exLogo{
-        color: #fff;
+        color: #f4f7fc;
         width: 200px;
-        text-align: center;
+        flex: 0 0 200px;
+        text-align: left;
+        padding-left: 24px;
         height: 60px;
         line-height: 60px;
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 700;
     }
     .menuList{
-        color: #fff;
+        min-width: 0;
+        height: 60px;
+        align-items: stretch;
+        color: #cbd5e1;
         display: flex;
         .menuItem{
             padding:0 16px;
@@ -23,11 +33,11 @@
             font-weight: 600;
             cursor: pointer;
             box-sizing: border-box;
+            transition: background 0.18s ease, color 0.18s ease;
         }
         .menuItem:hover{
-            background: #fff;
-            color: #000;
-            border-bottom: #000 1px solid;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
         }
         .activeMenuItem{
             padding:0 16px;
@@ -37,58 +47,75 @@
             font-weight: 600;
             cursor: pointer;
             box-sizing: border-box;
-            background: #fff;
-            color: #000;
-            border-bottom: #000 1px solid;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-bottom: 2px solid var(--app-primary, #356be8);
         }
     }
     .loginBtn{
        position:absolute;
        right: 16px;
        top:16px;
+       color: #fff !important;
     }
 }
 
 .subHeader{
-    position: fixed;
-    top: 0px;
-    right: 400px;
-    color: #fff;
-    z-index: 999;
-        .menuList{
-        color: #fff;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    flex: 0 0 56px;
+    min-height: 56px;
+    align-items: center;
+    background: #111b2b;
+    color: #eef3fb;
+
+    .menuList{
         display: flex;
+        min-width: 0;
+        align-items: stretch;
+        color: #eef3fb;
+
         .lineLi{
-            height: 60px;
-            width: 2px;
-            background: #fff;
-            margin-right: 24px;
+            width: 1px;
+            height: 24px;
+            margin: 16px 8px 16px 20px;
+            background: rgba(226, 232, 240, 0.24);
         }
+
         .menuItem{
-            padding:0 16px;
-            height: 60px;
-            line-height: 60px;
+            display: grid;
+            min-width: 92px;
+            height: 56px;
+            place-items: center;
+            padding: 0 18px;
+            color: #cbd5e1;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 550;
             cursor: pointer;
             box-sizing: border-box;
+            transition: background 0.18s ease, color 0.18s ease;
         }
+
         .menuItem:hover{
-            background: #fff;
-            color: #000;
-            border-bottom: #000 1px solid;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
         }
+
         .activeMenuItem{
-            padding:0 16px;
-            height: 60px;
-            line-height: 60px;
+            display: grid;
+            min-width: 92px;
+            height: 56px;
+            place-items: center;
+            padding: 0 18px;
+            border-bottom: 2px solid var(--app-primary, #356be8);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff !important;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             box-sizing: border-box;
-            background: #fff;
-            color: #000;
-            border-bottom: #000 1px solid;
         }
     }
 }

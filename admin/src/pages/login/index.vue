@@ -49,8 +49,6 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
-import {testApi,loginApi} from '@/api'
-import {userStore} from '@/store'
 
 const router = useRouter()
 const loginFormRef = ref<InstanceType<typeof ElForm>>()
@@ -113,7 +111,7 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--app-primary) 72%, #111b2b), #111b2b);
 
   .login-card {
     width: 520px;

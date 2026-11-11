@@ -50,6 +50,7 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
   const initGraph = (): Graph => {
     const graph = new Graph({
       container: document.getElementById("graph-container")!,
+      autoResize: true,
       grid: true,
       mousewheel: {
         enabled: true,

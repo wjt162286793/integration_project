@@ -1,18 +1,23 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './index.less'
 import BazaarCom from './bazaarCom'
 import MainCom from './mainCom'
 import OrderForm from './orderForm'
 import { ConfigProvider, theme } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { getUiPreferences, subscribeUiPreferences, themes } from '../../../../../shared/ui-runtime';
+import type { UiPreferences } from '../../../../../shared/ui-runtime';
 const Index: React.FC = () => {
     const navigate = useNavigate();
+    const [uiPreferences, setUiPreferences] = useState<UiPreferences>(getUiPreferences);
+    useEffect(() => subscribeUiPreferences(setUiPreferences), []);
+
     const backList = () => {
         navigate('/home/bazaar/currency')
     }
 
     return (
-        <ConfigProvider theme={{ token: { colorPrimary: '#000' }, algorithm: theme.darkAlgorithm }}>
+        <ConfigProvider theme={{ token: { colorPrimary: themes[uiPreferences.theme].color }, algorithm: theme.darkAlgorithm }}>
             <div className='tradingViewDom'>
                 <ul className='headerBox'>
                     <li className='libox1'>BTC/USDT <span>10x</span></li>

@@ -22,30 +22,27 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/mainapi/, '')
         },
         '/exchange-sub-api': {
-          target: 'http://82.157.193.128:8084', // 子应用真实地址
+          target: 'http://localhost:8051',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/exchange-sub-api/, ''),
-          // 关键：添加CORS头
+          rewrite: (path) => path.replace(/^\/exchange-sub-api\/exchangeApi/, '').replace(/^\/exchange-sub-api/, ''),
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
           }
         },
         '/bigdata-sub-api': {
-          target: 'http://82.157.193.128:8083', // 子应用真实地址
+          target: 'http://localhost:8051',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/bigdata-sub-api/, ''),
-          // 关键：添加CORS头
+          rewrite: (path) => path.replace(/^\/bigdata-sub-api\/bigdataApi/, '/bigdata').replace(/^\/bigdata-sub-api/, ''),
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
           }
         },
         '/aisystem-sub-api': {
-          target: 'http://82.157.193.128:8085', // 子应用真实地址
+          target: 'http://localhost:8051',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/aisystem-sub-api/, ''),
-          // 关键：添加CORS头
+          rewrite: (path) => path.replace(/^\/aisystem-sub-api\/aisystemApi/, ''),
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'

@@ -7,10 +7,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const useWujieFlag = window?.__POWERED_BY_WUJIE__;
-</script>
-
 <style scoped>
 /* 保留原有的样式 */
 .logo {

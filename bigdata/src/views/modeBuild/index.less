@@ -1,62 +1,102 @@
 .emptyTitle{
-    // margin: 300px 50%;
-    margin-top: 400px;
-    margin-left: 40%;
+    display: grid;
+    min-height: 100%;
+    place-items: center;
+    margin: 0;
     font-size: 24px;
     font-weight: 700;
+    color: #8995a7;
 }
 
 .mainBox {
     display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    gap: 14px;
 
     .leftMenu {
-        width: 240px;
-        box-shadow: #b9b9b9 2px 2px 2px 2px;
-        border: #000 1px solid;
-        border-radius: 6px;
+        flex: 0 0 clamp(168px, 18vw, 240px);
+        width: clamp(168px, 18vw, 240px);
+        min-height: 0;
+        overflow: auto;
+        border: 1px solid #e6eaf0;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(29, 47, 79, 0.05);
+
         .Title{
             width: 100%;
-            padding: 16px;
-            background: #000;
-            color: #fff;
-            font-size: 16px;
+            padding: 14px 16px;
+            background: #f5f7fb;
+            color: #243247;
+            font-size: 14px;
             font-weight: 600;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9edf3;
+
             .addIcon{
+                color: #71809a;
                 cursor: pointer;
             }
+
+            .addIcon:hover {
+                color: var(--app-primary, #356be8);
+            }
         }
+
         .liItem{
             width: 100%;
-            padding: 16px;
+            padding: 13px 14px;
             font-size: 14px;
             font-weight: 400;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid #edf0f5;
+            color: #4d5b70;
             cursor: pointer;
+            transition: color 0.18s ease, background 0.18s ease;
         }
+
         .liItem:hover {
-            color: #1677ff;
-            background: #f3f3f3;
+            color: var(--app-primary, #356be8);
+            background: #f7f9fd;
         }
+
         .liItemActive{
             width: 100%;
-            padding: 16px;
+            padding: 13px 14px;
             font-size: 14px;
             font-weight: 400;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid #edf0f5;
             cursor: pointer;
-            color: #1677ff;
-            background: #f3f3f3;
+            color: var(--app-primary, #356be8);
+            background: color-mix(in srgb, var(--app-primary, #356be8) 8%, white);
         }
     }
 
     .contentBox{
         flex: 1;
-        height: calc(100vh - 92px);
-        margin-left: 32px;
-        border: #000 1px solid;
-        box-shadow: #b9b9b9 2px 2px 2px 2px;
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid #e6eaf0;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(29, 47, 79, 0.05);
+    }
+}
+
+@media (max-width: 1100px) {
+    .mainBox {
+        gap: 10px;
+
+        .leftMenu {
+            flex-basis: 168px;
+            width: 168px;
+        }
     }
 }
 

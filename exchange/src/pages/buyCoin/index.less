@@ -209,3 +209,196 @@
 .ant-tabs-tab-btn{
     font-size: 18px;
 }
+
+.buyCoinBox {
+    width: 100%;
+    height: auto;
+    min-height: calc(100vh - 56px);
+    overflow-x: hidden;
+
+    .banner {
+        width: min(1200px, 100%);
+        height: auto;
+        min-height: 100%;
+        margin: 0 auto;
+        padding: 24px clamp(16px, 3vw, 36px);
+
+        .fastDom {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(420px, 500px);
+            align-items: center;
+            gap: clamp(24px, 4vw, 64px);
+            padding-top: 16px;
+
+            .leftTips {
+                min-width: 0;
+
+                .bigTips {
+                    font-size: clamp(30px, 3vw, 46px);
+                    line-height: 1.2;
+                }
+
+                .smallTips {
+                    line-height: 1.65;
+                }
+            }
+
+            .doneDom {
+                width: 100%;
+                min-width: 0;
+                height: auto;
+
+                .done-dom {
+                    width: 100%;
+                    max-width: 500px;
+                    height: auto;
+                    min-height: 460px;
+                    margin: 0 auto 16px;
+                    padding-bottom: 24px;
+
+                    .inputBox {
+                        margin-top: 36px;
+                        margin-bottom: 36px;
+
+                        .inputControl {
+                            position: relative;
+                            width: calc(100% - 64px);
+                            margin-left: 32px;
+                        }
+
+                        .inputItem {
+                            width: 100%;
+                            margin-left: 0;
+                        }
+
+                        .selectItem {
+                            width: 120px;
+                            right: 12px;
+                            box-sizing: border-box;
+                        }
+
+                        .tipsTitle {
+                            left: 32px;
+                        }
+                    }
+
+                    .priceTips {
+                        margin-left: 32px;
+                    }
+
+                    .coinBtn {
+                        width: calc(100% - 64px);
+                        margin-left: 32px;
+                        color: #fff !important;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .historyDom,
+        .tipDom {
+            width: 100%;
+            max-width: 1200px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .historyDom {
+            margin-top: 40px;
+        }
+
+        .tipDom {
+            height: auto;
+            min-height: 360px;
+            margin-top: 40px;
+            padding: 40px clamp(16px, 6vw, 96px);
+
+            h4 {
+                margin-bottom: 40px;
+            }
+
+            .tipList {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 24px;
+            }
+
+            .tipItem {
+                width: auto;
+                min-width: 0;
+            }
+        }
+    }
+}
+
+@media (max-width: 960px) {
+    .buyCoinBox .banner .fastDom {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+
+        .leftTips {
+            text-align: center;
+        }
+    }
+}
+
+@media (max-width: 680px) {
+    .buyCoinBox .banner {
+        padding: 16px;
+
+        .fastDom .doneDom .done-dom {
+            min-height: 420px;
+
+            .inputBox {
+                margin-top: 28px;
+                margin-bottom: 28px;
+
+                .inputControl {
+                    width: calc(100% - 40px);
+                    margin-left: 20px;
+                }
+
+                .inputItem {
+                    width: 100%;
+                    margin-left: 0;
+                }
+
+                .inputTitle {
+                    left: 32px;
+                }
+
+                .selectItem {
+                    width: 120px;
+                    right: 12px;
+                    box-sizing: border-box;
+                }
+
+                .tipsTitle {
+                    left: 20px;
+                }
+            }
+
+            .priceTips {
+                margin-left: 20px;
+            }
+
+            .coinBtn {
+                width: calc(100% - 40px);
+                margin-left: 20px;
+            }
+        }
+
+        .tipDom {
+            padding: 28px 20px;
+
+            h4 {
+                margin-bottom: 24px;
+            }
+
+            .tipList {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    }
+}

@@ -1,6 +1,8 @@
 export interface listItem {
   name: string;
   url: string;
-  cname:string;
-  sync:boolean;
+  cname: string;
+  sync: boolean;
+  symbol: string;
+  description: string;
 }

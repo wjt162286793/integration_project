@@ -16,10 +16,10 @@ onMounted(()=>{
 
 <style scoped>
 .app-container {
-  height: 100vh;
-  width: 100vw;
-  margin: 0px !important;
-  padding: 0px !important;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 </style>
 

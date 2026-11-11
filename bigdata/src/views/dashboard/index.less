@@ -15,20 +15,86 @@
 }
 .contentDom{
    height: calc(100vh - 60px);
-   overflow: auto;
+   overflow-x: hidden;
+   overflow-y: scroll;
    padding: 16px;
+}
+
+.appBox {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
 }
 
 .subAppBox{
     display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+
     .menu_subApp{
-        height: calc(100vh - 60px);
-        background: #001529;
+        flex: 0 0 200px;
+        width: 200px;
+        height: 100%;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(194, 208, 229, 0.45) #111b2b;
+        background: #111b2b;
+
+        .ant-menu {
+            border-inline-end: 0;
+            background: transparent;
+        }
+
+        .ant-menu-item,
+        .ant-menu-submenu-title {
+            width: auto;
+            margin-right: 8px;
+            margin-left: 8px;
+            border-radius: 8px;
+            color: #c2cddd;
+        }
+
+        .ant-menu-item-selected {
+            color: #fff !important;
+        }
+
+        .ant-menu-item:hover,
+        .ant-menu-submenu-title:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.08);
+        }
     }
+
     .contentDom{
-   height: calc(100vh - 60px);
-   overflow: auto;
-   flex: 1;
-   padding: 16px;
+        flex: 1;
+        width: 0;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: var(--app-primary, #356be8) #edf0f5;
+        padding: 16px;
+    }
 }
+
+.contentDom::-webkit-scrollbar {
+    width: 8px;
+}
+
+.contentDom::-webkit-scrollbar-track {
+    background: #edf0f5;
+}
+
+.contentDom::-webkit-scrollbar-thumb {
+    border: 2px solid #edf0f5;
+    border-radius: 8px;
+    background: var(--app-primary, #356be8);
 }

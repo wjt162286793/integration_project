@@ -5,7 +5,9 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import App from './App.vue';
 import router from './router'; // 导入路由
+import { initializeUiRuntime } from '../../shared/ui-runtime'
 
+initializeUiRuntime()
 const app = createApp(App)
 app.use(router) // 使用路由
 app.use(ElementPlus)

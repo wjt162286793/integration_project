@@ -6,15 +6,11 @@
   </header>
 </template>
 
-<script lang="ts" setup>
-  import { ref } from 'vue'
-</script>
-
 <style lang="less" scoped>
 .header{
     width: 100vw;
     height: 60px;
-    background: #000;
+    background: var(--app-primary);
     color: #fff;
     h1{
         width: 160px;

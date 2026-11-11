@@ -1,8 +1,8 @@
 <template>
     <el-menu
     :collapse="false"
-        active-text-color="#ffd04b"
-        background-color="#545c64"
+        active-text-color="#ffffff"
+        background-color="#1d2b42"
         class="el-menu-vertical-demo"
         default-active="2"
         text-color="#fff"
@@ -29,10 +29,7 @@
 </template>
 <script lang="ts" setup>
 import {
-  Document,
   Menu as IconMenu,
-  Location,
-  Setting,
 } from '@element-plus/icons-vue'
 
 const handleOpen = (key: string, keyPath: string[]) => {
@@ -45,7 +42,11 @@ const handleClose = (key: string, keyPath: string[]) => {
 <style lang="less" scoped>
 .el-menu{
  height: calc(100vh - 60px);
- background: #545c64 !important;
+ background: color-mix(in srgb, var(--app-primary) 58%, #111b2b) !important;
+}
+
+.el-menu-item.is-active {
+  background: color-mix(in srgb, var(--app-primary) 78%, #111b2b) !important;
 }
 
 </style>
