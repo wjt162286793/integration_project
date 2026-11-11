@@ -15,6 +15,8 @@ const BetList = lazy(() => import('@/pages/buyCoin/blockTrade/betList.tsx'));
 const Currency = lazy(() => import('@/pages/bazaar/currency/index.tsx'));
 const TradingData = lazy(() => import('@/pages/bazaar/tradingData/index.tsx'));
 const TradingView = lazy(() => import('@/pages/bazaar/tradingView/index.tsx'));
+const SpotTrade = lazy(() => import('@/pages/trade/spot/index.tsx'));
+const Assets = lazy(() => import('@/pages/assets/index.tsx'));
 
 // 路由配置接口（新增）
 interface RouteConfig {
@@ -125,6 +127,18 @@ const routeList: RouteConfig[] = [
         element: <WebThree />,
         key: 'webThree',
         name: 'webThree',
+      },
+      {
+        path: 'trade/spot',
+        element: <SpotTrade />,
+        key: 'spotTrade',
+        name: 'spotTrade',
+      },
+      {
+        path: 'assets',
+        element: <Assets />,
+        key: 'assets',
+        name: 'assets',
       },
     ]
   },

@@ -8,6 +8,8 @@ import type { UiSubAppNavigationItem } from '../../../shared/ui-runtime'
 const menuList: UiSubAppNavigationItem[] = [
     { name: '买币', path: 'buyCoin', key: 'buyCoin' },
     { name: '市场', path: 'bazaar', key: 'bazaar' },
+    { name: '交易', path: 'trade/spot', key: 'spotTrade' },
+    { name: '资产', path: 'assets', key: 'assets' },
     { name: 'web3(dev)', path: 'webThree', key: 'webThree' },
 ]
 
@@ -38,6 +40,10 @@ const Index: React.FC<{
             setActiveKey('bazaar')
         } else if (list.includes('webThree')) {
             setActiveKey('webThree')
+        } else if (list.includes('trade')) {
+            setActiveKey('spotTrade')
+        } else if (list.includes('assets')) {
+            setActiveKey('assets')
         } else {
             setActiveKey('buyCoin')
         }

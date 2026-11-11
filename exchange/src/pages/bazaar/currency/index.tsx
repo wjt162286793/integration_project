@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import './index.less'
-import { Row, Col, Button,message } from 'antd'
+import { Row, Col, Button, Input, Segmented, message } from 'antd'
+import { BellOutlined, StarFilled, StarOutlined } from '@ant-design/icons'
 
 import BTCImg from '@/assets/img/BTC.png'
 import ETHImg from '@/assets/img/ETH.png'
@@ -63,9 +64,11 @@ const list = [
     }
 ]
 const Index: React.FC = () => {
-
-
     const navigate = useNavigate()
+    const [filter, setFilter] = useState<'全部' | '自选'>('全部')
+    const [search, setSearch] = useState('')
+    const [favorites, setFavorites] = useState<string[]>(['BTC', 'ETH'])
+    const [messageApi, contextHolder] = message.useMessage();
     const startWithFn = (str: string) => {
         return str.startsWith('-')
     }
@@ -74,22 +77,21 @@ const Index: React.FC = () => {
        navigate(`/home/bazaar/tradingView?type=${name}`)
     }
 
-    const [messageApi, contextHolder] = message.useMessage();
-    const toDoHandler = ()=>{
-      messageApi.open({
-        type: 'info',
-        content: '闪兑功能暂未开放',
-      });
+    const visibleList = useMemo(() => list.filter((item) => {
+      const matchesSearch = `${item.name.label}${item.name.value}`.toLowerCase().includes(search.toLowerCase())
+      return matchesSearch && (filter === '全部' || favorites.includes(item.name.value))
+    }), [favorites, filter, search])
+
+    const toggleFavorite = (symbol: string) => {
+      setFavorites((current) => current.includes(symbol) ? current.filter((item) => item !== symbol) : [...current, symbol])
     }
 
     return (<div className='currencyDom'>
         {contextHolder}
-        <h5>
-            今日行情
-        </h5>
-        <p className='tips'>
-            查看欧易支持的数百种数字货币的最新价格、每日涨跌幅、市值等实时数据。
-        </p>
+        <div className="market-heading">
+          <div><h5>市场行情</h5><p className="tips">追踪热门资产价格、涨跌幅与市值，快速进入交易。</p></div>
+          <div className="market-tools"><Segmented value={filter} onChange={(value) => setFilter(value as '全部' | '自选')} options={['全部', '自选']} /><Input allowClear prefix="⌕" placeholder="搜索币种" value={search} onChange={(event) => setSearch(event.target.value)} /></div>
+        </div>
         <div className='listDom'>
             <Row className='titleRow'>
                 <Col span={12}>名称</Col>
@@ -99,10 +101,11 @@ const Index: React.FC = () => {
                 <Col span={3}>操作</Col>
             </Row>
             {
-                list.map(Item => {
+                visibleList.map(Item => {
                     return (
                         <Row className='dataRow' key={Item.name.value}>
                             <Col span={12} className='nameCol'>
+                                <Button type="text" className="favorite-btn" onClick={() => toggleFavorite(Item.name.value)}>{favorites.includes(Item.name.value) ? <StarFilled /> : <StarOutlined />}</Button>
                                 <img src={Item.name.img} />
                                 <div>
                                     <p className='labelP'>{Item.name.label}</p>
@@ -123,7 +126,7 @@ const Index: React.FC = () => {
                             </Col>
                             <Col span={3}>
                                 <Button type="text" onClick={()=>toTradingView(Item.name.value)}>交易</Button>
-                                <Button type="text" onClick={toDoHandler}>闪兑</Button>
+                                <Button type="text" icon={<BellOutlined />} onClick={() => messageApi.success(`已设置 ${Item.name.value} 价格提醒`)}>提醒</Button>
                             </Col>
                         </Row>
                     )
@@ -131,6 +134,7 @@ const Index: React.FC = () => {
             }
 
         </div>
+        {!visibleList.length && <div className="market-empty">没有找到匹配的资产</div>}
     </div>)
 }
 

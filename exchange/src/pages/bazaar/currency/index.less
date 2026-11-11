@@ -73,8 +73,18 @@
 
 }
 
+.market-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+.market-heading h5 { margin-bottom: 6px !important; }
+.market-tools { display: flex; gap: 10px; align-items: center; }
+.market-tools .ant-input-affix-wrapper { width: 170px; border-radius: 7px; }
+.favorite-btn { color: #ffb400; padding: 0 6px; }
+.market-empty { text-align: center; color: #9da5b5; padding: 50px; }
+
 @media (max-width: 600px) {
     .currencyDom {
         padding: 0 16px;
     }
+    .market-heading { display: block; }
+    .market-tools { margin: 14px 0; }
+    .market-tools .ant-input-affix-wrapper { width: 100%; }
 }
