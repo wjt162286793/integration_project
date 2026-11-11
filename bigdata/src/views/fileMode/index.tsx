@@ -15,9 +15,27 @@ import './index.less'
 // 1MB大小
 const ONE_MB = 1024 * 1024;
 
+const formatBeijingTime = (value: string | number | Date) => {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  }).format(date).replace(/\//g, '-');
+};
+
 const FileUploader: React.FC = () => {
   // 是否正在上传的状态
-  const [isUploading, setIsUploading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUploaderReady, setIsUploaderReady] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState('');
   // Uppy实例引用
   const uppyRef = useRef<Uppy | null>(null);
   // 拖拽区域和状态栏的DOM引用
@@ -53,6 +71,7 @@ const FileUploader: React.FC = () => {
       title: '上传时间',
       dataIndex: 'time',
       key: 'time',
+      render: (time: string | number | Date) => formatBeijingTime(time),
     },
     {
       title: '操作',
@@ -73,10 +92,19 @@ const FileUploader: React.FC = () => {
     return (size / ONE_MB).toFixed(2);
   }
   const getFileList = ()=>{
-    fileListApi().then(res=>{
-      setFileList(res.data)
-    })
- 
+    return fileListApi().then((res: any) => {
+      if (res?.code !== 200 || !Array.isArray(res.data)) {
+        setFileList([]);
+        message.error(res?.msg || '文件列表加载失败');
+        return false;
+      }
+      setFileList(res.data);
+      return true;
+    }).catch((error: any) => {
+      setFileList([]);
+      message.error(error?.message || '文件列表加载失败');
+      return false;
+    });
   }
 
 
@@ -120,6 +148,9 @@ if (isProxy) {
 
 // 添加获取基础URL的函数
 const getBaseUrl = () => {
+  if (env_mode === 'development' && import.meta.env.VITE_API_URL) {
+    return String(import.meta.env.VITE_API_URL).replace(/\/+$/, '');
+  }
   if (isSubFlag) {
     // 在微前端环境中
     return '/bigdata-sub-api';
@@ -127,24 +158,35 @@ const getBaseUrl = () => {
     // 独立运行时
     if (env_mode === 'development') {
       return 'http://127.0.0.1:8051';
-    } else {
-      return 'http://82.157.193.128:8051';
     }
+    return 'http://82.157.193.128:8051';
   }
 };
+
+const tusBaseUrl = env_mode === 'development'
+  ? (import.meta.env.VITE_API_URL || baseURL)
+  : baseURL;
 
 // 修改下载处理函数
 const downLoadHandler = (record)=>{
   const baseUrl = getBaseUrl();
-  window.open(`${baseUrl}/uploadFile/${record.hash}`);
+  const tusId = record.tus_id || record.hash;
+  window.open(`${baseUrl}/uploadFile/${encodeURIComponent(tusId)}`);
 }
 
 const deleteHandler = (record)=>{
   deleteFileApi({
     hash:record.hash
-  }).then(res=>{
-    getFileList()
-  })
+  }).then((res: any) => {
+    if (res?.code !== 200) {
+      message.error(res?.msg || '删除文件失败');
+      return;
+    }
+    message.success('文件已删除');
+    getFileList();
+  }).catch((error: any) => {
+    message.error(error?.message || '删除文件失败');
+  });
 }
 
   useEffect(() => {
@@ -154,8 +196,8 @@ const deleteHandler = (record)=>{
       autoProceed: false,
       restrictions: {
         maxFileSize: 1000 * ONE_MB,
-        maxNumberOfFiles: 5,
-        allowedFileTypes: ['.jpg', '.jpeg', '.png', '.zip','rar']
+        maxNumberOfFiles: 1,
+        allowedFileTypes: ['.jpg', '.jpeg', '.png', '.zip', '.rar']
       },
     });
   
@@ -163,38 +205,83 @@ const deleteHandler = (record)=>{
     // 使用插件
     uppyRef.current
       .use(DragDrop, { target: dragDropRef.current!, note: `
-        请将文件拖放到此处,当前仅限于jpg,jpeg,png,zip,rar文件。
-        由于是个人学习服务器,性能一般,尽量不要上传太大的文件,最好在300MB到700MB之间,不超过1个G。
+        支持 jpg、jpeg、png、zip、rar 文件，每次只能选择一个，单个文件不超过 1GB。
+        使用 Tus 分片和断点续传；相同内容会在上传完成后自动去重。
         `  })
-      .use(StatusBar, { target: statusBarRef.current! })
+      .use(StatusBar, {
+        target: statusBarRef.current!,
+        hideUploadButton: true,
+        hidePauseResumeButton: true
+      })
       .use(Tus, {
-        endpoint: `${baseURL}/fileMode`,
-        limit: 5,
+        endpoint: `${String(tusBaseUrl).replace(/\/+$/, '')}/fileMode`,
+        limit: 1,
         chunkSize: 5 * ONE_MB,
     });
 
+    uppyRef.current.on('file-added', (file: any) => {
+      setSelectedFileName(file.name);
+    });
+    uppyRef.current.on('file-removed', () => {
+      setSelectedFileName(uppyRef.current?.getFiles()[0]?.name || '');
+    });
+    uppyRef.current.on('restriction-failed', (_file: any, error: Error) => {
+      message.error(error.message || '每次只能选择一个文件');
+    });
+    uppyRef.current.on('upload', () => setIsUploading(true));
+    uppyRef.current.on('pause-all', () => setIsUploading(false));
+    uppyRef.current.on('resume-all', () => setIsUploading(true));
+
     // 监听上传完成事件
     uppyRef.current.on('complete', (result: any) => {
-      let successList = result.successful
-      if(successList.length>0){
-        let result = successList[0]
-        let hash = result.uploadURL.split('/').pop();
-        savehashTofileApi({
-          hash,
-          name:result.name,
-          extension:result.extension,
-          size:result.size
-        }).then(res=>{
-          getFileList()
-        })
+      setIsUploading(false);
+      const successfulFiles = Array.isArray(result.successful) ? result.successful : [];
+      const failedFiles = Array.isArray(result.failed) ? result.failed : [];
+      if (failedFiles.length > 0) {
+        message.error(`文件上传失败，${failedFiles.length} 个文件未完成`);
       }
-      if (Array.isArray(result.failed) && result.failed.length > 0) {
-        message.error(`文件上传失败，${result.failed}`);
-      } else {
-        message.success('文件上传成功');
-      }
+      if (successfulFiles.length === 0) return;
+
+      Promise.all(successfulFiles.map((file: any) => {
+        const tusId = file.uploadURL?.split('/').pop();
+        return savehashTofileApi({
+          tus_id: tusId,
+          name: file.name,
+          extension: file.extension,
+          size: file.size
+        }).then((res: any) => {
+          if (res?.code !== 200) {
+            throw new Error(res?.msg || '文件记录保存失败');
+          }
+          return res.data;
+        });
+      })).then((savedRecords) => getFileList().then((loaded) => ({ savedRecords, loaded }))).then(({ savedRecords, loaded }) => {
+        if (loaded) {
+          const duplicateCount = savedRecords.filter((record: any) => record?.duplicate).length;
+          message.success(duplicateCount > 0
+            ? `${duplicateCount} 个重复文件已识别，未重复保存`
+            : '文件上传成功');
+          const uppy = uppyRef.current;
+          if (uppy) {
+            try {
+              successfulFiles.forEach((file: any) => {
+                if (file?.id && uppy.getFile(file.id)) {
+                  uppy.removeFile(file.id);
+                }
+              });
+            } catch (cleanupError) {
+              console.warn('Failed to remove completed files from the Uppy queue', cleanupError);
+            }
+          }
+        } else {
+          message.error('文件已上传，但文件列表刷新失败');
+        }
+      }).catch((error: any) => {
+        message.error(`文件已上传，但记录保存失败：${error?.message || '请刷新后重试'}`);
+      });
     });
 
+    setIsUploaderReady(true);
     getFileList()
     // 组件卸载时清理
     return () => {
@@ -211,9 +298,26 @@ const deleteHandler = (record)=>{
     if (isUploading) {
       uppyRef.current.pauseAll();
     } else {
-      uppyRef.current.resumeAll();
+      if (uppyRef.current.getFiles().length === 0) {
+        message.info('请先选择文件');
+        return;
+      }
+      const hasPausedUploads = uppyRef.current.getFiles().some(
+        (file: any) => file.isPaused && !file.progress.uploadComplete
+      );
+      if (hasPausedUploads) {
+        uppyRef.current.resumeAll();
+      } else {
+        uppyRef.current.upload().catch((error: any) => {
+          message.error(error?.message || '无法开始上传');
+        });
+      }
     }
-    setIsUploading(!isUploading);
+  };
+
+  const removeSelectedFile = () => {
+    const uppy = uppyRef.current;
+    uppy?.getFiles().forEach((file: any) => uppy.removeFile(file.id));
   };
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -237,16 +341,26 @@ const deleteHandler = (record)=>{
     <div className="upload-container">
       <div ref={dragDropRef} id="drag-drop-area">        
       </div>
+      <div className="selected-file-name">
+        <span>
+          {selectedFileName ? (
+            <>已选择文件：<strong title={selectedFileName}>{selectedFileName}</strong></>
+          ) : '尚未选择文件'}
+        </span>
+        {selectedFileName && !isUploading && (
+          <Button type="link" onClick={removeSelectedFile}>移除</Button>
+        )}
+      </div>
       <div ref={statusBarRef} id="status-bar">
       </div>
       <div className='content'>
-        {
-          uppyRef.current && (
-                  <Button type="primary" onClick={pauseOrResume} >
-        {isUploading ? '暂停' : '开始'}
-      </Button>
-          )
-        }
+        <Button
+          type="primary"
+          onClick={pauseOrResume}
+          disabled={!isUploaderReady || (!isUploading && !selectedFileName)}
+        >
+          {isUploading ? '暂停上传' : selectedFileName ? '开始上传' : '请先选择文件'}
+        </Button>
 
 
       <Button onClick={getFileList} style={{marginLeft:'16px'}}>刷新列表</Button>

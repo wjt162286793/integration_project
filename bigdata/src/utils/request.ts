@@ -36,6 +36,10 @@ const request = axios.create({
 })
 
 request.interceptors.request.use((config)=>{
+    const token = localStorage.getItem('intergration_token')
+    if (token) {
+        config.headers.authorization = token
+    }
     console.log(config,'请求---')
     return config
 })

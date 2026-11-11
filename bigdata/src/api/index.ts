@@ -26,7 +26,8 @@ export const savehashTofileApi = (data: any) => {
     return request({
         url: savehashTofile,
         method: 'post',
-        data
+        data,
+        timeout: 120000
     })
 }
 

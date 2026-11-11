@@ -285,19 +285,14 @@ const isExchangePage = computed(() => route.name === 'exchange')
 }
 
 .app-shell-main-subapp {
-  padding: 0 16px 16px;
+  padding: 0;
   overflow: hidden;
 }
 
 .app-shell-main-subapp :deep(.micro-app-host) {
   width: 100%;
   height: 100%;
+  min-width: 0;
   min-height: 0;
-}
-
-@media (max-width: 760px) {
-  .app-shell-main-subapp {
-    padding: 0 6px 6px;
-  }
 }
 </style>

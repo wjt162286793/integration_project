@@ -1,8 +1,18 @@
 .currencyDom {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    margin: 0 auto;
     color: #000;
-    padding:0px 350px;
+    padding: 0 24px;
+    box-sizing: border-box;
+    overflow: hidden;
 
     h5 {
+        flex: 0 0 auto;
         font-size: 20px;
         font-weight: 600;
 
@@ -10,19 +20,29 @@
     }
 
     .tips {
+        flex: 0 0 auto;
         font-size: 14px;
 
     }
 
     .listDom {
+        flex: 1 1 auto;
+        min-height: 0;
         margin-top: 16px;
+        overflow: auto;
 
         .titleRow {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            min-width: 650px;
             padding: 8px 0px;
             border-bottom: 1px solid #eee;
+            background: #fff;
         }
 
         .dataRow {
+            min-width: 650px;
             padding: 16px 0px;
             border-bottom: 1px solid #eee;
 
@@ -51,4 +71,10 @@
         }
     }
 
+}
+
+@media (max-width: 600px) {
+    .currencyDom {
+        padding: 0 16px;
+    }
 }

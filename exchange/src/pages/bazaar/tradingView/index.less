@@ -1,6 +1,11 @@
 .tradingViewDom {
-    width: 100vw;
-    height: calc(100vh - 60px);
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
 
     .dark-theme-tabs {
   background-color: #000000 !important;
@@ -34,14 +39,20 @@
 
     .headerBox {
         height: 60px;
+        min-width: 0;
+        flex: 0 0 60px;
         box-sizing: border-box;
         border-top: #ccc 1px solid;
         border-bottom: #ccc 1px solid;
         display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
         align-items: center;
         position: relative;
         li{
             margin: 0 16px;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .libox1 {
@@ -72,9 +83,8 @@
             }
         }
         .liBox4{
-            position: absolute;
-            right: 16px;
-            top: 16px;
+            position: static;
+            margin-left: auto;
             color: #fff;
             font-size: 16px;
             cursor: pointer;
@@ -82,18 +92,40 @@
     }
 
     .contextBox{
-        height: 100%;
-        background: #ccc;
         display: flex;
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        flex: 1 1 auto;
+        background: #ccc;
+        overflow: hidden;
         color: #fff;
     .bazaarComDom{
+        display: flex;
         height: 100%;
-        width: 350px;
+        min-width: 0;
+        min-height: 0;
+        flex: 0 0 clamp(240px, 18vw, 350px);
+        flex-direction: column;
         background: #000;
+        overflow: hidden;
+        box-sizing: border-box;
+
+        .ant-tabs {
+            flex: 0 0 auto;
+            margin-bottom: 0;
+        }
+
         .searchDom{
+            display: flex;
+            min-height: 0;
+            flex: 1 1 auto;
+            flex-direction: column;
             padding: 8px;
+            box-sizing: border-box;
             .ant-input{
                 border-radius: 8px;
+                flex: 0 0 auto;
             }
         }
         .titleRow{
@@ -111,33 +143,48 @@
             text-align: right;
         }
         .listDom1{
-            height: calc(100vh - 250px);
-            overflow: auto;
+            min-height: 0;
+            flex: 1 1 auto;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         .listDom2{
-            height: calc(100vh - 210px);
-            overflow: auto;
+            min-height: 0;
+            flex: 1 1 auto;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
     }
     .tradingmainDom{
+        display: flex;
         height: 100%;
-        width: calc(100vw - 350px);
+        min-width: 320px;
+        min-height: 0;
+        flex: 1 1 0;
+        flex-direction: column;
         background: #000;
-        // flex: 1;
         border-left: 1px solid #eee;
         border-right: 1px solid #eee;
+        overflow-x: hidden;
+        overflow-y: auto;
+        box-sizing: border-box;
         .topTitle{
            padding: 16px 16px;
            border-bottom: 1px solid #eee;
-           height: 14px;
+           min-height: 46px;
            width: 100%;
            display: flex;
+           flex: 0 0 auto;
            align-items: center;
+           flex-wrap: wrap;
+           gap: 8px;
+           box-sizing: border-box;
            h5{
             font-size: 16px;
             font-weight: 600;
-            margin-right: 200px;
+            margin-right: 24px;
+            white-space: nowrap;
            }
            .infoItem{
              margin: 0 6px;
@@ -147,8 +194,10 @@
            }
         }
         .mainChartOutDom{
-            height: 400px;
+            height: 436px;
+            flex: 0 0 436px;
             padding: 18px;
+            box-sizing: border-box;
         .mainChartDom{
             width: 100%;
             height: 400px;
@@ -184,19 +233,25 @@
 
     }
     .orderFormDom{
-        height: 100%;
-        width: 350px;
-        background: #000;
         display: flex;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        flex: 0 0 clamp(260px, 18vw, 350px);
+        background: #000;
         flex-direction: column;
+        overflow: hidden;
         .title{
            padding: 16px 16px;
            border-bottom: 1px solid #eee;
-           height: 14px;
+           min-height: 47px;
            width: 100%;
+           flex: 0 0 auto;
+           box-sizing: border-box;
         }
         .content{
             flex: 1;
+            min-height: 0;
             overflow: auto;
             padding: 0 8px;
             .titleRow{
@@ -218,4 +273,13 @@
 
     }
 
+}
+
+@media (max-width: 820px) {
+    .tradingViewDom {
+        .contextBox {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+    }
 }

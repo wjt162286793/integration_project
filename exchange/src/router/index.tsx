@@ -10,8 +10,9 @@ const RouterCom: React.FC = () => {
           const renderRoutes = (routes: any[]) => {
             return routes.map((route, index) => (
               <Route
-                key={route.path || index}
+                key={route.key || route.path || index}
                 path={route.path}
+                index={route.index}
                 element={route.element}
               >
                 {/* 递归渲染子路由 */}
@@ -27,8 +28,8 @@ const RouterCom: React.FC = () => {
 
           {/* 使用递归函数替代原来的嵌套map */}
           {renderRoutes(routeList)}
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/home/buyCoin/fast/portal" replace />} />
+          <Route path="*" element={<Navigate to="/home/buyCoin/fast/portal" replace />} />
         </Routes>
       </Suspense>
     </Router>

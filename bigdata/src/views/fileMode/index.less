@@ -1,3 +1,155 @@
-.content{
-    padding-top: 16px;
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    min-height: 100%;
+    color: #172033;
+
+    &::before {
+        content: "大文件上传";
+        display: block;
+        margin: 4px 2px 0;
+        color: #172033;
+        font-size: 24px;
+        font-weight: 650;
+        line-height: 1.3;
+    }
+}
+
+#drag-drop-area {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e5eaf0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+
+    .uppy-DragDrop-container {
+        min-height: 220px;
+        border: 1px dashed #b7c4d3;
+        border-radius: 9px;
+        background: #f8fafc;
+        transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .uppy-DragDrop-container:hover,
+    .uppy-DragDrop--isDraggingOver {
+        border-color: #0f9d8a;
+        background: #f0faf8;
+    }
+
+    .uppy-DragDrop-inner {
+        padding: 28px 20px;
+    }
+
+    .uppy-DragDrop-arrow {
+        fill: #0f9d8a;
+    }
+
+    .uppy-DragDrop-label {
+        color: #263449;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .uppy-DragDrop-browse {
+        color: #087f70;
+        font-weight: 600;
+    }
+
+    .uppy-DragDrop-note {
+        max-width: 900px;
+        margin: 8px auto 0;
+        color: #718096;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+}
+
+#status-bar:not(:empty) {
+    padding: 12px 16px;
+    border: 1px solid #e5eaf0;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.selected-file-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 28px;
+    padding: 0 4px;
+    color: #718096;
+    font-size: 13px;
+
+    strong {
+        color: #263449;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+}
+
+.content {
+    padding: 18px;
+    border: 1px solid #e5eaf0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+
+    &::before {
+        content: "已上传文件";
+        display: block;
+        margin-bottom: 14px;
+        color: #172033;
+        font-size: 17px;
+        font-weight: 650;
+    }
+
+    > .ant-btn {
+        height: 36px;
+        border-radius: 7px;
+    }
+
+    .ant-table-wrapper {
+        margin-top: 16px;
+    }
+
+    .ant-table {
+        overflow: hidden;
+        border: 1px solid #edf0f4;
+        border-radius: 8px;
+    }
+
+    .ant-table-thead > tr > th {
+        background: #f7f9fc;
+        color: #273449;
+        font-weight: 600;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+        background: #f5faf9;
+    }
+}
+
+@media (max-width: 768px) {
+    #drag-drop-area {
+        padding: 6px;
+
+        .uppy-DragDrop-container {
+            min-height: 190px;
+        }
+
+        .uppy-DragDrop-inner {
+            padding: 22px 12px;
+        }
+
+        .uppy-DragDrop-note {
+            padding: 0 10px;
+        }
+    }
+
+    .content {
+        padding: 12px;
+    }
 }

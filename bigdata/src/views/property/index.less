@@ -11,5 +11,39 @@
 }
 .tableBox{
     margin-top:8px;
+
+    .ant-pagination {
+        .ant-pagination-item {
+            a {
+                color: #273142;
+            }
+        }
+
+        .ant-pagination-item-active {
+            background: #0f9d8a;
+            border-color: #0f9d8a;
+
+            a {
+                color: #fff !important;
+            }
+        }
+
+        .ant-pagination-item-active:hover a {
+            color: #fff !important;
+        }
+
+        .ant-pagination-prev,
+        .ant-pagination-next {
+            .ant-pagination-item-link {
+                color: #445064;
+            }
+        }
+
+        .ant-pagination-disabled {
+            .ant-pagination-item-link {
+                color: #aeb6c2;
+            }
+        }
+    }
 }
 

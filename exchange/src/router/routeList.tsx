@@ -1,4 +1,5 @@
 import React, { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
 // 懒加载组件（保持原有导入路径）
 const Home = lazy(() => import('@/pages/home/index.tsx'));
 const Bazaar = lazy(() => import('@/pages/bazaar/index.tsx'));
@@ -17,7 +18,7 @@ const TradingView = lazy(() => import('@/pages/bazaar/tradingView/index.tsx'));
 
 // 路由配置接口（新增）
 interface RouteConfig {
-  path: string;
+  path?: string;
   element: React.ReactNode;
   key: string;
   name: string;
@@ -33,6 +34,12 @@ const routeList: RouteConfig[] = [
     key: 'home',
     name: 'home',
     children: [
+      {
+        index: true,
+        element: <Navigate to="/home/buyCoin/fast/portal" replace />,
+        key: 'home-default',
+        name: 'home-default',
+      },
       {
         path: 'bazaar',
         element: <Bazaar />,

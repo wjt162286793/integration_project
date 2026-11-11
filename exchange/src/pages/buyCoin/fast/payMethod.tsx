@@ -46,8 +46,15 @@ const Index: React.FC = () => {
       pay_from: payType,
       pay_with: 'chinaBank'
     }).then(res => {
-      messageApi.success('委托单下单成功,请尽快支付');
-      setOrder(true)
+      if (res.code === 200) {
+        messageApi.success('委托单下单成功,请尽快支付');
+        setPayInfo({ ...payInfo, status: 'pending', pay_from: payType })
+        setOrder(true)
+      } else {
+        messageApi.error(res.msg || '委托单下单失败，请重试')
+      }
+    }).catch(() => {
+      messageApi.error('委托单下单失败，请重试')
     })
   }
 
@@ -95,7 +102,6 @@ const Index: React.FC = () => {
               const data = JSON.parse(e.data);
               if (data.status === 'success') {
                   setPaySuccess(true);
-                  messageApi.success('支付成功')
               }
           } catch (error) {
               // 处理非JSON格式数据
@@ -143,9 +149,13 @@ const Index: React.FC = () => {
       pay_with: 'chinaBank'
     }).then(res => {
       if (res.code === 200) {
-        messageApi.success('模拟进行扫码支付');
+        messageApi.success('模拟支付成功');
+        setPaySuccess(true)
       } else {
+        messageApi.error(res.msg || '模拟支付失败，请重试')
       }
+    }).catch(() => {
+      messageApi.error('模拟支付失败，请重试')
     })
     
   }
@@ -185,12 +195,15 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     if (payInfo) {
-      if(payInfo.status){
-        setOrder(true)
-        setPayType(payInfo.pay_from)
+      const orderPlaced = ['pending', 'cancel', 'success'].includes(payInfo.status)
+      setOrder(orderPlaced)
+      if (orderPlaced) {
+        setPayType(payInfo.pay_from || '')
         setChecked(true)
+      } else {
+        setPayType('')
+        setChecked(false)
       }
-
     }
   }, [payInfo])
 

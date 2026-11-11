@@ -60,7 +60,7 @@ const Index:React.FC = ()=>{
         <div className='bazaarDom'>
           {
             showTabs && (
-              <Tabs activeKey={activeKey} items={items} onChange={onChange} style={{margin:'24px 350px 0px 350px'}}/>
+              <Tabs activeKey={activeKey} items={items} onChange={onChange} className='bazaarTabs'/>
             )
           }
            <Outlet/>

@@ -1,4 +1,27 @@
 .bazaarDom{
-    height: calc(100vh - 60px);
-    width: 100vw;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.bazaarTabs {
+    width: 100%;
+    max-width: 1100px;
+    flex: 0 0 auto;
+    margin: 24px auto 0 !important;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+.bazaarDom > .currencyDom,
+.bazaarDom > .tradingDom,
+.bazaarDom > .tradingViewDom {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
 }

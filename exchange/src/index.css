@@ -252,8 +252,8 @@ label,button {
 
 /* 全局滚动条样式 */
 ::-webkit-scrollbar {
-  width: 2px; /* 纵向滚动条宽度 */
-  height: 2px; /* 横向滚动条高度 */
+  width: 6px;
+  height: 6px;
 }
 
 /* 滚动条轨道 */
@@ -264,7 +264,7 @@ label,button {
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
   background-color: #666; /* 滑块颜色 */
-  border-radius: 1px; /* 滑块圆角 */
+  border-radius: 3px;
 }
 
 /* 滚动条滑块悬停状态 */
