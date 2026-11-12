@@ -88,9 +88,10 @@ const RightCom: React.FC = () => {
             trigger: 'axis'
         },
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
+            left: 48,
+            right: 16,
+            top: 42,
+            bottom: 32,
             containLabel: true
         },
         xAxis: {

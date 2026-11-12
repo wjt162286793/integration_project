@@ -12,6 +12,13 @@ const LeftCom: React.FC = () => {
             type: 'category',
             data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
         },
+        grid: {
+            left: 48,
+            right: 16,
+            top: 42,
+            bottom: 32,
+            containLabel: true
+        },
         yAxis: {
             type: 'value'
         },
@@ -75,6 +82,13 @@ const option3 = {
   xAxis: {
     type: 'category',
     data: ['北京', '上海', '广州', '深圳', '西安', '成都', '杭州']
+  },
+  grid: {
+    left: 48,
+    right: 16,
+    top: 42,
+    bottom: 32,
+    containLabel: true
   },
   yAxis: {
     type: 'value'
