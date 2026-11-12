@@ -17,6 +17,9 @@ const Chart = lazy(() => import("../views/chart/index"))
 const ModeBuild = lazy(() => import("../views/modeBuild/index"))
 const ReadMe = lazy(() => import("../views/readMe/index"))
 const FileMode = lazy(() => import("../views/fileMode/index"))
+const Inbox = lazy(() => import("../views/workbench/inbox/index"))
+const DataQuality = lazy(() => import("../views/dataQuality/index"))
+const AlertCenter = lazy(() => import("../views/alertCenter/index"))
 
 
 // 定义路由配置的类型
@@ -44,6 +47,12 @@ const routeList: RouteConfig[] = [
         element: <WorkBench />
       },
       {
+        name: 'inbox',
+        path: '/dashBoard/inbox',
+        cname: '待办中心',
+        element: <Inbox />
+      },
+      {
         name: 'property',
         path: '/dashBoard/property',
         cname: '数字资产',
@@ -66,6 +75,18 @@ const routeList: RouteConfig[] = [
         path: '/dashBoard/fileMode',
         cname: '大文件上传',
         element: <FileMode />,
+      },
+      {
+        name: 'dataQuality',
+        path: '/dashBoard/dataQuality',
+        cname: '数据质量',
+        element: <DataQuality />,
+      },
+      {
+        name: 'alertCenter',
+        path: '/dashBoard/alertCenter',
+        cname: '告警中心',
+        element: <AlertCenter />,
       },
       {
         name: 'readMe',

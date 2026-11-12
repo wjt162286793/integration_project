@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import './index.less'
 import FlowChat from './flowchat/index';
 import Organization from './organization/index'
+import Preview from './preview'
 
 const EmptyDom:React.FC = () =>{
    return (
@@ -34,6 +35,12 @@ const Index: React.FC = () => {
           setLoading(true)
           setActiveCom(<Organization id={id}></Organization>);
         break
+        case 'mind':
+        case 'pipeline':
+        case 'topology':
+          setLoading(true)
+          setActiveCom(<Preview id={id} type={type as 'mind' | 'pipeline' | 'topology'} />)
+        break
       }
   }
 
@@ -48,6 +55,12 @@ const Index: React.FC = () => {
         case 'organization':
           setLoading(true)
           setActiveCom(<Organization id={null}></Organization>);
+        break
+        case 'mind':
+        case 'pipeline':
+        case 'topology':
+          setLoading(true)
+          setActiveCom(<Preview type={type as 'mind' | 'pipeline' | 'topology'} />)
         break
       }
   }

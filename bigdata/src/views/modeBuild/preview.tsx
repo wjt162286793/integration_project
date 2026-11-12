@@ -1,0 +1,11 @@
+import React from 'react'
+import { Button, Card, Descriptions, Tag, message } from 'antd'
+import { DatabaseOutlined, NodeIndexOutlined, SaveOutlined } from '@ant-design/icons'
+import './preview.less'
+
+const Preview: React.FC<{ type: 'mind' | 'pipeline' | 'topology'; id?: string | null }> = ({ type }) => {
+  const [messageApi, contextHolder] = message.useMessage()
+  const title = type === 'mind' ? '用户画像分析' : type === 'pipeline' ? '实时数据管道' : '平台服务拓扑'
+  return <div className="preview-editor">{contextHolder}<div className="preview-toolbar"><div><Tag color="blue">{type === 'mind' ? '思维导图' : type === 'pipeline' ? '数据管道' : '服务拓扑'}</Tag><strong>{title}</strong></div><Button type="primary" icon={<SaveOutlined />} onClick={() => messageApi.success('图形草稿已保存')}>保存草稿</Button></div><div className={`visual-canvas ${type}`}><div className="visual-caption"><span>AI GRAPH STUDIO</span><small>前端演示图形，可继续拖拽和编辑</small></div>{type === 'mind' && <><div className="mind-root">用户画像</div><div className="mind-node mind-a">基础属性</div><div className="mind-node mind-b">消费偏好</div><div className="mind-node mind-c">活跃度</div><div className="mind-node mind-d">营销策略</div><i className="line line-a" /><i className="line line-b" /><i className="line line-c" /><i className="line line-d" /></>}{type === 'pipeline' && <div className="pipeline-flow"><div className="graph-node source"><DatabaseOutlined /><b>Kafka 埋点</b><small>实时数据源</small></div><div className="flow-line" /><div className="graph-node transform"><NodeIndexOutlined /><b>清洗转换</b><small>Flink Job #1024</small></div><div className="flow-line" /><div className="graph-node sink"><DatabaseOutlined /><b>数据仓库</b><small>ODS / DWD</small></div></div>}{type === 'topology' && <div className="topology-flow"><div className="topology-node api">API 网关</div><div className="topology-node service">数据服务</div><div className="topology-node model">模型服务</div><div className="topology-node store">数据存储</div><div className="topology-link t1" /><div className="topology-link t2" /><div className="topology-link t3" /></div>}</div><Card className="preview-info"><Descriptions size="small" column={3}><Descriptions.Item label="图形名称">{title}</Descriptions.Item><Descriptions.Item label="当前版本">v1.2.0</Descriptions.Item><Descriptions.Item label="状态"><Tag color="green">草稿</Tag></Descriptions.Item></Descriptions></Card></div>
+}
+export default Preview

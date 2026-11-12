@@ -33,6 +33,14 @@
 }
 
 .listBox {
+    margin-top: 8px;
+    padding-bottom: 24px;
+    .panel-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-right: 36px;
+    }
     h5 {
         font-size: 16px;
         font-weight: 600;
@@ -50,18 +58,32 @@
         width: 100%;
         display: flex;
         justify-content: space-between;
+        p { margin: 0 0 6px; }
+        small { color: #96a0b0; font-size: 12px; }
     }
 
     .msgItem {
         width: 100%;
         display: flex;
         justify-content: space-between;
+        p { margin: 0 0 6px; }
+        small { color: #96a0b0; font-size: 12px; }
     }
-
+    .message-unread { background: #f7fbff; cursor: pointer; }
+    .message-detail {
+        p { margin: 22px 0 12px; color: #4c5668; line-height: 1.9; }
+        small { color: #98a1b1; }
+    }
 
     h6 {
         font-size: 14px;
         font-weight: 500;
     }
 
+}
+
+@media (max-width: 900px) {
+    .listBox .todoListBox,
+    .listBox .msgListBox { margin-right: 0; margin-bottom: 16px; }
+    .listBox .panel-heading { margin-right: 0; }
 }

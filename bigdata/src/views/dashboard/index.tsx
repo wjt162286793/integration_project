@@ -14,6 +14,10 @@ export default function Dashboard() {
       label: '工作台',
     },
     {
+      key: 'inbox',
+      label: '待办中心',
+    },
+    {
       key: 'property',
       label: '数字资产',
     },
@@ -28,6 +32,14 @@ export default function Dashboard() {
     {
       key: 'fileMode',
       label: '大文件上传',
+    },
+    {
+      key: 'dataQuality',
+      label: '数据质量',
+    },
+    {
+      key: 'alertCenter',
+      label: '告警中心',
     },
     // {
     //   key: 'readMe',
