@@ -13,7 +13,7 @@ import USDImg from '@/assets/img/USD.png'
 import { Decimal } from 'decimal.js';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { createBuyApi } from '@/api'
+import { createBuyApi, marketRatesApi } from '@/api'
 import { message } from 'antd'
 
 import HistoryCom from './historyCom'
@@ -53,50 +53,7 @@ const Index: React.FC = () => {
     ]
 
 
-    const rateList = [
-        {
-            from: 'CNY',
-            to: 'ETH',
-            rateValue: '0.000037'
-        },
-        {
-            from: 'ETH',
-            to: 'CNY',
-            rateValue: '26668.608'
-        },
-        {
-            from: 'CNY',
-            to: 'BTC',
-            rateValue: '0.00000116'
-        },
-        {
-            from: 'BTC',
-            to: 'CNY',
-            rateValue: '858926'
-        },
-        {
-            from: 'USD',
-            to: 'BTC',
-            rateValue: '0.0000084'
-        },
-        {
-            from: 'BTC',
-            to: 'USD',
-            rateValue: '119646.44'
-        },
-        {
-            from: 'USD',
-            to: 'ETH',
-            rateValue: '0.002616'
-        },
-        {
-            from: 'ETH',
-            to: 'USD',
-            rateValue: '2542.43'
-        },
-    ]
-
-
+    const [rateList, setRateList] = useState<{ from: string; to: string; rateValue: string }[]>([])
 
     const [doneType, setDoneType] = useState('buy')
     const changeDoneType = (type: string) => {
@@ -195,6 +152,14 @@ const Index: React.FC = () => {
         inputChange1('')
         inputChange2('')
     }, [buy_value_1, buy_value_2])
+
+    useEffect(() => {
+        marketRatesApi().then((res: any) => {
+            if (res?.code === 200) {
+                setRateList((res.data || []).map((item: any) => ({ ...item, rateValue: String(item.rate) })))
+            }
+        })
+    }, [])
 
     useEffect(() => {
         inputChange3('')

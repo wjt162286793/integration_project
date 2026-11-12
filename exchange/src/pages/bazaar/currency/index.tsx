@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import './index.less'
 import { Row, Col, Button, Input, Segmented, message } from 'antd'
 import { StarFilled, StarOutlined } from '@ant-design/icons'
@@ -10,64 +10,18 @@ import USDTImg from '@/assets/img/USDT.png'
 import SOLImg from '@/assets/img/SOL.png'
 
 import {useNavigate} from 'react-router-dom'
+import { marketOverviewApi } from '@/api'
 
-const list = [
-    {
-        name: {
-            label: '比特币',
-            value: 'BTC',
-            img: BTCImg
-        },
-        newPrice: '117548.5',
-        range: '-1.2%',
-        marketValue: '2.34万亿'
-    },
-    {
-        name: {
-            label: '以太坊',
-            value: 'ETH',
-            img: ETHImg
-        },
-        newPrice: '3540.45',
-        range: '-2.3%',
-        marketValue: '4310.82亿'
-    },
-    {
-        name: {
-            label: 'SOL',
-            value: 'SOL',
-            img: SOLImg
-        },
-        newPrice: '180.43',
-        range: '-4.1%',
-        marketValue: '984.6亿'
-    },
-    {
-        name: {
-            label: 'USDT',
-            value: 'USDT',
-            img: USDTImg
-        },
-        newPrice: '1.004',
-        range: '+0.1%',
-        marketValue: '1623.1亿'
-    },
-    {
-        name: {
-            label: 'DOGE',
-            value: 'DOGE',
-            img: DOGEImg
-        },
-        newPrice: '0.22156',
-        range: '-7.2%',
-        marketValue: '348.12亿'
-    }
-]
+const imageMap: Record<string, string> = { BTC: BTCImg, ETH: ETHImg, SOL: SOLImg, USDT: USDTImg, DOGE: DOGEImg }
+const labelMap: Record<string, string> = { BTC: '比特币', ETH: '以太坊', SOL: 'Solana', USDT: 'Tether', DOGE: 'Dogecoin' }
+const supportedAssets = new Set(Object.keys(imageMap))
+
 const Index: React.FC = () => {
     const navigate = useNavigate()
     const [filter, setFilter] = useState<'全部' | '自选'>('全部')
     const [search, setSearch] = useState('')
     const [favorites, setFavorites] = useState<string[]>(['BTC', 'ETH'])
+    const [list, setList] = useState<any[]>([])
     const [messageApi, contextHolder] = message.useMessage();
     const startWithFn = (str: string) => {
         return str.startsWith('-')
@@ -80,11 +34,29 @@ const Index: React.FC = () => {
     const visibleList = useMemo(() => list.filter((item) => {
       const matchesSearch = `${item.name.label}${item.name.value}`.toLowerCase().includes(search.toLowerCase())
       return matchesSearch && (filter === '全部' || favorites.includes(item.name.value))
-    }), [favorites, filter, search])
+    }), [favorites, filter, search, list])
 
     const toggleFavorite = (symbol: string) => {
       setFavorites((current) => current.includes(symbol) ? current.filter((item) => item !== symbol) : [...current, symbol])
     }
+
+    useEffect(() => {
+      marketOverviewApi().then((res: any) => {
+        if (res?.code === 200) {
+          setList((res.data || []).filter((item: any) => supportedAssets.has(String(item.symbol).replace('USDT', ''))).map((item: any) => {
+            const asset = String(item.symbol).replace('USDT', '')
+            return {
+              name: { label: labelMap[asset] || asset, value: asset, img: imageMap[asset] },
+              newPrice: item.price,
+              range: `${item.changePct >= 0 ? '+' : ''}${item.changePct}%`,
+              marketValue: item.marketValue
+            }
+          }))
+        } else {
+          messageApi.error(res?.msg || '市场行情加载失败')
+        }
+      }).catch(() => messageApi.error('市场行情加载失败'))
+    }, [messageApi])
 
     return (<div className='currencyDom'>
         {contextHolder}
@@ -121,7 +93,7 @@ const Index: React.FC = () => {
 
                             </Col>
                             <Col span={3}>
-                                <span className='textSpan'>{Item.marketValue}</span>
+                                <span className='textSpan'>{Item.marketValue ?? '--'}</span>
 
                             </Col>
                             <Col span={3} className="action-col">

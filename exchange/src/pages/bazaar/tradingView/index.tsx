@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import './index.less'
-import BazaarCom from './bazaarCom'
-import MainCom from './mainCom'
-import OrderForm from './orderForm'
+import BazaarCom from './bazaarComReal'
+import MainCom from './mainComReal'
+import OrderForm from './orderFormReal'
 import { ConfigProvider, theme } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { marketTickerApi } from '@/api';
 import { getUiPreferences, subscribeUiPreferences, themes } from '../../../../../shared/ui-runtime';
 import type { UiPreferences } from '../../../../../shared/ui-runtime';
 const Index: React.FC = () => {
     const navigate = useNavigate();
     const [uiPreferences, setUiPreferences] = useState<UiPreferences>(getUiPreferences);
     useEffect(() => subscribeUiPreferences(setUiPreferences), []);
+    const [ticker, setTicker] = useState<any>(null);
+    useEffect(() => {
+        marketTickerApi({ symbol: 'BTCUSDT', interval: '15m' }).then((res: any) => {
+            if (res?.code === 200) setTicker(res.data);
+        });
+    }, []);
 
     const backList = () => {
         navigate('/home/bazaar/currency')
@@ -22,28 +29,28 @@ const Index: React.FC = () => {
                 <ul className='headerBox'>
                     <li className='libox1'>BTC/USDT <span>10x</span></li>
                     <li className='liBox2'>
-                        <span>118.150.5</span>
-                        <span>+232.6(+0.20%)</span>
+                        <span>{ticker?.close ?? '--'}</span>
+                        <span>{ticker ? `${ticker.change >= 0 ? '+' : ''}${ticker.change} (${ticker.changePct >= 0 ? '+' : ''}${ticker.changePct}%)` : '--'}</span>
                     </li>
                     <li className='liBox3'>
                         <span>比特币 价格</span>
-                        <span className='priceSp'>$118.193.0</span>
+                        <span className='priceSp'>${ticker?.close ?? '--'}</span>
                     </li>
                     <li className='liBox3'>
                         <span>24小时最低</span>
-                        <span className='priceSp'>117,818.0</span>
+                        <span className='priceSp'>{ticker?.low ?? '--'}</span>
                     </li>
                     <li className='liBox3'>
                         <span>24小时最高</span>
-                        <span className='priceSp'>118,458.0</span>
+                        <span className='priceSp'>{ticker?.high ?? '--'}</span>
                     </li>
                     <li className='liBox3'>
                         <span>24小时量(BTC)</span>
-                        <span className='priceSp'>1960.47</span>
+                        <span className='priceSp'>{ticker?.volume ?? '--'}</span>
                     </li>
                     <li className='liBox3'>
                         <span>24小时额(USDT)</span>
-                        <span className='priceSp'>2.31亿</span>
+                        <span className='priceSp'>{ticker?.volume && ticker?.close ? (ticker.volume * ticker.close).toFixed(2) : '--'}</span>
                     </li>
                     <li className='liBox4' onClick={backList}>
                         返回市场列表

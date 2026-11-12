@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Card, Col, Modal, Progress, Row, Statistic, Table, Tabs, Tag, message } from 'antd'
 import { ArrowDownOutlined, ArrowUpOutlined, SwapOutlined, WalletOutlined } from '@ant-design/icons'
 import './index.less'
+import { assetsApi } from '@/api'
 
 type Asset = {
   key: string
@@ -13,18 +14,29 @@ type Asset = {
   color: string
 }
 
-const initialAssets: Asset[] = [
-  { key: 'usdt', symbol: 'USDT', name: 'Tether', amount: 12580.42, price: 1, change: 0.01, color: '#26a17b' },
-  { key: 'btc', symbol: 'BTC', name: 'Bitcoin', amount: 0.1842, price: 117548.5, change: 2.34, color: '#f7931a' },
-  { key: 'eth', symbol: 'ETH', name: 'Ethereum', amount: 2.86, price: 3540.45, change: -1.2, color: '#627eea' },
-  { key: 'sol', symbol: 'SOL', name: 'Solana', amount: 18.5, price: 180.43, change: 5.7, color: '#9945ff' },
-]
-
 const Assets: React.FC = () => {
-  const [assets] = useState(initialAssets)
+  const [assets, setAssets] = useState<Asset[]>([])
   const [activeTab, setActiveTab] = useState('overview')
   const [modal, setModal] = useState<'充值' | '提现' | '划转' | null>(null)
   const [messageApi, contextHolder] = message.useMessage()
+
+  useEffect(() => {
+    assetsApi().then((res: any) => {
+      if (res?.code !== 200) {
+        messageApi.error(res?.msg || '资产加载失败')
+        return
+      }
+      setAssets((res.data || []).map((item: any) => ({
+        key: item.asset,
+        symbol: item.asset,
+        name: item.asset,
+        amount: item.available + item.locked,
+        price: 0,
+        change: 0,
+        color: '#1769ff'
+      })))
+    }).catch(() => messageApi.error('资产加载失败'))
+  }, [messageApi])
 
   const total = useMemo(() => assets.reduce((sum, item) => sum + item.amount * item.price, 0), [assets])
   const todayPnl = assets.reduce((sum, item) => sum + item.amount * item.price * item.change / 100, 0)
@@ -34,7 +46,7 @@ const Assets: React.FC = () => {
   }
 
   const confirmAction = () => {
-    messageApi.success(`${modal}申请已提交，当前为演示数据`)
+    messageApi.info(`${modal}接口尚未开放，请先完成账户配置`)
     setModal(null)
   }
 
@@ -78,11 +90,11 @@ const Assets: React.FC = () => {
       <Card className="asset-card" bodyStyle={{ padding: 0 }}>
         <Tabs activeKey={activeTab} onChange={setActiveTab} items={[{ key: 'overview', label: '资产总览' }, { key: 'funding', label: '资金账户' }, { key: 'history', label: '资金流水' }]} />
         {activeTab === 'overview' && <Table rowKey="key" columns={columns} dataSource={assets} pagination={false} />}
-        {activeTab === 'funding' && <div className="funding-panel"><div><h3>资金分布</h3><p>交易账户 <strong>$18,204.62</strong></p><Progress percent={68} strokeColor="#1769ff" showInfo={false} /><p>资金账户 <strong>$8,443.18</strong></p><Progress percent={32} strokeColor="#7c5cff" showInfo={false} /></div><div className="funding-note"><Tag color="blue">低风险</Tag><p>您的资产均处于模拟账户中，充值、提现和划转不会产生真实资金变动。</p></div></div>}
+        {activeTab === 'funding' && <div className="funding-panel"><div><h3>资金分布</h3><p>账户余额由后端资产接口返回</p><Progress percent={assets.length ? 100 : 0} strokeColor="#1769ff" showInfo={false} /></div><div className="funding-note"><Tag color="blue">账户资产</Tag><p>当前页面只展示真实账户余额，充值、提现和划转需后端开放对应业务接口。</p></div></div>}
         {activeTab === 'history' && <div className="empty-history"><WalletOutlined /><p>暂无资金流水</p><span>完成充值、提现或划转后，记录会显示在这里</span></div>}
       </Card>
       <Modal title={`${modal}资产`} open={Boolean(modal)} onCancel={() => setModal(null)} onOk={confirmAction} okText="确认提交" cancelText="取消">
-        <div className="action-modal"><p>当前为前端演示模式</p><div className="fake-address">0x71a3...90cF <Button type="link">复制</Button></div><small>提交后不会产生真实链上或账户变动。</small></div>
+        <div className="action-modal"><p>当前账户接口未配置该操作</p><small>不会提交模拟资产变动。</small></div>
       </Modal>
     </div>
   )
