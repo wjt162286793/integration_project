@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import './index.less'
 import { Row, Col, Button, Input, Segmented, message } from 'antd'
-import { BellOutlined, StarFilled, StarOutlined } from '@ant-design/icons'
+import { StarFilled, StarOutlined } from '@ant-design/icons'
 
 import BTCImg from '@/assets/img/BTC.png'
 import ETHImg from '@/assets/img/ETH.png'
@@ -124,9 +124,9 @@ const Index: React.FC = () => {
                                 <span className='textSpan'>{Item.marketValue}</span>
 
                             </Col>
-                            <Col span={3}>
+                            <Col span={3} className="action-col">
                                 <Button type="text" onClick={()=>toTradingView(Item.name.value)}>交易</Button>
-                                <Button type="text" icon={<BellOutlined />} onClick={() => messageApi.success(`已设置 ${Item.name.value} 价格提醒`)}>提醒</Button>
+                                <Button type="text" onClick={() => messageApi.success(`已设置 ${Item.name.value} 价格提醒`)}>提醒</Button>
                             </Col>
                         </Row>
                     )
