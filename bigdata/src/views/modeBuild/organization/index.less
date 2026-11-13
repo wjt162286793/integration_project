@@ -28,3 +28,62 @@
         color: #1677ff;
     }
 }
+
+.org-node-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.org-node-field > label {
+    flex: 0 0 58px;
+    color: #52627a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.org-node-field > .ant-input,
+.org-node-field > .ant-radio-group,
+.org-color-picker {
+    flex: 1;
+}
+
+.org-node-field > label span {
+    color: #ef4d5b;
+}
+
+.org-node-field .ant-radio-group {
+    display: flex;
+}
+
+.org-node-field .ant-radio-button-wrapper {
+    flex: 1;
+    padding-inline: 6px;
+    color: #60708a;
+    text-align: center;
+}
+
+.org-color-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 9px;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.org-color-picker input[type='color'] {
+    width: 70px;
+    height: 30px;
+    padding: 2px;
+    border: 0;
+    border-radius: 5px;
+}
+
+.org-color-picker span {
+    color: #66758c;
+    font-family: monospace;
+    font-size: 12px;
+}

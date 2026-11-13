@@ -7,4 +7,12 @@
 .asset-title { display: flex; align-items: center; gap: 10px; }.asset-title small { display: block; color: #9aa4b4; margin-top: 3px; }.asset-avatar { display: inline-grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; color: #fff; font-weight: 700; background: linear-gradient(135deg, #1769ff, #7c5cff); }.asset-avatar.large { width: 48px; height: 48px; font-size: 20px; border-radius: 13px; }
 .status-dot { display: inline-flex; align-items: center; gap: 6px; }.status-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #b7bfca; }.status-dot.on { color: #11a875; }.status-dot.on::before { background: #11b978; }.status-dot.pause { color: #d28b18; }.status-dot.pause::before { background: #e7aa31; }.status-dot.off { color: #9099a9; }
 .asset-detail .detail-banner { display: flex; gap: 14px; align-items: center; padding: 20px; background: #f5f8ff; border-radius: 12px; }.detail-banner h3 { margin: 0 0 8px; }.asset-detail dl { display: grid; grid-template-columns: 90px 1fr; gap: 16px 10px; margin-top: 24px; }.asset-detail dt { color: #929cad; }.asset-detail dd { margin: 0; color: #273143; }
+.property-card .ant-pagination-item { background: #fff; border-color: #d9e1ee; }
+.property-card .ant-pagination-item a { color: #40516d; }
+.property-card .ant-pagination-item-active { background: #1769ff; border-color: #1769ff; }
+.property-card .ant-pagination-item-active a { color: #fff; }
+.property-card .ant-pagination-item a { display: block !important; min-width: 100%; color: #40516d !important; font-size: 14px !important; line-height: 30px !important; text-align: center; visibility: visible !important; opacity: 1 !important; }
+.property-card .ant-pagination-item-active a { color: #fff !important; }
+.property-card .ant-pagination-prev .ant-pagination-item-link,
+.property-card .ant-pagination-next .ant-pagination-item-link { color: #40516d; background: #fff; border-color: #d9e1ee; }
 @media (max-width: 680px) { .property-page { padding-inline: 0; }.page-heading { display: block; }.page-heading .ant-space { margin-top: 16px; }.searchBox .ant-input-affix-wrapper { width: 100%; }.searchBox .ant-select { flex: 1; min-width: 120px; }.result-count { width: 100%; margin-left: 0; } }

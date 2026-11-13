@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState,useContext } from 'react'
 import { Graph, Node, Point, Shape, Cell } from '@antv/x6'
 import './index.less'
-import { Modal,Input, Button } from 'antd'
+import { Modal,Input, Button, Radio, message } from 'antd'
 import {cloneDeep} from 'lodash'
 import dataList from './data'
 import { GlobalContext } from '@/global/context';
@@ -148,6 +148,7 @@ export default function index(props) {
     const createGraph = () => {
         const graph = new Graph({
             container: document.getElementById('container'),
+            interacting: !props.readOnly,
             connecting: {
                 anchor: 'orth',
                 router: 'manhattan',
@@ -169,29 +170,30 @@ export default function index(props) {
                 }
             },
         })
-        graph.on("node:contextmenu",(event)=>{
-            event.e.stopPropagation()
-            setMenuVisible2(true)
-            setSelectNode(event.node)
-            setMenuPosition({ x: event.e.clientX, y: event.e.clientY });
-        })
+        if (!props.readOnly) {
+            graph.on("node:contextmenu",(event)=>{
+                event.e.stopPropagation()
+                setMenuVisible2(true)
+                setSelectNode(event.node)
+                setMenuPosition({ x: event.e.clientX, y: event.e.clientY });
+            })
 
-        graph.on("edge:contextmenu",(event)=>{
-            event.e.stopPropagation()
-            setMenuVisible3(true)
-            setSelectEdge(event.edge)
-            setMenuPosition({ x: event.e.clientX, y: event.e.clientY });
-        })
+            graph.on("edge:contextmenu",(event)=>{
+                event.e.stopPropagation()
+                setMenuVisible3(true)
+                setSelectEdge(event.edge)
+                setMenuPosition({ x: event.e.clientX, y: event.e.clientY });
+            })
 
-        graph.on("edge:mouseleave",(event)=>{
-            event.e.stopPropagation()
-            let edgeItem = event.edge
-            if(!edgeItem.target.port){
-                graph.removeCell(edgeItem)
-            }
-            
-            return false
-        })
+            graph.on("edge:mouseleave",(event)=>{
+                event.e.stopPropagation()
+                let edgeItem = event.edge
+                if(!edgeItem.target.port){
+                    graph.removeCell(edgeItem)
+                }
+                return false
+            })
+        }
 
         setGraphEntity(graph)
     }
@@ -313,7 +315,11 @@ export default function index(props) {
          setEditVisible(true)
          setMenuVisible2(false)
          console.log(selectNode,'打开编辑')
-         setSelectNodeData(selectNode?.attrs)
+         setSelectNodeData({
+            ...selectNode?.attrs,
+            status: selectNode?.getData()?.status || 'default',
+            color: selectNode?.getData()?.color || selectNode?.attr('body/stroke') || '#5F95FF',
+         })
     }
 
     const changeInput = (event,prop) =>{
@@ -324,8 +330,14 @@ export default function index(props) {
 
     }
     const handleModalOk = ()=>{
+         if (!selectNodeData?.name?.text?.trim()) {
+            message.warning('节点名称不能为空')
+            return
+         }
          setEditVisible(false)
-         selectNode?.setAttrs(selectNodeData)
+         const { status, color, ...attrs } = selectNodeData || {}
+         selectNode?.setAttrs({ ...attrs, body: { ...attrs.body, stroke: color, fill: color } })
+         selectNode?.setData({ ...selectNode?.getData(), status, color })
     }
 
     const clearGraph = ()=>{
@@ -398,8 +410,8 @@ const drawerGraph = () => {
 const globalText = useContext(GlobalContext)
     return (
         <>
-        <div id='container' className={globalText?.isSubAppFlag?'container_subApp':'container'} onContextMenu={graphContextMenuHandler}>
-            {menuVisible1 && (
+        <div id='container' className={globalText?.isSubAppFlag?'container_subApp':'container'} onContextMenu={props.readOnly ? undefined : graphContextMenuHandler}>
+            {!props.readOnly && menuVisible1 && (
                 <ul
                     className='menu'
                     style={{
@@ -423,7 +435,7 @@ const globalText = useContext(GlobalContext)
                     </li>
                 </ul>
             )}
-            {menuVisible2 && (
+            {!props.readOnly && menuVisible2 && (
                 <ul
                     className='menu'
                     style={{
@@ -444,7 +456,7 @@ const globalText = useContext(GlobalContext)
                     </li>
                 </ul>
             )}
-                        {menuVisible3 && (
+                        {!props.readOnly && menuVisible3 && (
                 <ul
                     className='menu'
                     style={{
@@ -463,7 +475,7 @@ const globalText = useContext(GlobalContext)
                 </ul>
             )}
         </div>
-              <Modal
+              {!props.readOnly && <Modal
         title="节点信息编辑"
         open={editVisible}
         closable={false}
@@ -475,14 +487,33 @@ const globalText = useContext(GlobalContext)
 
       >
         <div>
-            <div>
-                职务: <Input placeholder="请输入职务" value={selectNodeData?.rank?.text} onChange={(event)=>changeInput(event,'rank')}/>
+<div className="org-node-field">
+                <label>部门</label><Input placeholder="请输入部门" value={selectNodeData?.rank?.text} onChange={(event)=>changeInput(event,'rank')}/>
             </div>
-            <div>
-                姓名: <Input placeholder="请输入姓名" value={selectNodeData?.name?.text} onChange={(event)=>changeInput(event,'name')}/>
+            <div className="org-node-field">
+                <label>姓名 <span>*</span></label><Input required placeholder="请输入姓名" value={selectNodeData?.name?.text || '新增节点'} onChange={(event)=>changeInput(event,'name')}/>
+            </div>
+            <div className="org-node-field">
+                <label>状态</label>
+                <Radio.Group
+                    optionType="button"
+                    buttonStyle="solid"
+                    value={selectNodeData?.status || 'default'}
+                    options={[
+                        { value: 'default', label: '未开始' },
+                        { value: 'running', label: '进行中' },
+                        { value: 'success', label: '已完成' },
+                        { value: 'failed', label: '异常' },
+                    ]}
+                    onChange={(event) => setSelectNodeData({ ...selectNodeData, status: event.target.value })}
+                />
+            </div>
+            <div className="org-node-field">
+                <label>节点颜色</label>
+                <div className="org-color-picker"><Input type="color" value={selectNodeData?.color || '#5F95FF'} onChange={(event) => setSelectNodeData({ ...selectNodeData, color: event.target.value })}/><span>{selectNodeData?.color || '#5F95FF'}</span></div>
             </div>
         </div>
-      </Modal>
+      </Modal>}
         </>
 
 

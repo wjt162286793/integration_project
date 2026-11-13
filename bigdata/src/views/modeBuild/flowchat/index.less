@@ -224,3 +224,68 @@
     }
   }
 }
+
+.node-config-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.node-config-field label {
+  flex: 0 0 76px;
+  color: #52627a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.required-mark {
+  color: #ef4d5b;
+}
+
+.node-config-field > .ant-input,
+.node-config-field > textarea {
+  flex: 1;
+}
+
+.node-config-field .ant-radio-group {
+  display: flex;
+  flex: 1;
+}
+
+.node-config-field .ant-radio-button-wrapper {
+  flex: 1;
+  padding-inline: 8px;
+  color: #60708a;
+  text-align: center;
+}
+
+.node-config-field .ant-radio-button-wrapper-checked {
+  color: #fff;
+}
+
+.node-color-picker {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 9px;
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.node-color-picker input[type='color'] {
+  width: 70px;
+  height: 30px;
+  padding: 2px;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.node-color-picker span {
+  color: #66758c;
+  font-family: monospace;
+  font-size: 12px;
+}

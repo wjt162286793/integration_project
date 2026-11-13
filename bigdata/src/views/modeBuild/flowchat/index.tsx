@@ -7,7 +7,7 @@ import { Snapline } from "@antv/x6-plugin-snapline";
 import { Keyboard } from "@antv/x6-plugin-keyboard";
 import { Clipboard } from "@antv/x6-plugin-clipboard";
 import { History } from "@antv/x6-plugin-history";
-import { Button, Modal, Input, message } from "antd";
+import { Button, Modal, Input, Radio, message } from "antd";
 import { cloneDeep } from 'lodash';
 import { dataLists } from "./data";
 import {
@@ -26,7 +26,6 @@ import {
   contextmenuNodeHandler,
   contextmenuEdgeHandler
 } from "./func";
-import { dataInfoItemType } from './type';
 import "./index.less";
 import { GlobalContext } from '@/global/context';
 
@@ -34,12 +33,13 @@ const { TextArea } = Input;
 
 interface X6EditorProps {
   id?: string;
+  readOnly?: boolean;
 }
 
-const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
+const X6Editor: React.FC<X6EditorProps> = ({ id, readOnly = false }) => {
   const [graphInstance, setGraphInstance] = useState<Graph | null>(null);
   const [selectNode, setSelectNode] = useState<Node | null>(null);
-  const [selectNodeData, setSelectNodeData] = useState<Partial<dataInfoItemType> | null>(null);
+  const [selectNodeData, setSelectNodeData] = useState<any>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [nodeMenuVisible, setNodeMenuVisible] = useState(false);
   const [edgeMenuVisible, setEdgeMenuVisible] = useState(false);
@@ -52,8 +52,9 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
       container: document.getElementById("graph-container")!,
       autoResize: true,
       grid: true,
+      interacting: !readOnly,
       mousewheel: {
-        enabled: true,
+        enabled: !readOnly,
         zoomAtMousePosition: true,
         modifiers: "ctrl",
         minScale: 0.5,
@@ -105,13 +106,15 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     });
 
     // 注册插件
-    graph
-      .use(new Transform({ resizing: true, rotating: true }))
-      .use(new Selection({ rubberband: true, showNodeSelectionBox: true }))
-      .use(new Snapline())
-      .use(new Keyboard())
-      .use(new Clipboard())
-      .use(new History());
+    if (!readOnly) {
+      graph
+        .use(new Transform({ resizing: true, rotating: true }))
+        .use(new Selection({ rubberband: true, showNodeSelectionBox: true }))
+        .use(new Snapline())
+        .use(new Keyboard())
+        .use(new Clipboard())
+        .use(new History());
+    }
 
     return graph;
   };
@@ -139,11 +142,15 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
       return;
     }
 
-    const cells: Cell[] = data.map(item =>
-      item.shape === "edge"
-        ? graph.createEdge(item)
-        : graph.createNode(item)
-    );
+    const cells: Cell[] = data.map(item => {
+      if (item.shape === "edge") return graph.createEdge(item)
+      const node = graph.createNode(item)
+      const groups = new Set(node.getPorts().map((port) => port.group))
+      ;['top', 'right', 'bottom', 'left'].forEach((group) => {
+        if (!groups.has(group)) node.addPort({ id: `${group}-${node.id}`, group })
+      })
+      return node
+    });
     try {
       graph.resetCells(cells);
     } catch (error) {
@@ -157,41 +164,46 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     if (typeof window === 'undefined') return;
 
     const graph = initGraph();
-    initStencil(graph);
+    if (!readOnly) initStencil(graph);
 
     // 注册事件
-    graph.on("node:added", ({ node }) => addNodeHandler({ node }));
-    graph.on("edge:added", addEdgeHandler);
-    graph.on("node:contextmenu", (event) => {
-      setEdgeMenuVisible(false)
-      contextmenuNodeHandler(
-        event,
-        setSelectNode,
-        setSelectNodeData,
-        setNodeMenuVisible,
-        setMenuPosition
-      )
+    const graphContainer = document.getElementById("graph-container");
+    let handleNativeContextMenu: ((event: MouseEvent) => void) | null = null;
+    if (!readOnly) {
+      graph.on("node:added", ({ node }) => addNodeHandler({ node }));
+      graph.on("edge:added", addEdgeHandler);
+      graph.on("node:contextmenu", (event) => {
+        setEdgeMenuVisible(false)
+        contextmenuNodeHandler(event, setSelectNode, setSelectNodeData, setNodeMenuVisible, setMenuPosition)
+      });
+      graph.on("edge:contextmenu", (event) => {
+        setSelectNode(event.edge)
+        setNodeMenuVisible(false)
+        setEdgeMenuVisible(true)
+        setMenuPosition({ x: event.e.clientX, y: event.e.clientY })
+      });
+      handleNativeContextMenu = (event: MouseEvent) => {
+        const target = event.target as Element | null;
+        const cellElement = target?.closest?.("[data-cell-id]");
+        const cellId = cellElement?.getAttribute("data-cell-id");
+        const cell = cellId ? graph.getCellById(cellId) : null;
+        if (cell?.isNode()) {
+          event.preventDefault();
+          setEdgeMenuVisible(false);
+          contextmenuNodeHandler({ node: cell, e: event }, setSelectNode, setSelectNodeData, setNodeMenuVisible, setMenuPosition);
+        }
+      };
+      graphContainer?.addEventListener("contextmenu", handleNativeContextMenu);
     }
-
-    );
-
-    graph.on("edge:contextmenu", (event) => {
-      setSelectNode(event.edge)
-      setNodeMenuVisible(false)
-      setEdgeMenuVisible(true)
-      setMenuPosition({ x: event.e.clientX, y: event.e.clientY })
-    }
-
-    );
-
 
     setGraphInstance(graph);
     setIsReady(true);
 
     return () => {
+      if (handleNativeContextMenu) graphContainer?.removeEventListener("contextmenu", handleNativeContextMenu);
       graph.dispose();
     };
-  }, []);
+  }, [readOnly]);
 
   // 数据加载效果
   useEffect(() => {
@@ -245,7 +257,20 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
     }
 
     if (selectNode && selectNodeData) {
-      selectNode.setData(selectNodeData);
+      selectNode.setData({
+        ...selectNode.getData(),
+        ...selectNodeData,
+        status: selectNodeData.status || 'default',
+        color: selectNodeData.color || '#5F95FF',
+      });
+      selectNode.setAttrs({
+        body: {
+          stroke: selectNodeData.color || '#5F95FF',
+        },
+        text: {
+          fill: selectNodeData.color || '#262626',
+        },
+      });
       setIsModalOpen(false);
     }
   };
@@ -260,10 +285,10 @@ const X6Editor: React.FC<X6EditorProps> = ({ id }) => {
 const globalText = useContext(GlobalContext)
   return (
     <div id="container" className={globalText?.isSubAppFlag?'container_subApp':'container'}>
-      <div id="stencil" />
+      {!readOnly && <div id="stencil" />}
       <div id="graph-container" />
 
-      <div className="operationDom">
+      {!readOnly && <div className="operationDom">
         <h4 className="title">节点操作</h4>
         <ul className="operationList">
           <li><Button type="primary" size="small" onClick={() => allSelectHandler(graphInstance)}>全选</Button></li>
@@ -283,9 +308,9 @@ const globalText = useContext(GlobalContext)
         </ul>
 
         <Button type="primary" size="small" onClick={getGraphInfo}>获取信息</Button>
-      </div>
+      </div>}
 
-      {nodeMenuVisible && (
+      {!readOnly && nodeMenuVisible && (
         <ul
           className="contextMenuList"
           style={{
@@ -299,7 +324,7 @@ const globalText = useContext(GlobalContext)
           <li onClick={() => setNodeMenuVisible(false)}>关闭菜单</li>
         </ul>
       )}
-      {edgeMenuVisible && (
+      {!readOnly && edgeMenuVisible && (
         <ul
           className="contextMenuList"
           style={{
@@ -314,7 +339,7 @@ const globalText = useContext(GlobalContext)
       )}
 
 
-      <Modal
+      {!readOnly && <Modal
         title="节点配置"
         closable={false}
         open={isModalOpen}
@@ -324,28 +349,47 @@ const globalText = useContext(GlobalContext)
           </Button>
         ]}
       >
-        <div>
-          节点名称:
-
+        <div className="node-config-field">
+          <label>节点名称 <span className="required-mark">*</span></label>
           <Input
             disabled={selectNode?.shape ? selectNode.shape[0] === '3' : false}
-            placeholder="节点名称不能为空"
-            value={selectNodeData?.label || ''}
+            required
+            placeholder="请输入节点名称"
+            value={selectNodeData?.label || '新增节点'}
             onChange={(e) => handleInputChange(e, 'label')}
           />
         </div>
-        <div>
-          节点简介:
+        <div className="node-config-field">
+          <label>节点简介</label>
           <TextArea
             rows={4}
             value={selectNodeData?.desc || ''}
             onChange={(e) => handleInputChange(e, 'desc')}
           />
         </div>
-        {selectNodeData?.status && (
-          <div>节点状态: {selectNodeData.status}</div>
-        )}
-      </Modal>
+        <div className="node-config-field">
+          <label>节点状态</label>
+          <Radio.Group
+            optionType="button"
+            buttonStyle="solid"
+            value={selectNodeData?.status || 'default'}
+            options={[
+              { value: 'default', label: '未开始' },
+              { value: 'running', label: '进行中' },
+              { value: 'success', label: '已完成' },
+              { value: 'failed', label: '异常' },
+            ]}
+            onChange={(event) => setSelectNodeData({ ...selectNodeData, status: event.target.value })}
+          />
+        </div>
+        <div className="node-config-field">
+          <label>节点颜色</label>
+          <div className="node-color-picker">
+            <Input type="color" value={selectNodeData?.color || '#5F95FF'} onChange={(e) => setSelectNodeData({ ...selectNodeData, color: e.target.value })} />
+            <span>{selectNodeData?.color || '#5F95FF'}</span>
+          </div>
+        </div>
+      </Modal>}
     </div>
   );
 };

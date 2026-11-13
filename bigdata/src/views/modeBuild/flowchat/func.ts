@@ -9,160 +9,39 @@ import { cloneDeep } from 'lodash';
 
 
 
-export const registerFun = () => {
-  register({
-    shape: '2-start-rect',
-    width: 180,
-    height: 36,
-    component: AlgoNode,
-    ports: {
-      groups: {
-        bottom: {
-          position: 'bottom',
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: '#C2C8D5',
-              strokeWidth: 1,
-              fill: '#fff',
-              style: {
-                visibility: 'hidden'
-              }
-            },
-          },
-        },
-      },
-      items: [
-        {
-          group: "bottom",
-        },
-      ]
+const allNodePorts = {
+  groups: {
+    top: { position: 'top', attrs: { circle: { r: 3, magnet: true, stroke: '#9aa9bd', strokeWidth: 1.2, fill: '#fff' } } },
+    right: { position: 'right', attrs: { circle: { r: 3, magnet: true, stroke: '#9aa9bd', strokeWidth: 1.2, fill: '#fff' } } },
+    bottom: { position: 'bottom', attrs: { circle: { r: 3, magnet: true, stroke: '#9aa9bd', strokeWidth: 1.2, fill: '#fff' } } },
+    left: { position: 'left', attrs: { circle: { r: 3, magnet: true, stroke: '#9aa9bd', strokeWidth: 1.2, fill: '#fff' } } },
+  },
+  items: [
+    { group: 'top' },
+    { group: 'right' },
+    { group: 'bottom' },
+    { group: 'left' },
+  ],
+}
 
-    },
+const ensureFlowNodePorts = (node: Node) => {
+  const groups = new Set(node.getPorts().map((port) => port.group))
+  ;['top', 'right', 'bottom', 'left'].forEach((group) => {
+    if (!groups.has(group)) {
+      node.addPort({ id: `${group}-${node.id}`, group })
+    }
   })
-  register({
-    shape: '2-status-rect',
-    width: 180,
-    height: 36,
-    component: AlgoNode,
-    ports: {
-      groups: {
-        top: {
-          position: 'top',
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: '#C2C8D5',
-              strokeWidth: 1,
-              fill: '#fff',
-              style: {
-                visibility: 'hidden'
-              }
-            },
-          },
-        },
-        bottom: {
-          position: 'bottom',
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: '#C2C8D5',
-              strokeWidth: 1,
-              fill: '#fff',
-              style: {
-                visibility: 'hidden'
-              }
-            },
-          },
-        },
-        left: {
-          position: 'left',
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: '#C2C8D5',
-              strokeWidth: 1,
-              fill: '#fff',
-              style: {
-                visibility: 'hidden'
-              }
-            },
-          },
-        },
-        right: {
-          position: 'right',
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: '#C2C8D5',
-              strokeWidth: 1,
-              fill: '#fff',
-              style: {
-                visibility: 'hidden'
-              }
-            },
-          },
-        },
-      },
-      items: [
-        {
-          group: "top",
-        },
-        {
-          group: "right",
-        },
-        {
-          group: "bottom",
-        },
-        {
-          group: "left",
-        },
-      ]
-    },
-  })
-  register({
-    shape: '2-end-rect',
-    width: 180,
-    height: 36,
-    component: AlgoNode,
-    ports: {
-      groups: {
-        top: {
-          position: 'top',
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: '#C2C8D5',
-              strokeWidth: 1,
-              fill: '#fff',
-              style: {
-                visibility: 'hidden'
-              }
-            },
-          },
-        },
-      },
-      items: [
-        {
-          group: "top",
-        },
-      ]
-    },
-  })
-  register({
-    shape: '2-alone-rect',
-    width: 180,
-    height: 36,
-    component: AlgoNode,
-    ports: {
-      groups: {},
-    },
+}
+
+export const registerFun = () => {
+  ;['2-start-rect', '2-status-rect', '2-end-rect', '2-alone-rect'].forEach((shape) => {
+    register({
+      shape,
+      width: 180,
+      height: 36,
+      component: AlgoNode,
+      ports: allNodePorts,
+    })
   })
 }
 
@@ -348,6 +227,7 @@ export const createGroup1 = (graph: Graph) => {
 export const createGroup2 = (graph: Graph) => {
   const r1 = graph.createNode({
     shape: "2-start-rect",
+    ports: allNodePorts,
     data: {
       label: "起点节点",
       status: "success",
@@ -356,6 +236,7 @@ export const createGroup2 = (graph: Graph) => {
   });
   const r2 = graph.createNode({
     shape: "2-status-rect",
+    ports: allNodePorts,
     data: {
       label: "中间节点",
       status: "success",
@@ -364,6 +245,7 @@ export const createGroup2 = (graph: Graph) => {
   });
   const r3 = graph.createNode({
     shape: "2-end-rect",
+    ports: allNodePorts,
     data: {
       label: "终点节点",
       status: "success",
@@ -372,6 +254,7 @@ export const createGroup2 = (graph: Graph) => {
   });
   const r4 = graph.createNode({
     shape: "2-alone-rect",
+    ports: allNodePorts,
     data: {
       label: "孤立节点",
       status: "success",
@@ -476,13 +359,13 @@ export const allports = {
       attrs: {
         circle: {
           //圆形端口
-          r: 4, //半径
+          r: 3, //半径
           magnet: true, //可连接
           stroke: "#5F95FF", //描边色
           strokeWidth: 1, //描边宽度
           fill: "#fff", //填充色
           style: {
-            visibility: "hidden", //默认隐藏
+            visibility: "visible",
           },
         },
       },
@@ -491,13 +374,13 @@ export const allports = {
       position: "right",
       attrs: {
         circle: {
-          r: 4,
+          r: 3,
           magnet: true,
           stroke: "#5F95FF",
           strokeWidth: 1,
           fill: "#fff",
           style: {
-            visibility: "hidden",
+            visibility: "visible",
           },
         },
       },
@@ -506,13 +389,13 @@ export const allports = {
       position: "bottom",
       attrs: {
         circle: {
-          r: 4,
+          r: 3,
           magnet: true,
           stroke: "#5F95FF",
           strokeWidth: 1,
           fill: "#fff",
           style: {
-            visibility: "hidden",
+            visibility: "visible",
           },
         },
       },
@@ -521,13 +404,13 @@ export const allports = {
       position: "left",
       attrs: {
         circle: {
-          r: 4,
+          r: 3,
           magnet: true,
           stroke: "#5F95FF",
           strokeWidth: 1,
           fill: "#fff",
           style: {
-            visibility: "hidden",
+            visibility: "visible",
           },
         },
       },
@@ -682,7 +565,7 @@ export const createNodeAndPort = (Graph: Graph) => {
 //显示或者隐藏端口
 export const showPorts = (ports: NodeListOf<SVGElement>, show: boolean) => {
   for (let i = 0, len = ports.length; i < len; i += 1) {
-    ports[i].style.visibility = show ? "visible" : "hidden";
+    ports[i].style.visibility = "visible";
   }
 };
 
@@ -806,7 +689,12 @@ export const toSmallHandler = (graph: Graph) => {
 export const contextmenuNodeHandler = (event, setNode, setNodeData, setNodeMenuVisible, setMenuPosition) => {
   setNode(event.node)
   // const info = dataInfo.find(item => item.id === event.node.id)
-  setNodeData(event.node.data)
+  setNodeData({
+    label: event.node.data?.label || '新增节点',
+    desc: event.node.data?.desc || '',
+    status: event.node.data?.status || 'default',
+    color: event.node.data?.color || '#5F95FF',
+  })
   setNodeMenuVisible(true)
   setMenuPosition({ x: event.e.clientX, y: event.e.clientY })
 
@@ -860,9 +748,15 @@ export const contextmenuEdgeHandler = ({ edge }: { edge: Edge }) => {
 
 
 export const addNodeHandler = ({ node }: { node: Node }) => {
-  node.label = node.data.label
-
-
+  ensureFlowNodePorts(node)
+  const data = {
+    ...node.getData(),
+    label: node.getData()?.label || '新增节点',
+    status: node.getData()?.status || 'default',
+    color: node.getData()?.color || '#5F95FF',
+  }
+  node.setData(data)
+  node.label = data.label
 
   // setDataInfo(prevDataInfo => {
   //   console.log(prevDataInfo, '修改前的快照')
